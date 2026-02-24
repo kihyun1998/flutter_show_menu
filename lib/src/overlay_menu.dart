@@ -386,8 +386,13 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   }
 
   Widget _buildScrollableBody(double? maxHeight) {
-    final headerEntries = widget.header;
-    final footerEntries = widget.footer;
+    final hasItems = widget.items.isNotEmpty;
+    final headerEntries = hasItems
+        ? widget.header
+        : widget.header?.where((e) => e is! OverlayMenuDivider<T>).toList();
+    final footerEntries = hasItems
+        ? widget.footer
+        : widget.footer?.where((e) => e is! OverlayMenuDivider<T>).toList();
 
     final itemWidgets =
         widget.items.map((entry) => _buildEntry(entry)).toList();

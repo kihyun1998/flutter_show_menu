@@ -527,10 +527,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
             _sliderRow(
               'Item Count',
               _itemCount.toDouble(),
-              1,
+              0,
               6,
               (v) => setState(() => _itemCount = v.round()),
-              divisions: 5,
+              divisions: 6,
             ),
             const SizedBox(height: 4),
             SwitchListTile(
