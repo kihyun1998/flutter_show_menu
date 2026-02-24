@@ -78,7 +78,14 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   double _offsetX = 0;
   double _offsetY = 0;
   double _borderRadius = 8;
+  double _itemBorderRadius = 0;
   double _itemHeight = 48;
+  double _itemPaddingH = 16;
+  double _itemPaddingV = 0;
+  double _menuPaddingH = 0;
+  double _menuPaddingV = 4;
+  double _maxHeight = 0; // 0 = no limit
+  double _selectedBorderWidth = 0;
   double _animDuration = 150;
   int _itemCount = 4;
   bool _barrierDismissible = true;
@@ -86,27 +93,43 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   bool _useCustomWidth = false;
   double _customWidth = 200;
 
+  // Style colors (null = disabled/default)
+  Color? _backgroundColor;
+  Color? _hoverColor;
+  Color? _splashColor;
+  Color? _selectedBgColor;
+  Color? _selectedTextColor;
+  Color? _dividerColor;
+  Color? _scrollbarColor;
+  double _scrollbarThickness = 4;
+  double _scrollbarRadius = 8;
+  bool _scrollbarAlwaysVisible = false;
+  bool _showSelectedState = false;
+  bool _showPrefixIcons = false;
+  bool _showDividers = false;
+
   // Button config
   double _buttonWidth = 240;
   double _buttonHeight = 56;
 
   // Result
   String _lastResult = '-';
+  String _selectedItem = 'item_0';
 
-  List<OverlayMenuItem<String>> get _items => List.generate(
-    _itemCount,
-    (i) => OverlayMenuItem<String>(
-      value: 'item_$i',
-      height: _itemHeight,
-      child: Row(
-        children: [
-          Icon(_demoIcons[i % _demoIcons.length], size: 20),
-          const SizedBox(width: 12),
-          Text('Menu Item ${i + 1}'),
-        ],
-      ),
-    ),
-  );
+  static const _palette = [
+    Colors.red,
+    Colors.pink,
+    Colors.purple,
+    Colors.deepPurple,
+    Colors.indigo,
+    Colors.blue,
+    Colors.teal,
+    Colors.green,
+    Colors.orange,
+    Colors.brown,
+    Colors.grey,
+    Colors.blueGrey,
+  ];
 
   static const _demoIcons = [
     Icons.edit_outlined,
@@ -116,6 +139,82 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     Icons.star_outlined,
     Icons.bookmark_outlined,
   ];
+
+  OverlayMenuStyle get _menuStyle {
+    final selColor = _selectedTextColor ?? Colors.deepPurple;
+    return OverlayMenuStyle(
+      borderRadius: BorderRadius.circular(_borderRadius),
+      maxHeight: _maxHeight > 0 ? _maxHeight : null,
+      backgroundColor: _backgroundColor,
+      itemStyle: OverlayMenuItemStyle(
+        height: _itemHeight,
+        padding: EdgeInsets.symmetric(
+          horizontal: _itemPaddingH,
+          vertical: _itemPaddingV,
+        ),
+        borderRadius: _itemBorderRadius > 0
+            ? BorderRadius.circular(_itemBorderRadius)
+            : null,
+        hoverColor: _hoverColor,
+        splashColor: _splashColor,
+      ),
+      selectedStyle: _showSelectedState
+          ? OverlayMenuSelectedStyle(
+              backgroundColor: _selectedBgColor,
+              textStyle: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: selColor,
+              ),
+              border: _selectedBorderWidth > 0
+                  ? BorderSide(color: selColor, width: _selectedBorderWidth)
+                  : null,
+            )
+          : null,
+      dividerStyle: _showDividers
+          ? OverlayMenuDividerStyle(color: _dividerColor)
+          : null,
+      scrollbarStyle: _maxHeight > 0
+          ? OverlayMenuScrollbarStyle(
+              thumbColor: _scrollbarColor,
+              thickness: _scrollbarThickness,
+              radius: Radius.circular(_scrollbarRadius),
+              thumbVisibility: _scrollbarAlwaysVisible,
+            )
+          : null,
+      prefixBuilder: _showPrefixIcons
+          ? (context, selected) => Icon(
+              selected ? Icons.check_circle : Icons.circle_outlined,
+              size: 20,
+              color: selected ? selColor : null,
+            )
+          : null,
+    );
+  }
+
+  List<OverlayMenuEntry<String>> get _items {
+    final entries = <OverlayMenuEntry<String>>[];
+    for (var i = 0; i < _itemCount; i++) {
+      if (_showDividers && i > 0) {
+        entries.add(const OverlayMenuDivider<String>());
+      }
+      entries.add(
+        OverlayMenuItem<String>(
+          value: 'item_$i',
+          selected: _showSelectedState && _selectedItem == 'item_$i',
+          child: Row(
+            children: [
+              if (!_showPrefixIcons) ...[
+                Icon(_demoIcons[i % _demoIcons.length], size: 20),
+                const SizedBox(width: 12),
+              ],
+              Text('Menu Item ${i + 1}'),
+            ],
+          ),
+        ),
+      );
+    }
+    return entries;
+  }
 
   Future<void> _showMenu(BuildContext context) async {
     final result = await showOverlayMenu<String>(
@@ -127,12 +226,17 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       barrierDismissible: _barrierDismissible,
       barrierColor: _showBarrierColor ? Colors.black26 : null,
       width: _useCustomWidth ? _customWidth : null,
-      animationDuration: Duration(milliseconds: _animDuration.round()),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(_borderRadius),
+      padding: EdgeInsets.symmetric(
+        horizontal: _menuPaddingH,
+        vertical: _menuPaddingV,
       ),
+      animationDuration: Duration(milliseconds: _animDuration.round()),
+      style: _menuStyle,
     );
-    setState(() => _lastResult = result ?? 'dismissed');
+    setState(() {
+      _lastResult = result ?? 'dismissed';
+      if (result != null) _selectedItem = result;
+    });
   }
 
   @override
@@ -259,14 +363,20 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           ],
         ),
 
-        // Menu Styling
+        // Menu Container
         ExpansionTile(
-          title: const Text('Menu Styling'),
+          title: const Text('Menu Container'),
           childrenPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 8,
           ),
           children: [
+            _colorPickerRow(
+              'Background',
+              _backgroundColor,
+              (c) => setState(() => _backgroundColor = c),
+            ),
+            const SizedBox(height: 8),
             _sliderRow(
               'Border Radius',
               _borderRadius,
@@ -275,11 +385,25 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               (v) => setState(() => _borderRadius = v),
             ),
             _sliderRow(
-              'Item Height',
-              _itemHeight,
-              32,
-              72,
-              (v) => setState(() => _itemHeight = v),
+              'Max Height',
+              _maxHeight,
+              0,
+              400,
+              (v) => setState(() => _maxHeight = v),
+            ),
+            _sliderRow(
+              'Padding H',
+              _menuPaddingH,
+              0,
+              16,
+              (v) => setState(() => _menuPaddingH = v),
+            ),
+            _sliderRow(
+              'Padding V',
+              _menuPaddingV,
+              0,
+              16,
+              (v) => setState(() => _menuPaddingV = v),
             ),
             _sliderRow(
               'Item Count',
@@ -305,6 +429,182 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 320,
                 (v) => setState(() => _customWidth = v),
               ),
+          ],
+        ),
+
+        // Item Style
+        ExpansionTile(
+          title: const Text('Item Style'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          children: [
+            _sliderRow(
+              'Height',
+              _itemHeight,
+              32,
+              72,
+              (v) => setState(() => _itemHeight = v),
+            ),
+            _sliderRow(
+              'Padding H',
+              _itemPaddingH,
+              0,
+              32,
+              (v) => setState(() => _itemPaddingH = v),
+            ),
+            _sliderRow(
+              'Padding V',
+              _itemPaddingV,
+              0,
+              16,
+              (v) => setState(() => _itemPaddingV = v),
+            ),
+            _sliderRow(
+              'Border Radius',
+              _itemBorderRadius,
+              0,
+              24,
+              (v) => setState(() => _itemBorderRadius = v),
+            ),
+            const SizedBox(height: 8),
+            _colorPickerRow(
+              'Hover',
+              _hoverColor,
+              (c) => setState(() => _hoverColor = c),
+            ),
+            const SizedBox(height: 8),
+            _colorPickerRow(
+              'Splash',
+              _splashColor,
+              (c) => setState(() => _splashColor = c),
+            ),
+          ],
+        ),
+
+        // Selected Style
+        ExpansionTile(
+          title: const Text('Selected Style'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          children: [
+            SwitchListTile(
+              title: const Text('Enable'),
+              dense: true,
+              value: _showSelectedState,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) => setState(() => _showSelectedState = v),
+            ),
+            if (_showSelectedState) ...[
+              const SizedBox(height: 4),
+              _colorPickerRow(
+                'Background',
+                _selectedBgColor,
+                (c) => setState(() => _selectedBgColor = c),
+              ),
+              const SizedBox(height: 8),
+              _colorPickerRow(
+                'Text Color',
+                _selectedTextColor,
+                (c) => setState(() => _selectedTextColor = c),
+              ),
+              const SizedBox(height: 8),
+              _sliderRow(
+                'Border Width',
+                _selectedBorderWidth,
+                0,
+                4,
+                (v) => setState(() => _selectedBorderWidth = v),
+                divisions: 8,
+              ),
+            ],
+          ],
+        ),
+
+        // Divider Style
+        ExpansionTile(
+          title: const Text('Divider Style'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          children: [
+            SwitchListTile(
+              title: const Text('Enable'),
+              dense: true,
+              value: _showDividers,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) => setState(() => _showDividers = v),
+            ),
+            if (_showDividers) ...[
+              const SizedBox(height: 4),
+              _colorPickerRow(
+                'Color',
+                _dividerColor,
+                (c) => setState(() => _dividerColor = c),
+              ),
+            ],
+          ],
+        ),
+
+        // Scrollbar Style
+        if (_maxHeight > 0)
+          ExpansionTile(
+            title: const Text('Scrollbar Style'),
+            childrenPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            children: [
+              _colorPickerRow(
+                'Thumb Color',
+                _scrollbarColor,
+                (c) => setState(() => _scrollbarColor = c),
+              ),
+              const SizedBox(height: 8),
+              _sliderRow(
+                'Thickness',
+                _scrollbarThickness,
+                2,
+                12,
+                (v) => setState(() => _scrollbarThickness = v),
+                divisions: 10,
+              ),
+              _sliderRow(
+                'Radius',
+                _scrollbarRadius,
+                0,
+                12,
+                (v) => setState(() => _scrollbarRadius = v),
+              ),
+              SwitchListTile(
+                title: const Text('Always Visible'),
+                dense: true,
+                value: _scrollbarAlwaysVisible,
+                contentPadding: EdgeInsets.zero,
+                onChanged: (v) => setState(() => _scrollbarAlwaysVisible = v),
+              ),
+            ],
+          ),
+
+        // Prefix Builder
+        ExpansionTile(
+          title: const Text('Prefix Builder'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          children: [
+            SwitchListTile(
+              title: const Text('Enable'),
+              dense: true,
+              value: _showPrefixIcons,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) => setState(() => _showPrefixIcons = v),
+            ),
           ],
         ),
 
@@ -391,6 +691,68 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _colorPickerRow(
+    String label,
+    Color? current,
+    ValueChanged<Color?> onChanged,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              width: 70,
+              child: Text(label, style: const TextStyle(fontSize: 13)),
+            ),
+            if (current != null) ...[
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: current,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black26),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            if (current != null)
+              GestureDetector(
+                onTap: () => onChanged(null),
+                child: const Icon(Icons.close, size: 16),
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: _palette.map((color) {
+            final isSelected = current?.toARGB32() == color.toARGB32();
+            return GestureDetector(
+              onTap: () => onChanged(color),
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(color: Colors.white, width: 2)
+                      : null,
+                  boxShadow: isSelected
+                      ? [BoxShadow(color: color, blurRadius: 4)]
+                      : null,
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

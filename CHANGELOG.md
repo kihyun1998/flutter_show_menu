@@ -2,9 +2,18 @@
 
 - **feat**: `showOverlayMenu` — imperative function API replacing Flutter's `showMenu`
 - **feat**: `OverlayMenuButton` — declarative widget wrapper for tap-to-show menus
-- **feat**: `OverlayMenuItem` — menu item data class with value, child, enabled, onTap
+- **feat**: `OverlayMenuEntry` sealed class — base type for menu entries (`OverlayMenuItem`, `OverlayMenuDivider`)
+- **feat**: `OverlayMenuItem` — menu item with value, child, enabled, onTap, selected state, prefixBuilder
+- **feat**: `OverlayMenuDivider` — horizontal divider entry with color, thickness, indent
+- **feat**: `OverlayMenuStyle` — grouped style options for menu container, items, selection, dividers, scrollbar
+  - `OverlayMenuItemStyle` — height, padding, borderRadius, textStyle, hover/splash/highlight/focus colors, mouseCursor
+  - `OverlayMenuSelectedStyle` — backgroundColor, textStyle, border for selected items
+  - `OverlayMenuDividerStyle` — color, thickness
+  - `OverlayMenuScrollbarStyle` — thumbColor, thickness, radius, thumbVisibility
 - **feat**: `MenuPosition` (top, bottom, left, right) — controls which side of the target the menu appears
 - **feat**: `MenuAlignment` (start, center, end) — controls cross-axis alignment
+- **feat**: `maxHeight` with automatic scroll when content overflows
+- **feat**: `prefixBuilder` — per-item or style-level prefix widget with selected state
 - **feat**: Fade + scale enter/exit animation with configurable duration and curve
 - **feat**: Automatic screen-edge flip when menu overflows viewport
 - **feat**: Barrier dismiss support with optional barrier color

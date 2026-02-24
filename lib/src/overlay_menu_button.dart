@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'menu_position.dart';
 import 'overlay_menu.dart';
 import 'overlay_menu_item.dart';
+import 'overlay_menu_style.dart';
 
 /// 자식 위젯을 감싸고, 탭 시 오버레이 메뉴를 표시하는 위젯입니다.
 class OverlayMenuButton<T> extends StatelessWidget {
@@ -23,10 +24,11 @@ class OverlayMenuButton<T> extends StatelessWidget {
     this.animationDuration = const Duration(milliseconds: 150),
     this.animationCurve = Curves.easeOutCubic,
     this.enabled = true,
+    this.style,
   });
 
   /// 메뉴 항목 목록
-  final List<OverlayMenuItem<T>> items;
+  final List<OverlayMenuEntry<T>> items;
 
   /// 탭 영역이 되는 자식 위젯
   final Widget child;
@@ -73,6 +75,9 @@ class OverlayMenuButton<T> extends StatelessWidget {
   /// 버튼 활성화 여부
   final bool enabled;
 
+  /// Visual style options for the menu.
+  final OverlayMenuStyle? style;
+
   Future<void> _show(BuildContext context) async {
     final result = await showOverlayMenu<T>(
       context: context,
@@ -88,6 +93,7 @@ class OverlayMenuButton<T> extends StatelessWidget {
       width: menuWidth,
       animationDuration: animationDuration,
       animationCurve: animationCurve,
+      style: style,
     );
 
     if (result != null) {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'menu_position.dart';
 import 'menu_position_delegate.dart';
 import 'overlay_menu_item.dart';
+import 'overlay_menu_style.dart';
 
 /// [showMenu]를 대체하는 OverlayEntry 기반 메뉴를 표시합니다.
 ///
@@ -10,7 +11,7 @@ import 'overlay_menu_item.dart';
 /// 메뉴를 배치합니다.
 Future<T?> showOverlayMenu<T>({
   required BuildContext context,
-  required List<OverlayMenuItem<T>> items,
+  required List<OverlayMenuEntry<T>> items,
   MenuPosition position = MenuPosition.bottom,
   MenuAlignment alignment = MenuAlignment.start,
   Offset offset = Offset.zero,
@@ -22,6 +23,7 @@ Future<T?> showOverlayMenu<T>({
   double? width,
   Duration animationDuration = const Duration(milliseconds: 150),
   Curve animationCurve = Curves.easeOutCubic,
+  OverlayMenuStyle? style,
 }) {
   final renderBox = context.findRenderObject() as RenderBox;
   final targetRect = renderBox.localToGlobal(Offset.zero) & renderBox.size;
@@ -51,6 +53,7 @@ Future<T?> showOverlayMenu<T>({
       width: width,
       animationDuration: animationDuration,
       animationCurve: animationCurve,
+      style: style,
       onClose: (result) {
         entry.remove();
         close(result);
@@ -78,10 +81,11 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
     this.width,
     required this.animationDuration,
     required this.animationCurve,
+    this.style,
   });
 
   final Rect targetRect;
-  final List<OverlayMenuItem<T>> items;
+  final List<OverlayMenuEntry<T>> items;
   final MenuPosition position;
   final MenuAlignment alignment;
   final Offset offset;
@@ -93,6 +97,7 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
   final double? width;
   final Duration animationDuration;
   final Curve animationCurve;
+  final OverlayMenuStyle? style;
   final ValueChanged<T?> onClose;
 
   @override
@@ -104,10 +109,14 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<double> _scale;
+  ScrollController? _scrollController;
 
   @override
   void initState() {
     super.initState();
+    if (widget.style?.maxHeight != null) {
+      _scrollController = ScrollController();
+    }
     _controller = AnimationController(
       vsync: this,
       duration: widget.animationDuration,
@@ -123,6 +132,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   @override
   void dispose() {
+    _scrollController?.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -201,20 +211,21 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   Widget _buildMenu(BuildContext context) {
     final theme = Theme.of(context);
+    final style = widget.style;
+
+    final bgColor =
+        style?.backgroundColor ?? theme.colorScheme.surfaceContainer;
+    final radius = style?.borderRadius ?? BorderRadius.circular(8);
 
     Widget menu = Material(
       elevation: 8,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: radius,
       clipBehavior: Clip.antiAlias,
-      color: theme.colorScheme.surfaceContainer,
+      color: bgColor,
       child: Padding(
         padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 4),
         child: IntrinsicWidth(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: widget.items.map((item) => _buildItem(item)).toList(),
-          ),
+          child: _buildScrollableBody(style?.maxHeight),
         ),
       ),
     );
@@ -240,7 +251,131 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     return menu;
   }
 
+  Widget _buildScrollableBody(double? maxHeight) {
+    final column = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: widget.items.map((entry) => _buildEntry(entry)).toList(),
+    );
+
+    if (maxHeight == null) return column;
+
+    final sb = widget.style?.scrollbarStyle;
+    final scrollView = SingleChildScrollView(
+      controller: _scrollController,
+      child: column,
+    );
+
+    Widget scrollable;
+    if (sb != null) {
+      scrollable = ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor: sb.thumbColor != null
+              ? WidgetStatePropertyAll(sb.thumbColor!)
+              : null,
+          thickness: sb.thickness != null
+              ? WidgetStatePropertyAll(sb.thickness!)
+              : null,
+          radius: sb.radius,
+          thumbVisibility: sb.thumbVisibility != null
+              ? WidgetStatePropertyAll(sb.thumbVisibility!)
+              : null,
+        ),
+        child: Scrollbar(
+          controller: _scrollController,
+          child: scrollView,
+        ),
+      );
+    } else {
+      scrollable = Scrollbar(
+        controller: _scrollController,
+        child: scrollView,
+      );
+    }
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      child: scrollable,
+    );
+  }
+
+  Widget _buildEntry(OverlayMenuEntry<T> entry) {
+    return switch (entry) {
+      OverlayMenuItem<T>() => _buildItem(entry),
+      OverlayMenuDivider<T>() => _buildDivider(entry),
+    };
+  }
+
   Widget _buildItem(OverlayMenuItem<T> item) {
+    final itemStyle = widget.style?.itemStyle;
+    final selectedStyle = widget.style?.selectedStyle;
+    final theme = Theme.of(context);
+    final isSelected = item.selected;
+
+    // Resolve: item → itemStyle → hardcoded default
+    final height = item.height ?? itemStyle?.height ?? 48.0;
+    final padding = item.padding ??
+        itemStyle?.padding ??
+        const EdgeInsets.symmetric(horizontal: 16);
+    final baseTextStyle = itemStyle?.textStyle;
+    final itemBorderRadius = itemStyle?.borderRadius;
+
+    final mouseCursor = item.enabled
+        ? (itemStyle?.mouseCursor ?? SystemMouseCursors.click)
+        : SystemMouseCursors.basic;
+
+    // Prefix
+    final prefixBuilder = item.prefixBuilder ?? widget.style?.prefixBuilder;
+    Widget content;
+    if (prefixBuilder != null) {
+      content = Row(
+        children: [
+          prefixBuilder(context, isSelected),
+          const SizedBox(width: 12),
+          Expanded(child: item.child),
+        ],
+      );
+    } else {
+      content = item.child;
+    }
+
+    // Text style
+    TextStyle? resolvedTextStyle;
+    if (isSelected && selectedStyle?.textStyle != null) {
+      resolvedTextStyle =
+          (baseTextStyle ?? const TextStyle()).merge(selectedStyle!.textStyle);
+    } else if (baseTextStyle != null) {
+      resolvedTextStyle = baseTextStyle;
+    }
+    if (!item.enabled) {
+      resolvedTextStyle = (resolvedTextStyle ?? const TextStyle())
+          .copyWith(color: theme.disabledColor);
+    }
+
+    Widget child = Container(
+      height: height,
+      padding: padding,
+      alignment: Alignment.centerLeft,
+      child: DefaultTextStyle.merge(
+        style: resolvedTextStyle ?? const TextStyle(),
+        child: content,
+      ),
+    );
+
+    // Selected decoration
+    if (isSelected) {
+      child = Container(
+        decoration: BoxDecoration(
+          color: selectedStyle?.backgroundColor,
+          borderRadius: itemBorderRadius,
+          border: selectedStyle?.border != null
+              ? Border.fromBorderSide(selectedStyle!.border!)
+              : null,
+        ),
+        child: child,
+      );
+    }
+
     return InkWell(
       onTap: item.enabled
           ? () {
@@ -248,17 +383,24 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
               _dismiss(item.value);
             }
           : null,
-      child: Container(
-        height: item.height,
-        padding: item.padding ?? const EdgeInsets.symmetric(horizontal: 16),
-        alignment: Alignment.centerLeft,
-        child: DefaultTextStyle.merge(
-          style: TextStyle(
-            color: item.enabled ? null : Theme.of(context).disabledColor,
-          ),
-          child: item.child,
-        ),
-      ),
+      mouseCursor: mouseCursor,
+      borderRadius: itemBorderRadius,
+      hoverColor: itemStyle?.hoverColor,
+      splashColor: itemStyle?.splashColor,
+      highlightColor: itemStyle?.highlightColor,
+      focusColor: itemStyle?.focusColor,
+      child: child,
+    );
+  }
+
+  Widget _buildDivider(OverlayMenuDivider<T> divider) {
+    final ds = widget.style?.dividerStyle;
+    return Divider(
+      color: divider.color ?? ds?.color,
+      thickness: divider.thickness ?? ds?.thickness ?? 1.0,
+      indent: divider.indent ?? 0,
+      endIndent: divider.endIndent ?? 0,
+      height: divider.thickness ?? ds?.thickness ?? 1.0,
     );
   }
 }

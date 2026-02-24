@@ -13,6 +13,11 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Smooth animation** — fade + scale with configurable duration and curve
 - **Two API styles** — imperative function (`showOverlayMenu`) and declarative widget (`OverlayMenuButton`)
 - **Barrier support** — dismiss on outside tap with optional backdrop color
+- **Rich styling** — `OverlayMenuStyle` with grouped sub-classes for item, selected, divider, and scrollbar styles
+- **Divider support** — `OverlayMenuDivider` entries between items
+- **Selected state** — per-item `selected` flag with customizable background, text style, and border
+- **Prefix builder** — per-item or style-level leading widget with selected state awareness
+- **Scrollable menu** — `maxHeight` with automatic scrolling and scrollbar theming
 
 ## Install
 
@@ -28,7 +33,6 @@ dependencies:
 ```dart
 import 'package:flutter_show_menu/flutter_show_menu.dart';
 
-// Inside a button's onPressed or onTap callback:
 final result = await showOverlayMenu<String>(
   context: context,
   items: [
@@ -59,6 +63,40 @@ OverlayMenuButton<String>(
   onCanceled: () => print('Dismissed'),
   child: Icon(Icons.more_vert),
 )
+```
+
+### With Styling, Dividers, and Selected State
+
+```dart
+final result = await showOverlayMenu<String>(
+  context: context,
+  items: [
+    OverlayMenuItem(value: 'home', selected: true, child: Text('Home')),
+    OverlayMenuDivider(),
+    OverlayMenuItem(value: 'settings', child: Text('Settings')),
+    OverlayMenuItem(value: 'logout', child: Text('Logout')),
+  ],
+  style: OverlayMenuStyle(
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    maxHeight: 300,
+    itemStyle: OverlayMenuItemStyle(
+      height: 44,
+      borderRadius: BorderRadius.circular(8),
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      hoverColor: Colors.blue.withValues(alpha: 0.08),
+    ),
+    selectedStyle: OverlayMenuSelectedStyle(
+      backgroundColor: Colors.blue.withValues(alpha: 0.12),
+      textStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),
+    ),
+    dividerStyle: OverlayMenuDividerStyle(color: Colors.grey.shade300),
+    prefixBuilder: (context, selected) => Icon(
+      selected ? Icons.check_circle : Icons.circle_outlined,
+      size: 20,
+    ),
+  ),
+);
 ```
 
 ## Position & Alignment
@@ -97,8 +135,8 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `context` | `BuildContext` | **required** | BuildContext of the target widget (used to calculate position) |
-| `items` | `List<OverlayMenuItem<T>>` | **required** | List of menu items to display |
+| `context` | `BuildContext` | **required** | BuildContext of the target widget |
+| `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries (items and dividers) |
 | `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
 | `offset` | `Offset` | `Offset.zero` | Additional offset for fine-tuning position |
@@ -110,6 +148,7 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `width` | `double?` | `null` | Fixed width for the menu |
 | `animationDuration` | `Duration` | `150ms` | Duration of enter/exit animation |
 | `animationCurve` | `Curve` | `Curves.easeOutCubic` | Animation curve |
+| `style` | `OverlayMenuStyle?` | `null` | Visual style options |
 
 **Returns** `Future<T?>` — the selected item's value, or `null` if dismissed.
 
@@ -120,7 +159,7 @@ A widget that wraps a child and shows an overlay menu on tap.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `child` | `Widget` | **required** | The tap target widget |
-| `items` | `List<OverlayMenuItem<T>>` | **required** | List of menu items |
+| `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries |
 | `position` | `MenuPosition` | `bottom` | Menu position relative to child |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment |
 | `offset` | `Offset` | `Offset.zero` | Additional position offset |
@@ -135,17 +174,84 @@ A widget that wraps a child and shows an overlay menu on tap.
 | `animationDuration` | `Duration` | `150ms` | Animation duration |
 | `animationCurve` | `Curve` | `Curves.easeOutCubic` | Animation curve |
 | `enabled` | `bool` | `true` | Whether the button responds to taps |
+| `style` | `OverlayMenuStyle?` | `null` | Visual style options |
 
-### `OverlayMenuItem<T>`
+### `OverlayMenuEntry<T>` (sealed)
+
+Base type for menu entries. Two subtypes:
+
+#### `OverlayMenuItem<T>`
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `value` | `T?` | `null` | Value returned when this item is selected |
 | `child` | `Widget` | **required** | Content widget of the menu item |
-| `onTap` | `VoidCallback?` | `null` | Additional callback on tap (runs alongside value return) |
+| `onTap` | `VoidCallback?` | `null` | Additional callback on tap |
 | `enabled` | `bool` | `true` | Whether the item is tappable |
-| `height` | `double` | `48.0` | Item height |
-| `padding` | `EdgeInsets?` | `EdgeInsets.symmetric(horizontal: 16)` | Item inner padding |
+| `height` | `double?` | `null` | Item height (falls back to style, then `48.0`) |
+| `padding` | `EdgeInsets?` | `null` | Item inner padding (falls back to style) |
+| `selected` | `bool` | `false` | Whether this item is marked as selected |
+| `prefixBuilder` | `Widget Function(BuildContext, bool)?` | `null` | Leading widget builder (overrides style-level) |
+
+#### `OverlayMenuDivider<T>`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `color` | `Color?` | `null` | Divider color (falls back to style) |
+| `thickness` | `double?` | `null` | Divider thickness (falls back to style, then `1.0`) |
+| `indent` | `double?` | `null` | Leading indent |
+| `endIndent` | `double?` | `null` | Trailing indent |
+
+### `OverlayMenuStyle`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `backgroundColor` | `Color?` | Menu surface color (falls back to `surfaceContainer`) |
+| `borderRadius` | `BorderRadius?` | Menu surface border radius (falls back to `circular(8)`) |
+| `maxHeight` | `double?` | Max menu height; scrolls when exceeded |
+| `itemStyle` | `OverlayMenuItemStyle?` | Default item styling |
+| `selectedStyle` | `OverlayMenuSelectedStyle?` | Selected item styling |
+| `dividerStyle` | `OverlayMenuDividerStyle?` | Divider defaults |
+| `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming (when `maxHeight` is set) |
+| `prefixBuilder` | `Widget Function(BuildContext, bool)?` | Default prefix builder for all items |
+
+### `OverlayMenuItemStyle`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `height` | `double?` | Default item height (falls back to `48.0`) |
+| `padding` | `EdgeInsets?` | Default item padding (falls back to `horizontal: 16`) |
+| `borderRadius` | `BorderRadius?` | Item border radius for InkWell and selection |
+| `textStyle` | `TextStyle?` | Default text style |
+| `hoverColor` | `Color?` | Hover color |
+| `splashColor` | `Color?` | Splash color |
+| `highlightColor` | `Color?` | Highlight color |
+| `focusColor` | `Color?` | Focus color |
+| `mouseCursor` | `MouseCursor?` | Mouse cursor (falls back to `SystemMouseCursors.click`) |
+
+### `OverlayMenuSelectedStyle`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `backgroundColor` | `Color?` | Background color for selected items |
+| `textStyle` | `TextStyle?` | Text style override (merged on top of item textStyle) |
+| `border` | `BorderSide?` | Border around selected items |
+
+### `OverlayMenuDividerStyle`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `color` | `Color?` | Divider color (falls back to theme default) |
+| `thickness` | `double?` | Divider thickness (falls back to `1.0`) |
+
+### `OverlayMenuScrollbarStyle`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `thumbColor` | `Color?` | Scrollbar thumb color |
+| `thickness` | `double?` | Scrollbar thickness |
+| `radius` | `Radius?` | Scrollbar corner radius |
+| `thumbVisibility` | `bool?` | Whether the thumb is always visible |
 
 ### `MenuPosition`
 
