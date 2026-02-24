@@ -1,3 +1,12 @@
+## 0.3.1
+
+- **feat**: Hide header/footer dividers when the items list is empty
+- **docs**: Translate all comments and doc comments to English
+- **docs**: Add library-level doc comment for pub.dev API docs
+- **docs**: Add doc comments to `MenuPosition` and `MenuAlignment` enum values
+- **docs**: Add parameter descriptions to `showOverlayMenu`
+- **fix**: Resolve broken dartdoc references (`OverlayMenuStyle.itemHeight`, `dividerColor`, `dividerThickness`)
+
 ## 0.3.0
 
 - **feat**: Auto-close menu on route pop or new route push — no more orphaned overlays on navigation

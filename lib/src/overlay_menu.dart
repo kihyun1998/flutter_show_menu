@@ -5,10 +5,10 @@ import 'menu_position_delegate.dart';
 import 'overlay_menu_item.dart';
 import 'overlay_menu_style.dart';
 
-/// 열려 있는 오버레이 메뉴를 프로그래밍 방식으로 닫을 수 있는 컨트롤러.
+/// Controller to programmatically close an open overlay menu.
 ///
-/// [showOverlayMenu]의 `controller` 파라미터에 전달하여 사용합니다.
-/// [close]를 호출하면 메뉴가 닫힙니다. 이미 닫힌 상태에서도 안전하게 호출할 수 있습니다.
+/// Pass this to the `controller` parameter of [showOverlayMenu].
+/// Call [close] to dismiss the menu. Safe to call even if already closed.
 ///
 /// ```dart
 /// final controller = OverlayMenuController();
@@ -18,17 +18,17 @@ import 'overlay_menu_style.dart';
 ///   controller: controller,
 /// );
 ///
-/// // 나중에 메뉴를 닫고 싶을 때:
+/// // Later, when you want to close the menu:
 /// controller.close();
 /// ```
 class OverlayMenuController {
   VoidCallback? _onClose;
   bool _isClosed = false;
 
-  /// 메뉴가 이미 닫혔는지 여부.
+  /// Whether the menu is already closed.
   bool get isClosed => _isClosed;
 
-  /// 메뉴를 닫습니다. 이미 닫힌 상태에서 호출해도 안전합니다.
+  /// Closes the menu. Safe to call even if already closed.
   void close() {
     if (_isClosed) return;
     _isClosed = true;
@@ -37,13 +37,33 @@ class OverlayMenuController {
   }
 }
 
-/// [showMenu]를 대체하는 OverlayEntry 기반 메뉴를 표시합니다.
+/// Displays an OverlayEntry-based menu as a replacement for [showMenu].
 ///
-/// [context]의 RenderBox를 기준으로 [position] 방향, [alignment] 정렬에 따라
-/// 메뉴를 배치합니다.
+/// Positions the menu relative to the [context]'s RenderBox according to
+/// the given [position] direction and [alignment].
 ///
-/// [controller]를 전달하면 외부에서 메뉴를 명시적으로 닫을 수 있습니다.
-/// 메뉴가 속한 route가 pop되면 자동으로 닫힙니다.
+/// Pass a [controller] to explicitly close the menu from outside.
+/// The menu automatically closes when the owning route is popped.
+///
+/// Parameters:
+///
+/// - [context] – Build context whose RenderBox is used as the anchor.
+/// - [items] – Selectable entries displayed in the scrollable area.
+/// - [header] – Entries pinned above the scrollable area.
+/// - [footer] – Entries pinned below the scrollable area.
+/// - [position] – Which side of the target the menu appears on.
+/// - [alignment] – Cross-axis alignment relative to the target.
+/// - [offset] – Additional pixel offset applied after positioning.
+/// - [barrierDismissible] – Whether tapping outside closes the menu.
+/// - [barrierColor] – Color of the full-screen barrier behind the menu.
+/// - [decoration] – Extra [BoxDecoration] wrapped around the menu.
+/// - [padding] – Internal padding of the menu container.
+/// - [constraints] – Additional box constraints for the menu.
+/// - [width] – Fixed width for the menu.
+/// - [animationDuration] – Duration of the open/close animation.
+/// - [animationCurve] – Curve of the open/close animation.
+/// - [style] – Visual style options (colors, item sizes, scrollbar, etc.).
+/// - [controller] – Optional controller for programmatic dismissal.
 Future<T?> showOverlayMenu<T>({
   required BuildContext context,
   required List<OverlayMenuEntry<T>> items,
@@ -86,23 +106,23 @@ Future<T?> showOverlayMenu<T>({
     }
   }
 
-  // 컨트롤러 연결
+  // Connect controller
   if (controller != null) {
     controller._isClosed = false;
     controller._onClose = () => close();
   }
 
-  // route가 pop되거나 다른 route가 push되면 메뉴 자동 닫기
+  // Auto-close menu when the route is popped or a new route is pushed
   final route = ModalRoute.of(context);
   void onRouteStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.reverse) {
-      close(); // 현재 route가 pop됨
+      close(); // Current route popped
     }
   }
 
   void onSecondaryStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.forward) {
-      close(); // 새 route가 push됨
+      close(); // New route pushed
     }
   }
 
@@ -115,7 +135,7 @@ Future<T?> showOverlayMenu<T>({
         route.secondaryAnimation
             ?.removeStatusListener(onSecondaryStatusChanged);
       } catch (_) {
-        // route가 이미 dispose된 경우 무시
+        // Ignore if the route is already disposed
       }
     });
   }
@@ -270,7 +290,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     try {
       await _controller.reverse();
     } on TickerCanceled {
-      // 외부(컨트롤러/route pop)에서 entry가 제거되어 dispose된 경우
+      // Entry was removed and disposed externally (controller / route pop)
       return;
     }
     widget.onClose(result);

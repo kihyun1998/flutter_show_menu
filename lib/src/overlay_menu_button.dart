@@ -4,7 +4,7 @@ import 'overlay_menu.dart';
 import 'overlay_menu_item.dart';
 import 'overlay_menu_style.dart';
 
-/// 자식 위젯을 감싸고, 탭 시 오버레이 메뉴를 표시하는 위젯입니다.
+/// A widget that wraps a child widget and shows an overlay menu when tapped.
 class OverlayMenuButton<T> extends StatelessWidget {
   const OverlayMenuButton({
     super.key,
@@ -29,58 +29,58 @@ class OverlayMenuButton<T> extends StatelessWidget {
     this.style,
   });
 
-  /// 메뉴 항목 목록
+  /// List of menu items.
   final List<OverlayMenuEntry<T>> items;
 
-  /// 스크롤 영역 상단에 고정되는 항목 목록
+  /// List of entries fixed at the top of the scroll area.
   final List<OverlayMenuEntry<T>>? header;
 
-  /// 스크롤 영역 하단에 고정되는 항목 목록
+  /// List of entries fixed at the bottom of the scroll area.
   final List<OverlayMenuEntry<T>>? footer;
 
-  /// 탭 영역이 되는 자식 위젯
+  /// The child widget that acts as the tap target.
   final Widget child;
 
-  /// 메뉴 표시 방향
+  /// Menu display direction.
   final MenuPosition position;
 
-  /// 메뉴 교차축 정렬
+  /// Menu cross-axis alignment.
   final MenuAlignment alignment;
 
-  /// 위치 미세 조정 오프셋
+  /// Fine-tuning offset for positioning.
   final Offset offset;
 
-  /// 항목 선택 시 콜백
+  /// Callback when an item is selected.
   final ValueChanged<T>? onSelected;
 
-  /// 메뉴가 선택 없이 닫힐 때 콜백
+  /// Callback when the menu is closed without a selection.
   final VoidCallback? onCanceled;
 
-  /// 바깥 탭으로 닫기 허용 여부
+  /// Whether tapping outside the menu dismisses it.
   final bool barrierDismissible;
 
-  /// 배리어 배경색
+  /// Barrier background color.
   final Color? barrierColor;
 
-  /// 메뉴 컨테이너 데코레이션
+  /// Menu container decoration.
   final BoxDecoration? decoration;
 
-  /// 메뉴 내부 패딩
+  /// Internal padding of the menu.
   final EdgeInsets? menuPadding;
 
-  /// 메뉴 크기 제약
+  /// Menu size constraints.
   final BoxConstraints? menuConstraints;
 
-  /// 메뉴 고정 너비
+  /// Fixed menu width.
   final double? menuWidth;
 
-  /// 애니메이션 지속 시간
+  /// Animation duration.
   final Duration animationDuration;
 
-  /// 애니메이션 커브
+  /// Animation curve.
   final Curve animationCurve;
 
-  /// 버튼 활성화 여부
+  /// Whether the button is enabled.
   final bool enabled;
 
   /// Visual style options for the menu.

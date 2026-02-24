@@ -8,7 +8,7 @@ sealed class OverlayMenuEntry<T> {
   const OverlayMenuEntry();
 }
 
-/// 오버레이 메뉴의 개별 항목을 정의합니다.
+/// Defines an individual item in the overlay menu.
 class OverlayMenuItem<T> extends OverlayMenuEntry<T> {
   const OverlayMenuItem({
     this.value,
@@ -21,22 +21,22 @@ class OverlayMenuItem<T> extends OverlayMenuEntry<T> {
     this.prefixBuilder,
   });
 
-  /// 이 항목이 선택되었을 때 반환할 값
+  /// The value to return when this item is selected.
   final T? value;
 
-  /// 메뉴 항목의 콘텐츠 위젯
+  /// The content widget of the menu item.
   final Widget child;
 
-  /// 항목 탭 시 콜백 (value 반환과 별개로 동작)
+  /// Callback when the item is tapped (fires independently of value return).
   final VoidCallback? onTap;
 
-  /// 항목 활성화 여부
+  /// Whether the item is enabled.
   final bool enabled;
 
-  /// 항목 높이 (null → [OverlayMenuStyle.itemHeight] → 48.0)
+  /// Item height (null → [OverlayMenuItemStyle.height] → 48.0).
   final double? height;
 
-  /// 항목 내부 패딩
+  /// Internal padding of the item.
   final EdgeInsets? padding;
 
   /// Whether this item is marked as selected.
@@ -56,10 +56,10 @@ class OverlayMenuDivider<T> extends OverlayMenuEntry<T> {
     this.endIndent,
   });
 
-  /// Divider color (null → [OverlayMenuStyle.dividerColor] → theme default).
+  /// Divider color (null → [OverlayMenuDividerStyle.color] → theme default).
   final Color? color;
 
-  /// Divider thickness (null → [OverlayMenuStyle.dividerThickness] → 1.0).
+  /// Divider thickness (null → [OverlayMenuDividerStyle.thickness] → 1.0).
   final double? thickness;
 
   /// Leading indent.

@@ -300,7 +300,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   }
 
   void _testAutoClose(BuildContext context) {
-    // 메뉴를 열고, 결과를 비동기로 받음
+    // Open the menu and receive the result asynchronously
     showOverlayMenu<String>(
       context: context,
       items: _items,
@@ -311,7 +311,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       debugPrint('menu closed with: $result');
     });
 
-    // 3초 뒤 다른 페이지 push → 메뉴가 열려있으면 자동으로 닫혀야 함
+    // Push another page after 3 seconds → menu should auto-close if still open
     Future.delayed(const Duration(seconds: 3), () {
       if (!context.mounted) return;
 
@@ -319,7 +319,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         MaterialPageRoute(
           builder: (_) => Scaffold(
             appBar: AppBar(title: const Text('Test Page')),
-            body: const Center(child: Text('3초 뒤 push된 페이지')),
+            body: const Center(child: Text('Page pushed after 3 seconds')),
           ),
         ),
       );

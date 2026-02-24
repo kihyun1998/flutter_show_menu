@@ -30,7 +30,7 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
   Offset getPositionForChild(Size size, Size childSize) {
     double x, y;
 
-    // 주축 위치 결정
+    // Determine main-axis position
     switch (position) {
       case MenuPosition.bottom:
         y = targetRect.bottom + offset.dy;
@@ -46,12 +46,12 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
         y = _crossAxisVertical(childSize.height);
     }
 
-    // 화면 경계 flip
+    // Flip if overflowing screen bounds
     final flipped = _flipIfNeeded(x, y, childSize);
     x = flipped.dx;
     y = flipped.dy;
 
-    // 최종 clamp
+    // Final clamp to safe area
     x = x.clamp(
       screenPadding.left,
       max(screenPadding.left,
