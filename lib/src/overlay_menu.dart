@@ -62,6 +62,7 @@ class OverlayMenuController {
 /// - [width] – Fixed width for the menu.
 /// - [animationDuration] – Duration of the open/close animation.
 /// - [animationCurve] – Curve of the open/close animation.
+/// - [initialValue] – Value of the item to scroll to when the menu opens.
 /// - [style] – Visual style options (colors, item sizes, scrollbar, etc.).
 /// - [controller] – Optional controller for programmatic dismissal.
 Future<T?> showOverlayMenu<T>({
@@ -69,6 +70,7 @@ Future<T?> showOverlayMenu<T>({
   required List<OverlayMenuEntry<T>> items,
   List<OverlayMenuEntry<T>>? header,
   List<OverlayMenuEntry<T>>? footer,
+  T? initialValue,
   MenuPosition position = MenuPosition.bottom,
   MenuAlignment alignment = MenuAlignment.start,
   Offset offset = Offset.zero,
@@ -146,6 +148,7 @@ Future<T?> showOverlayMenu<T>({
       items: items,
       header: header,
       footer: footer,
+      initialValue: initialValue,
       position: position,
       alignment: alignment,
       offset: offset,
@@ -174,6 +177,7 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
     required this.items,
     this.header,
     this.footer,
+    this.initialValue,
     required this.position,
     required this.alignment,
     required this.offset,
@@ -193,6 +197,7 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
   final List<OverlayMenuEntry<T>> items;
   final List<OverlayMenuEntry<T>>? header;
   final List<OverlayMenuEntry<T>>? footer;
+  final T? initialValue;
   final MenuPosition position;
   final MenuAlignment alignment;
   final Offset offset;
@@ -223,7 +228,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     super.initState();
     if (widget.style?.maxHeight != null) {
       _scrollController = ScrollController();
-      _jumpToSelectedItem();
+      if (widget.initialValue != null) _jumpToInitialValue();
     }
     _controller = AnimationController(
       vsync: this,
@@ -238,22 +243,22 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     _controller.forward();
   }
 
-  void _jumpToSelectedItem() {
+  void _jumpToInitialValue() {
     final maxHeight = widget.style!.maxHeight!;
     final itemStyle = widget.style?.itemStyle;
     final ds = widget.style?.dividerStyle;
 
     double offset = 0;
-    double? selectedOffset;
-    double? selectedHeight;
+    double? matchedOffset;
+    double? matchedHeight;
 
     for (final entry in widget.items) {
       switch (entry) {
         case OverlayMenuItem<T>():
           final h = entry.height ?? itemStyle?.height ?? 48.0;
-          if (entry.selected && selectedOffset == null) {
-            selectedOffset = offset;
-            selectedHeight = h;
+          if (entry.value == widget.initialValue && matchedOffset == null) {
+            matchedOffset = offset;
+            matchedHeight = h;
           }
           offset += h;
         case OverlayMenuDivider<T>():
@@ -263,10 +268,10 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       }
     }
 
-    if (selectedOffset == null) return;
+    if (matchedOffset == null) return;
 
-    // Center the selected item in the viewport.
-    final target = selectedOffset - (maxHeight / 2) + (selectedHeight! / 2);
+    // Center the matched item in the viewport.
+    final target = matchedOffset - (maxHeight / 2) + (matchedHeight! / 2);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController != null && _scrollController!.hasClients) {
@@ -509,9 +514,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   Widget _buildItem(OverlayMenuItem<T> item,
       {OverlayMenuItemStyle? styleOverride}) {
     final itemStyle = styleOverride ?? widget.style?.itemStyle;
-    final selectedStyle = widget.style?.selectedStyle;
     final theme = Theme.of(context);
-    final isSelected = item.selected;
 
     // Resolve: item → itemStyle → hardcoded default
     final height = item.height ?? itemStyle?.height ?? 48.0;
@@ -525,30 +528,8 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         ? (itemStyle?.mouseCursor ?? SystemMouseCursors.click)
         : SystemMouseCursors.basic;
 
-    // Prefix
-    final prefixBuilder = item.prefixBuilder ?? widget.style?.prefixBuilder;
-    Widget content;
-    if (prefixBuilder != null) {
-      final prefixSpacing = widget.style?.prefixSpacing ?? 12.0;
-      content = Row(
-        children: [
-          prefixBuilder(context, isSelected),
-          SizedBox(width: prefixSpacing),
-          Expanded(child: item.child),
-        ],
-      );
-    } else {
-      content = item.child;
-    }
-
     // Text style
-    TextStyle? resolvedTextStyle;
-    if (isSelected && selectedStyle?.textStyle != null) {
-      resolvedTextStyle =
-          (baseTextStyle ?? const TextStyle()).merge(selectedStyle!.textStyle);
-    } else if (baseTextStyle != null) {
-      resolvedTextStyle = baseTextStyle;
-    }
+    TextStyle? resolvedTextStyle = baseTextStyle;
     if (!item.enabled) {
       resolvedTextStyle = (resolvedTextStyle ?? const TextStyle())
           .copyWith(color: theme.disabledColor);
@@ -560,23 +541,9 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       alignment: Alignment.centerLeft,
       child: DefaultTextStyle.merge(
         style: resolvedTextStyle ?? const TextStyle(),
-        child: content,
+        child: item.child,
       ),
     );
-
-    // Selected decoration
-    if (isSelected) {
-      child = Container(
-        decoration: BoxDecoration(
-          color: selectedStyle?.backgroundColor,
-          borderRadius: itemBorderRadius,
-          border: selectedStyle?.border != null
-              ? Border.fromBorderSide(selectedStyle!.border!)
-              : null,
-        ),
-        child: child,
-      );
-    }
 
     return InkWell(
       onTap: item.enabled

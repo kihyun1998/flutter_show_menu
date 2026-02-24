@@ -7,8 +7,8 @@
 /// - Anchor to any side of the target ([MenuPosition]) with cross-axis
 ///   alignment ([MenuAlignment]).
 /// - Fixed header/footer entries outside the scroll area.
-/// - Selected-item highlighting, prefix builders, dividers, and scrollbar
-///   customisation via [OverlayMenuStyle].
+/// - Selected-item auto-scroll, dividers, and scrollbar customisation via
+///   [OverlayMenuStyle].
 /// - Automatic dismissal on route changes and programmatic close via
 ///   [OverlayMenuController].
 library;

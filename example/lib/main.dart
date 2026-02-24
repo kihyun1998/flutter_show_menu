@@ -85,7 +85,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   double _menuPaddingH = 0;
   double _menuPaddingV = 4;
   double _maxHeight = 0; // 0 = no limit
-  double _selectedBorderWidth = 0;
   double _animDuration = 150;
   int _itemCount = 4;
   bool _barrierDismissible = true;
@@ -97,8 +96,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   Color? _backgroundColor;
   Color? _hoverColor;
   Color? _splashColor;
-  Color? _selectedBgColor;
-  Color? _selectedTextColor;
   Color? _dividerColor;
   double _dividerHeight = 1;
   double _dividerIndent = 0;
@@ -107,9 +104,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   double _scrollbarThickness = 4;
   double _scrollbarRadius = 8;
   bool _scrollbarAlwaysVisible = false;
-  bool _showSelectedState = false;
-  bool _showPrefixIcons = false;
-  double _prefixSpacing = 12;
   bool _showDividers = false;
   bool _showHeader = false;
   double _headerHeight = 48;
@@ -162,7 +156,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   ];
 
   OverlayMenuStyle get _menuStyle {
-    final selColor = _selectedTextColor ?? Colors.deepPurple;
     return OverlayMenuStyle(
       borderRadius: BorderRadius.circular(_borderRadius),
       padding: EdgeInsets.symmetric(
@@ -211,18 +204,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               splashColor: _footerSplashColor,
             )
           : null,
-      selectedStyle: _showSelectedState
-          ? OverlayMenuSelectedStyle(
-              backgroundColor: _selectedBgColor,
-              textStyle: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: selColor,
-              ),
-              border: _selectedBorderWidth > 0
-                  ? BorderSide(color: selColor, width: _selectedBorderWidth)
-                  : null,
-            )
-          : null,
       dividerStyle: _showDividers
           ? OverlayMenuDividerStyle(
               color: _dividerColor,
@@ -239,14 +220,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               thumbVisibility: _scrollbarAlwaysVisible,
             )
           : null,
-      prefixBuilder: _showPrefixIcons
-          ? (context, selected) => Icon(
-              selected ? Icons.check_circle : Icons.circle_outlined,
-              size: 20,
-              color: selected ? selColor : null,
-            )
-          : null,
-      prefixSpacing: _showPrefixIcons ? _prefixSpacing : null,
     );
   }
 
@@ -259,13 +232,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       entries.add(
         OverlayMenuItem<String>(
           value: 'item_$i',
-          selected: _showSelectedState && _selectedItem == 'item_$i',
           child: Row(
             children: [
-              if (!_showPrefixIcons) ...[
-                Icon(_demoIcons[i % _demoIcons.length], size: 20),
-                const SizedBox(width: 12),
-              ],
+              Icon(_demoIcons[i % _demoIcons.length], size: 20),
+              const SizedBox(width: 12),
               Text('Menu Item ${i + 1}'),
             ],
           ),
@@ -314,6 +284,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     showOverlayMenu<String>(
       context: context,
       items: _items,
+      initialValue: _selectedItem,
       position: MenuPosition.bottom,
       alignment: MenuAlignment.end,
       style: _menuStyle,
@@ -342,6 +313,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       items: _items,
       header: _header,
       footer: _footer,
+      initialValue: _selectedItem,
       position: _position,
       alignment: _alignment,
       offset: Offset(_offsetX, _offsetY),
@@ -629,47 +601,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           ],
         ),
 
-        // Selected Style
-        ExpansionTile(
-          title: const Text('Selected Style'),
-          childrenPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          children: [
-            SwitchListTile(
-              title: const Text('Enable'),
-              dense: true,
-              value: _showSelectedState,
-              contentPadding: EdgeInsets.zero,
-              onChanged: (v) => setState(() => _showSelectedState = v),
-            ),
-            if (_showSelectedState) ...[
-              const SizedBox(height: 4),
-              _colorPickerRow(
-                'Background',
-                _selectedBgColor,
-                (c) => setState(() => _selectedBgColor = c),
-              ),
-              const SizedBox(height: 8),
-              _colorPickerRow(
-                'Text Color',
-                _selectedTextColor,
-                (c) => setState(() => _selectedTextColor = c),
-              ),
-              const SizedBox(height: 8),
-              _sliderRow(
-                'Border Width',
-                _selectedBorderWidth,
-                0,
-                4,
-                (v) => setState(() => _selectedBorderWidth = v),
-                divisions: 8,
-              ),
-            ],
-          ],
-        ),
-
         // Divider Style
         ExpansionTile(
           title: const Text('Divider Style'),
@@ -757,32 +688,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               ),
             ],
           ),
-
-        // Prefix Builder
-        ExpansionTile(
-          title: const Text('Prefix Builder'),
-          childrenPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          children: [
-            SwitchListTile(
-              title: const Text('Enable'),
-              dense: true,
-              value: _showPrefixIcons,
-              contentPadding: EdgeInsets.zero,
-              onChanged: (v) => setState(() => _showPrefixIcons = v),
-            ),
-            if (_showPrefixIcons)
-              _sliderRow(
-                'Spacing',
-                _prefixSpacing,
-                0,
-                24,
-                (v) => setState(() => _prefixSpacing = v),
-              ),
-          ],
-        ),
 
         // Header Style
         ExpansionTile(

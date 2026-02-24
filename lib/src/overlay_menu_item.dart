@@ -17,8 +17,6 @@ class OverlayMenuItem<T> extends OverlayMenuEntry<T> {
     this.enabled = true,
     this.height,
     this.padding,
-    this.selected = false,
-    this.prefixBuilder,
   });
 
   /// The value to return when this item is selected.
@@ -38,13 +36,6 @@ class OverlayMenuItem<T> extends OverlayMenuEntry<T> {
 
   /// Internal padding of the item.
   final EdgeInsets? padding;
-
-  /// Whether this item is marked as selected.
-  final bool selected;
-
-  /// Optional prefix widget builder for this item.
-  /// Takes precedence over [OverlayMenuStyle.prefixBuilder].
-  final Widget Function(BuildContext context, bool selected)? prefixBuilder;
 }
 
 /// A horizontal divider line inside an overlay menu.

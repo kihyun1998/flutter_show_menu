@@ -13,12 +13,10 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Smooth animation** — fade + scale with configurable duration and curve
 - **Two API styles** — imperative function (`showOverlayMenu`) and declarative widget (`OverlayMenuButton`)
 - **Barrier support** — dismiss on outside tap with optional backdrop color
-- **Rich styling** — `OverlayMenuStyle` with grouped sub-classes for item, selected, divider, and scrollbar styles
+- **Rich styling** — `OverlayMenuStyle` with grouped sub-classes for item, divider, and scrollbar styles
 - **Divider support** — `OverlayMenuDivider` entries between items
-- **Selected state** — per-item `selected` flag with customizable background, text style, and border
-- **Prefix builder** — per-item or style-level leading widget with selected state awareness
 - **Scrollable menu** — `maxHeight` with automatic scrolling and scrollbar theming
-- **Auto-scroll to selected** — when reopening a scrollable menu, the selected item is automatically centered in the viewport
+- **Auto-scroll via `initialValue`** — when reopening a scrollable menu, the matching item is automatically centered in the viewport
 - **Header / Footer** — fixed entries pinned above/below the scrollable area with independent styling
 - **Auto-close on navigation** — menu automatically dismisses when the route is popped or a new route is pushed
 - **Overlay child** — full-screen overlay above the barrier (e.g. drag-to-move area)
@@ -28,7 +26,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.4.1
+  flutter_show_menu: ^0.5.0
 ```
 
 ## Basic Usage
@@ -70,13 +68,14 @@ OverlayMenuButton<String>(
 )
 ```
 
-### With Styling, Dividers, and Selected State
+### With Styling, Dividers, and Initial Value
 
 ```dart
 final result = await showOverlayMenu<String>(
   context: context,
+  initialValue: 'home',
   items: [
-    OverlayMenuItem(value: 'home', selected: true, child: Text('Home')),
+    OverlayMenuItem(value: 'home', child: Text('Home')),
     OverlayMenuDivider(),
     OverlayMenuItem(value: 'settings', child: Text('Settings')),
     OverlayMenuItem(value: 'logout', child: Text('Logout')),
@@ -91,15 +90,7 @@ final result = await showOverlayMenu<String>(
       padding: EdgeInsets.symmetric(horizontal: 12),
       hoverColor: Colors.blue.withValues(alpha: 0.08),
     ),
-    selectedStyle: OverlayMenuSelectedStyle(
-      backgroundColor: Colors.blue.withValues(alpha: 0.12),
-      textStyle: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue),
-    ),
     dividerStyle: OverlayMenuDividerStyle(color: Colors.grey.shade300),
-    prefixBuilder: (context, selected) => Icon(
-      selected ? Icons.check_circle : Icons.circle_outlined,
-      size: 20,
-    ),
   ),
 );
 ```
@@ -170,6 +161,7 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries (items and dividers) |
 | `header` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned above the scrollable area |
 | `footer` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned below the scrollable area |
+| `initialValue` | `T?` | `null` | Value of the item to auto-scroll to when the menu opens |
 | `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
 | `offset` | `Offset` | `Offset.zero` | Additional offset for fine-tuning position |
@@ -250,8 +242,6 @@ Base type for menu entries. Two subtypes:
 | `enabled` | `bool` | `true` | Whether the item is tappable |
 | `height` | `double?` | `null` | Item height (falls back to style, then `48.0`) |
 | `padding` | `EdgeInsets?` | `null` | Item inner padding (falls back to style) |
-| `selected` | `bool` | `false` | Whether this item is marked as selected |
-| `prefixBuilder` | `Widget Function(BuildContext, bool)?` | `null` | Leading widget builder (overrides style-level) |
 
 #### `OverlayMenuDivider<T>`
 
@@ -274,11 +264,8 @@ Base type for menu entries. Two subtypes:
 | `itemStyle` | `OverlayMenuItemStyle?` | Default item styling |
 | `headerStyle` | `OverlayMenuHeaderStyle?` | Style override for header items |
 | `footerStyle` | `OverlayMenuFooterStyle?` | Style override for footer items |
-| `selectedStyle` | `OverlayMenuSelectedStyle?` | Selected item styling |
 | `dividerStyle` | `OverlayMenuDividerStyle?` | Divider defaults |
 | `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming (when `maxHeight` is set) |
-| `prefixBuilder` | `Widget Function(BuildContext, bool)?` | Default prefix builder for all items |
-| `prefixSpacing` | `double?` | Gap between prefix widget and item child (falls back to `12.0`) |
 
 ### `OverlayMenuItemStyle`
 
@@ -293,14 +280,6 @@ Base type for menu entries. Two subtypes:
 | `highlightColor` | `Color?` | Highlight color |
 | `focusColor` | `Color?` | Focus color |
 | `mouseCursor` | `MouseCursor?` | Mouse cursor (falls back to `SystemMouseCursors.click`) |
-
-### `OverlayMenuSelectedStyle`
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `backgroundColor` | `Color?` | Background color for selected items |
-| `textStyle` | `TextStyle?` | Text style override (merged on top of item textStyle) |
-| `border` | `BorderSide?` | Border around selected items |
 
 ### `OverlayMenuDividerStyle`
 

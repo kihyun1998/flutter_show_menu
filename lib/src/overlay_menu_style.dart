@@ -16,11 +16,8 @@ class OverlayMenuStyle {
     this.itemStyle,
     this.headerStyle,
     this.footerStyle,
-    this.selectedStyle,
     this.dividerStyle,
     this.scrollbarStyle,
-    this.prefixBuilder,
-    this.prefixSpacing,
   });
 
   /// Background color of the menu surface.
@@ -47,21 +44,11 @@ class OverlayMenuStyle {
   /// Style for footer items. Overrides [itemStyle] for footer entries.
   final OverlayMenuFooterStyle? footerStyle;
 
-  /// Style for selected items.
-  final OverlayMenuSelectedStyle? selectedStyle;
-
   /// Style for dividers.
   final OverlayMenuDividerStyle? dividerStyle;
 
   /// Scrollbar style. Only applies when [maxHeight] triggers scrolling.
   final OverlayMenuScrollbarStyle? scrollbarStyle;
-
-  /// Default prefix widget builder for all items.
-  /// Item-level [OverlayMenuItem.prefixBuilder] takes precedence.
-  final Widget Function(BuildContext context, bool selected)? prefixBuilder;
-
-  /// Spacing between the prefix widget and the item child. Falls back to `12.0`.
-  final double? prefixSpacing;
 }
 
 /// Default style for individual menu items.
@@ -105,24 +92,6 @@ class OverlayMenuItemStyle {
   /// Mouse cursor when hovering over enabled items.
   /// Falls back to `SystemMouseCursors.click`.
   final MouseCursor? mouseCursor;
-}
-
-/// Style applied to items marked as selected.
-class OverlayMenuSelectedStyle {
-  const OverlayMenuSelectedStyle({
-    this.backgroundColor,
-    this.textStyle,
-    this.border,
-  });
-
-  /// Background color for selected items.
-  final Color? backgroundColor;
-
-  /// Text style override (merged on top of item textStyle).
-  final TextStyle? textStyle;
-
-  /// Border around selected items.
-  final BorderSide? border;
 }
 
 /// Style for menu dividers.

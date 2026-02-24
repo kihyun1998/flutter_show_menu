@@ -28,6 +28,5 @@ void main() {
     expect(item.value, 'test');
     expect(item.enabled, false);
     expect(item.height, isNull);
-    expect(item.selected, false);
   });
 }

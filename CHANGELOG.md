@@ -1,3 +1,11 @@
+## 0.5.0
+
+- **BREAKING**: Remove `selected` from `OverlayMenuItem` — use `initialValue` on `showOverlayMenu` instead
+- **BREAKING**: Remove `OverlayMenuSelectedStyle` and `selectedStyle` from `OverlayMenuStyle`
+- **BREAKING**: Remove `prefixBuilder` from `OverlayMenuItem` and `OverlayMenuStyle`
+- **BREAKING**: Remove `prefixSpacing` from `OverlayMenuStyle`
+- **feat**: `initialValue` parameter for `showOverlayMenu` — auto-scrolls to the matching item when the menu opens
+
 ## 0.4.1
 
 - **feat**: `height` parameter for `OverlayMenuDivider` and `OverlayMenuDividerStyle` — control total divider height independently from line thickness
