@@ -20,12 +20,14 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Scrollable menu** — `maxHeight` with automatic scrolling and scrollbar theming
 - **Auto-scroll to selected** — when reopening a scrollable menu, the selected item is automatically centered in the viewport
 - **Header / Footer** — fixed entries pinned above/below the scrollable area with independent styling
+- **Auto-close on navigation** — menu automatically dismisses when the route is popped or a new route is pushed
+- **Programmatic close** — `OverlayMenuController` for explicit dismissal with safe idempotent `close()`
 
 ## Install
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.2.0
+  flutter_show_menu: ^0.3.0
 ```
 
 ## Basic Usage
@@ -179,8 +181,33 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `animationDuration` | `Duration` | `150ms` | Duration of enter/exit animation |
 | `animationCurve` | `Curve` | `Curves.easeOutCubic` | Animation curve |
 | `style` | `OverlayMenuStyle?` | `null` | Visual style options |
+| `controller` | `OverlayMenuController?` | `null` | Controller for programmatic close |
 
 **Returns** `Future<T?>` — the selected item's value, or `null` if dismissed.
+
+### `OverlayMenuController`
+
+Controller for programmatically closing an open menu. Safe to call `close()` multiple times.
+
+| Property / Method | Type | Description |
+|-------------------|------|-------------|
+| `isClosed` | `bool` | Whether the menu has already been closed |
+| `close()` | `void` | Closes the menu. No-op if already closed |
+
+```dart
+final controller = OverlayMenuController();
+
+showOverlayMenu<String>(
+  context: context,
+  items: [...],
+  controller: controller,
+);
+
+// Later — safe even if the menu was already dismissed:
+controller.close();
+```
+
+> **Note:** The menu also auto-closes when the current route is popped or a new route is pushed on top — no controller needed for navigation scenarios.
 
 ### `OverlayMenuButton<T>`
 

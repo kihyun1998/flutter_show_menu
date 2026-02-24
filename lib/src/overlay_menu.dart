@@ -5,10 +5,45 @@ import 'menu_position_delegate.dart';
 import 'overlay_menu_item.dart';
 import 'overlay_menu_style.dart';
 
+/// 열려 있는 오버레이 메뉴를 프로그래밍 방식으로 닫을 수 있는 컨트롤러.
+///
+/// [showOverlayMenu]의 `controller` 파라미터에 전달하여 사용합니다.
+/// [close]를 호출하면 메뉴가 닫힙니다. 이미 닫힌 상태에서도 안전하게 호출할 수 있습니다.
+///
+/// ```dart
+/// final controller = OverlayMenuController();
+/// showOverlayMenu(
+///   context: context,
+///   items: [...],
+///   controller: controller,
+/// );
+///
+/// // 나중에 메뉴를 닫고 싶을 때:
+/// controller.close();
+/// ```
+class OverlayMenuController {
+  VoidCallback? _onClose;
+  bool _isClosed = false;
+
+  /// 메뉴가 이미 닫혔는지 여부.
+  bool get isClosed => _isClosed;
+
+  /// 메뉴를 닫습니다. 이미 닫힌 상태에서 호출해도 안전합니다.
+  void close() {
+    if (_isClosed) return;
+    _isClosed = true;
+    _onClose?.call();
+    _onClose = null;
+  }
+}
+
 /// [showMenu]를 대체하는 OverlayEntry 기반 메뉴를 표시합니다.
 ///
 /// [context]의 RenderBox를 기준으로 [position] 방향, [alignment] 정렬에 따라
 /// 메뉴를 배치합니다.
+///
+/// [controller]를 전달하면 외부에서 메뉴를 명시적으로 닫을 수 있습니다.
+/// 메뉴가 속한 route가 pop되면 자동으로 닫힙니다.
 Future<T?> showOverlayMenu<T>({
   required BuildContext context,
   required List<OverlayMenuEntry<T>> items,
@@ -26,6 +61,7 @@ Future<T?> showOverlayMenu<T>({
   Duration animationDuration = const Duration(milliseconds: 150),
   Curve animationCurve = Curves.easeOutCubic,
   OverlayMenuStyle? style,
+  OverlayMenuController? controller,
 }) {
   final renderBox = context.findRenderObject() as RenderBox;
   final targetRect = renderBox.localToGlobal(Offset.zero) & renderBox.size;
@@ -33,11 +69,55 @@ Future<T?> showOverlayMenu<T>({
   final completer = Completer<T?>();
 
   late OverlayEntry entry;
+  bool removed = false;
+
+  void removeEntry() {
+    if (removed) return;
+    removed = true;
+    entry.remove();
+  }
 
   void close([T? result]) {
+    removeEntry();
+    controller?._isClosed = true;
+    controller?._onClose = null;
     if (!completer.isCompleted) {
       completer.complete(result);
     }
+  }
+
+  // 컨트롤러 연결
+  if (controller != null) {
+    controller._isClosed = false;
+    controller._onClose = () => close();
+  }
+
+  // route가 pop되거나 다른 route가 push되면 메뉴 자동 닫기
+  final route = ModalRoute.of(context);
+  void onRouteStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.reverse) {
+      close(); // 현재 route가 pop됨
+    }
+  }
+
+  void onSecondaryStatusChanged(AnimationStatus status) {
+    if (status == AnimationStatus.forward) {
+      close(); // 새 route가 push됨
+    }
+  }
+
+  if (route != null) {
+    route.animation?.addStatusListener(onRouteStatusChanged);
+    route.secondaryAnimation?.addStatusListener(onSecondaryStatusChanged);
+    completer.future.whenComplete(() {
+      try {
+        route.animation?.removeStatusListener(onRouteStatusChanged);
+        route.secondaryAnimation
+            ?.removeStatusListener(onSecondaryStatusChanged);
+      } catch (_) {
+        // route가 이미 dispose된 경우 무시
+      }
+    });
   }
 
   entry = OverlayEntry(
@@ -59,7 +139,6 @@ Future<T?> showOverlayMenu<T>({
       animationCurve: animationCurve,
       style: style,
       onClose: (result) {
-        entry.remove();
         close(result);
       },
     ),
@@ -183,8 +262,17 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     super.dispose();
   }
 
+  bool _dismissed = false;
+
   Future<void> _dismiss([T? result]) async {
-    await _controller.reverse();
+    if (_dismissed) return;
+    _dismissed = true;
+    try {
+      await _controller.reverse();
+    } on TickerCanceled {
+      // 외부(컨트롤러/route pop)에서 entry가 제거되어 dispose된 경우
+      return;
+    }
     widget.onClose(result);
   }
 

@@ -1,3 +1,9 @@
+## 0.3.0
+
+- **feat**: Auto-close menu on route pop or new route push — no more orphaned overlays on navigation
+- **feat**: `OverlayMenuController` — programmatically close a menu with safe idempotent `close()` / `isClosed` check
+- **feat**: `controller` parameter for `showOverlayMenu`
+
 ## 0.2.0
 
 - **feat**: `header`/`footer` fixed entries for `showOverlayMenu` and `OverlayMenuButton` — pinned above/below the scrollable items area

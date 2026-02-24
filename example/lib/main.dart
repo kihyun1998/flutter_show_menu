@@ -299,6 +299,33 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     ];
   }
 
+  void _testAutoClose(BuildContext context) {
+    // 메뉴를 열고, 결과를 비동기로 받음
+    showOverlayMenu<String>(
+      context: context,
+      items: _items,
+      position: MenuPosition.bottom,
+      alignment: MenuAlignment.end,
+      style: _menuStyle,
+    ).then((result) {
+      debugPrint('menu closed with: $result');
+    });
+
+    // 3초 뒤 다른 페이지 push → 메뉴가 열려있으면 자동으로 닫혀야 함
+    Future.delayed(const Duration(seconds: 3), () {
+      if (!context.mounted) return;
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: const Text('Test Page')),
+            body: const Center(child: Text('3초 뒤 push된 페이지')),
+          ),
+        ),
+      );
+    });
+  }
+
   Future<void> _showMenu(BuildContext context) async {
     final result = await showOverlayMenu<String>(
       context: context,
@@ -332,6 +359,13 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       appBar: AppBar(
         title: const Text('OverlayMenu Playground'),
         actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.navigate_next),
+              tooltip: 'Open menu → push page after 3s',
+              onPressed: () => _testAutoClose(context),
+            ),
+          ),
           IconButton(
             icon: Icon(widget.isDark ? Icons.light_mode : Icons.dark_mode),
             onPressed: widget.onThemeToggle,
