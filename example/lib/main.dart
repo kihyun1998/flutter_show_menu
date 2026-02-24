@@ -100,6 +100,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   Color? _selectedBgColor;
   Color? _selectedTextColor;
   Color? _dividerColor;
+  double _dividerIndent = 0;
+  double _dividerEndIndent = 0;
   Color? _scrollbarColor;
   double _scrollbarThickness = 4;
   double _scrollbarRadius = 8;
@@ -107,6 +109,21 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   bool _showSelectedState = false;
   bool _showPrefixIcons = false;
   bool _showDividers = false;
+  bool _showHeader = false;
+  double _headerHeight = 48;
+  double _headerPaddingH = 16;
+  double _headerPaddingV = 0;
+  double _headerBorderRadius = 0;
+  Color? _headerHoverColor;
+  Color? _headerSplashColor;
+
+  bool _showFooter = false;
+  double _footerHeight = 48;
+  double _footerPaddingH = 16;
+  double _footerPaddingV = 0;
+  double _footerBorderRadius = 0;
+  Color? _footerHoverColor;
+  Color? _footerSplashColor;
 
   // Button config
   double _buttonWidth = 240;
@@ -158,6 +175,34 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         hoverColor: _hoverColor,
         splashColor: _splashColor,
       ),
+      headerStyle: _showHeader
+          ? OverlayMenuHeaderStyle(
+              height: _headerHeight,
+              padding: EdgeInsets.symmetric(
+                horizontal: _headerPaddingH,
+                vertical: _headerPaddingV,
+              ),
+              borderRadius: _headerBorderRadius > 0
+                  ? BorderRadius.circular(_headerBorderRadius)
+                  : null,
+              hoverColor: _headerHoverColor,
+              splashColor: _headerSplashColor,
+            )
+          : null,
+      footerStyle: _showFooter
+          ? OverlayMenuFooterStyle(
+              height: _footerHeight,
+              padding: EdgeInsets.symmetric(
+                horizontal: _footerPaddingH,
+                vertical: _footerPaddingV,
+              ),
+              borderRadius: _footerBorderRadius > 0
+                  ? BorderRadius.circular(_footerBorderRadius)
+                  : null,
+              hoverColor: _footerHoverColor,
+              splashColor: _footerSplashColor,
+            )
+          : null,
       selectedStyle: _showSelectedState
           ? OverlayMenuSelectedStyle(
               backgroundColor: _selectedBgColor,
@@ -171,7 +216,11 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
             )
           : null,
       dividerStyle: _showDividers
-          ? OverlayMenuDividerStyle(color: _dividerColor)
+          ? OverlayMenuDividerStyle(
+              color: _dividerColor,
+              indent: _dividerIndent,
+              endIndent: _dividerEndIndent,
+            )
           : null,
       scrollbarStyle: _maxHeight > 0
           ? OverlayMenuScrollbarStyle(
@@ -216,10 +265,46 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     return entries;
   }
 
+  List<OverlayMenuEntry<String>>? get _header {
+    if (!_showHeader) return null;
+    return [
+      OverlayMenuItem<String>(
+        value: 'search',
+        child: Row(
+          children: [
+            const Icon(Icons.search, size: 20),
+            const SizedBox(width: 12),
+            const Text('Search...'),
+          ],
+        ),
+      ),
+      const OverlayMenuDivider<String>(),
+    ];
+  }
+
+  List<OverlayMenuEntry<String>>? get _footer {
+    if (!_showFooter) return null;
+    return [
+      const OverlayMenuDivider<String>(),
+      OverlayMenuItem<String>(
+        value: 'create_new',
+        child: Row(
+          children: [
+            const Icon(Icons.add_circle_outline, size: 20),
+            const SizedBox(width: 12),
+            const Text('Create New'),
+          ],
+        ),
+      ),
+    ];
+  }
+
   Future<void> _showMenu(BuildContext context) async {
     final result = await showOverlayMenu<String>(
       context: context,
       items: _items,
+      header: _header,
+      footer: _footer,
       position: _position,
       alignment: _alignment,
       offset: Offset(_offsetX, _offsetY),
@@ -546,6 +631,21 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 _dividerColor,
                 (c) => setState(() => _dividerColor = c),
               ),
+              const SizedBox(height: 8),
+              _sliderRow(
+                'Indent',
+                _dividerIndent,
+                0,
+                32,
+                (v) => setState(() => _dividerIndent = v),
+              ),
+              _sliderRow(
+                'End Indent',
+                _dividerEndIndent,
+                0,
+                32,
+                (v) => setState(() => _dividerEndIndent = v),
+              ),
             ],
           ],
         ),
@@ -605,6 +705,126 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               contentPadding: EdgeInsets.zero,
               onChanged: (v) => setState(() => _showPrefixIcons = v),
             ),
+          ],
+        ),
+
+        // Header Style
+        ExpansionTile(
+          title: const Text('Header Style'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          children: [
+            SwitchListTile(
+              title: const Text('Enable'),
+              dense: true,
+              value: _showHeader,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) => setState(() => _showHeader = v),
+            ),
+            if (_showHeader) ...[
+              _sliderRow(
+                'Height',
+                _headerHeight,
+                32,
+                72,
+                (v) => setState(() => _headerHeight = v),
+              ),
+              _sliderRow(
+                'Padding H',
+                _headerPaddingH,
+                0,
+                32,
+                (v) => setState(() => _headerPaddingH = v),
+              ),
+              _sliderRow(
+                'Padding V',
+                _headerPaddingV,
+                0,
+                16,
+                (v) => setState(() => _headerPaddingV = v),
+              ),
+              _sliderRow(
+                'Border Radius',
+                _headerBorderRadius,
+                0,
+                24,
+                (v) => setState(() => _headerBorderRadius = v),
+              ),
+              const SizedBox(height: 8),
+              _colorPickerRow(
+                'Hover',
+                _headerHoverColor,
+                (c) => setState(() => _headerHoverColor = c),
+              ),
+              const SizedBox(height: 8),
+              _colorPickerRow(
+                'Splash',
+                _headerSplashColor,
+                (c) => setState(() => _headerSplashColor = c),
+              ),
+            ],
+          ],
+        ),
+
+        // Footer Style
+        ExpansionTile(
+          title: const Text('Footer Style'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          children: [
+            SwitchListTile(
+              title: const Text('Enable'),
+              dense: true,
+              value: _showFooter,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) => setState(() => _showFooter = v),
+            ),
+            if (_showFooter) ...[
+              _sliderRow(
+                'Height',
+                _footerHeight,
+                32,
+                72,
+                (v) => setState(() => _footerHeight = v),
+              ),
+              _sliderRow(
+                'Padding H',
+                _footerPaddingH,
+                0,
+                32,
+                (v) => setState(() => _footerPaddingH = v),
+              ),
+              _sliderRow(
+                'Padding V',
+                _footerPaddingV,
+                0,
+                16,
+                (v) => setState(() => _footerPaddingV = v),
+              ),
+              _sliderRow(
+                'Border Radius',
+                _footerBorderRadius,
+                0,
+                24,
+                (v) => setState(() => _footerBorderRadius = v),
+              ),
+              const SizedBox(height: 8),
+              _colorPickerRow(
+                'Hover',
+                _footerHoverColor,
+                (c) => setState(() => _footerHoverColor = c),
+              ),
+              const SizedBox(height: 8),
+              _colorPickerRow(
+                'Splash',
+                _footerSplashColor,
+                (c) => setState(() => _footerSplashColor = c),
+              ),
+            ],
           ],
         ),
 

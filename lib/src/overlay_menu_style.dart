@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Style for header items. Same shape as [OverlayMenuItemStyle].
+typedef OverlayMenuHeaderStyle = OverlayMenuItemStyle;
+
+/// Style for footer items. Same shape as [OverlayMenuItemStyle].
+typedef OverlayMenuFooterStyle = OverlayMenuItemStyle;
+
 /// Groups visual style options for [showOverlayMenu].
 class OverlayMenuStyle {
   const OverlayMenuStyle({
@@ -7,6 +13,8 @@ class OverlayMenuStyle {
     this.borderRadius,
     this.maxHeight,
     this.itemStyle,
+    this.headerStyle,
+    this.footerStyle,
     this.selectedStyle,
     this.dividerStyle,
     this.scrollbarStyle,
@@ -26,6 +34,12 @@ class OverlayMenuStyle {
 
   /// Default style for menu items.
   final OverlayMenuItemStyle? itemStyle;
+
+  /// Style for header items. Overrides [itemStyle] for header entries.
+  final OverlayMenuHeaderStyle? headerStyle;
+
+  /// Style for footer items. Overrides [itemStyle] for footer entries.
+  final OverlayMenuFooterStyle? footerStyle;
 
   /// Style for selected items.
   final OverlayMenuSelectedStyle? selectedStyle;
@@ -107,6 +121,8 @@ class OverlayMenuDividerStyle {
   const OverlayMenuDividerStyle({
     this.color,
     this.thickness,
+    this.indent,
+    this.endIndent,
   });
 
   /// Divider color. Falls back to theme default.
@@ -114,6 +130,12 @@ class OverlayMenuDividerStyle {
 
   /// Divider thickness. Falls back to `1.0`.
   final double? thickness;
+
+  /// Leading indent. Falls back to `0`.
+  final double? indent;
+
+  /// Trailing indent. Falls back to `0`.
+  final double? endIndent;
 }
 
 /// Style for the menu scrollbar.

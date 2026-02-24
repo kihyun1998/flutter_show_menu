@@ -12,6 +12,8 @@ import 'overlay_menu_style.dart';
 Future<T?> showOverlayMenu<T>({
   required BuildContext context,
   required List<OverlayMenuEntry<T>> items,
+  List<OverlayMenuEntry<T>>? header,
+  List<OverlayMenuEntry<T>>? footer,
   MenuPosition position = MenuPosition.bottom,
   MenuAlignment alignment = MenuAlignment.start,
   Offset offset = Offset.zero,
@@ -42,6 +44,8 @@ Future<T?> showOverlayMenu<T>({
     builder: (context) => _OverlayMenuWidget<T>(
       targetRect: targetRect,
       items: items,
+      header: header,
+      footer: footer,
       position: position,
       alignment: alignment,
       offset: offset,
@@ -69,6 +73,8 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
   const _OverlayMenuWidget({
     required this.targetRect,
     required this.items,
+    this.header,
+    this.footer,
     required this.position,
     required this.alignment,
     required this.offset,
@@ -86,6 +92,8 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
 
   final Rect targetRect;
   final List<OverlayMenuEntry<T>> items;
+  final List<OverlayMenuEntry<T>>? header;
+  final List<OverlayMenuEntry<T>>? footer;
   final MenuPosition position;
   final MenuAlignment alignment;
   final Offset offset;
@@ -290,13 +298,36 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   }
 
   Widget _buildScrollableBody(double? maxHeight) {
+    final headerEntries = widget.header;
+    final footerEntries = widget.footer;
+
+    final itemWidgets =
+        widget.items.map((entry) => _buildEntry(entry)).toList();
+
+    final headerStyle = widget.style?.headerStyle;
+    final footerStyle = widget.style?.footerStyle;
+
+    if (maxHeight == null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (headerEntries != null)
+            ...headerEntries
+                .map((e) => _buildEntry(e, styleOverride: headerStyle)),
+          ...itemWidgets,
+          if (footerEntries != null)
+            ...footerEntries
+                .map((e) => _buildEntry(e, styleOverride: footerStyle)),
+        ],
+      );
+    }
+
     final column = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: widget.items.map((entry) => _buildEntry(entry)).toList(),
+      children: itemWidgets,
     );
-
-    if (maxHeight == null) return column;
 
     final sb = widget.style?.scrollbarStyle;
     final scrollView = SingleChildScrollView(
@@ -333,19 +364,33 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: maxHeight),
-      child: scrollable,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (headerEntries != null)
+            ...headerEntries
+                .map((e) => _buildEntry(e, styleOverride: headerStyle)),
+          Flexible(child: scrollable),
+          if (footerEntries != null)
+            ...footerEntries
+                .map((e) => _buildEntry(e, styleOverride: footerStyle)),
+        ],
+      ),
     );
   }
 
-  Widget _buildEntry(OverlayMenuEntry<T> entry) {
+  Widget _buildEntry(OverlayMenuEntry<T> entry,
+      {OverlayMenuItemStyle? styleOverride}) {
     return switch (entry) {
-      OverlayMenuItem<T>() => _buildItem(entry),
+      OverlayMenuItem<T>() => _buildItem(entry, styleOverride: styleOverride),
       OverlayMenuDivider<T>() => _buildDivider(entry),
     };
   }
 
-  Widget _buildItem(OverlayMenuItem<T> item) {
-    final itemStyle = widget.style?.itemStyle;
+  Widget _buildItem(OverlayMenuItem<T> item,
+      {OverlayMenuItemStyle? styleOverride}) {
+    final itemStyle = styleOverride ?? widget.style?.itemStyle;
     final selectedStyle = widget.style?.selectedStyle;
     final theme = Theme.of(context);
     final isSelected = item.selected;
@@ -436,8 +481,8 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     return Divider(
       color: divider.color ?? ds?.color,
       thickness: divider.thickness ?? ds?.thickness ?? 1.0,
-      indent: divider.indent ?? 0,
-      endIndent: divider.endIndent ?? 0,
+      indent: divider.indent ?? ds?.indent ?? 0,
+      endIndent: divider.endIndent ?? ds?.endIndent ?? 0,
       height: divider.thickness ?? ds?.thickness ?? 1.0,
     );
   }

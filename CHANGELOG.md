@@ -1,3 +1,9 @@
+## 0.2.0
+
+- **feat**: `header`/`footer` fixed entries for `showOverlayMenu` and `OverlayMenuButton` — pinned above/below the scrollable items area
+- **feat**: `OverlayMenuHeaderStyle`/`OverlayMenuFooterStyle` — independent styling for header/footer items (same options as `OverlayMenuItemStyle`)
+- **feat**: `OverlayMenuDividerStyle` now supports `indent`/`endIndent`
+
 ## 0.1.1
 
 - **feat**: Auto-scroll to selected item when menu opens (applies when `maxHeight` is set)

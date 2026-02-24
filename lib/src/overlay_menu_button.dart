@@ -9,6 +9,8 @@ class OverlayMenuButton<T> extends StatelessWidget {
   const OverlayMenuButton({
     super.key,
     required this.items,
+    this.header,
+    this.footer,
     required this.child,
     this.position = MenuPosition.bottom,
     this.alignment = MenuAlignment.start,
@@ -29,6 +31,12 @@ class OverlayMenuButton<T> extends StatelessWidget {
 
   /// 메뉴 항목 목록
   final List<OverlayMenuEntry<T>> items;
+
+  /// 스크롤 영역 상단에 고정되는 항목 목록
+  final List<OverlayMenuEntry<T>>? header;
+
+  /// 스크롤 영역 하단에 고정되는 항목 목록
+  final List<OverlayMenuEntry<T>>? footer;
 
   /// 탭 영역이 되는 자식 위젯
   final Widget child;
@@ -82,6 +90,8 @@ class OverlayMenuButton<T> extends StatelessWidget {
     final result = await showOverlayMenu<T>(
       context: context,
       items: items,
+      header: header,
+      footer: footer,
       position: position,
       alignment: alignment,
       offset: offset,

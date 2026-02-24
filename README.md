@@ -19,12 +19,13 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Prefix builder** — per-item or style-level leading widget with selected state awareness
 - **Scrollable menu** — `maxHeight` with automatic scrolling and scrollbar theming
 - **Auto-scroll to selected** — when reopening a scrollable menu, the selected item is automatically centered in the viewport
+- **Header / Footer** — fixed entries pinned above/below the scrollable area with independent styling
 
 ## Install
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.1.1
+  flutter_show_menu: ^0.2.0
 ```
 
 ## Basic Usage
@@ -100,6 +101,32 @@ final result = await showOverlayMenu<String>(
 );
 ```
 
+### With Header and Footer
+
+```dart
+final result = await showOverlayMenu<String>(
+  context: context,
+  header: [
+    OverlayMenuItem(value: 'search', child: Text('Search...')),
+    OverlayMenuDivider(),
+  ],
+  items: [
+    OverlayMenuItem(value: 'home', child: Text('Home')),
+    OverlayMenuItem(value: 'settings', child: Text('Settings')),
+    OverlayMenuItem(value: 'profile', child: Text('Profile')),
+  ],
+  footer: [
+    OverlayMenuDivider(),
+    OverlayMenuItem(value: 'create', child: Text('Create New')),
+  ],
+  style: OverlayMenuStyle(
+    maxHeight: 250,
+    headerStyle: OverlayMenuHeaderStyle(height: 40),
+    footerStyle: OverlayMenuFooterStyle(height: 40),
+  ),
+);
+```
+
 ## Position & Alignment
 
 `MenuPosition` determines **which side** of the target the menu appears on.
@@ -138,6 +165,8 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 |-----------|------|---------|-------------|
 | `context` | `BuildContext` | **required** | BuildContext of the target widget |
 | `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries (items and dividers) |
+| `header` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned above the scrollable area |
+| `footer` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned below the scrollable area |
 | `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
 | `offset` | `Offset` | `Offset.zero` | Additional offset for fine-tuning position |
@@ -161,6 +190,8 @@ A widget that wraps a child and shows an overlay menu on tap.
 |-----------|------|---------|-------------|
 | `child` | `Widget` | **required** | The tap target widget |
 | `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries |
+| `header` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned above the scrollable area |
+| `footer` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned below the scrollable area |
 | `position` | `MenuPosition` | `bottom` | Menu position relative to child |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment |
 | `offset` | `Offset` | `Offset.zero` | Additional position offset |
@@ -211,6 +242,8 @@ Base type for menu entries. Two subtypes:
 | `borderRadius` | `BorderRadius?` | Menu surface border radius (falls back to `circular(8)`) |
 | `maxHeight` | `double?` | Max menu height; scrolls when exceeded |
 | `itemStyle` | `OverlayMenuItemStyle?` | Default item styling |
+| `headerStyle` | `OverlayMenuHeaderStyle?` | Style override for header items |
+| `footerStyle` | `OverlayMenuFooterStyle?` | Style override for footer items |
 | `selectedStyle` | `OverlayMenuSelectedStyle?` | Selected item styling |
 | `dividerStyle` | `OverlayMenuDividerStyle?` | Divider defaults |
 | `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming (when `maxHeight` is set) |
@@ -244,6 +277,12 @@ Base type for menu entries. Two subtypes:
 |-----------|------|-------------|
 | `color` | `Color?` | Divider color (falls back to theme default) |
 | `thickness` | `double?` | Divider thickness (falls back to `1.0`) |
+| `indent` | `double?` | Leading indent (falls back to `0`) |
+| `endIndent` | `double?` | Trailing indent (falls back to `0`) |
+
+### `OverlayMenuHeaderStyle` / `OverlayMenuFooterStyle`
+
+Type aliases for `OverlayMenuItemStyle`. Same parameters as `OverlayMenuItemStyle` above.
 
 ### `OverlayMenuScrollbarStyle`
 
