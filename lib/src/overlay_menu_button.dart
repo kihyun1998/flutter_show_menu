@@ -20,7 +20,6 @@ class OverlayMenuButton<T> extends StatelessWidget {
     this.barrierDismissible = true,
     this.barrierColor,
     this.decoration,
-    this.menuPadding,
     this.menuConstraints,
     this.menuWidth,
     this.animationDuration = const Duration(milliseconds: 150),
@@ -65,9 +64,6 @@ class OverlayMenuButton<T> extends StatelessWidget {
   /// Menu container decoration.
   final BoxDecoration? decoration;
 
-  /// Internal padding of the menu.
-  final EdgeInsets? menuPadding;
-
   /// Menu size constraints.
   final BoxConstraints? menuConstraints;
 
@@ -98,7 +94,6 @@ class OverlayMenuButton<T> extends StatelessWidget {
       barrierDismissible: barrierDismissible,
       barrierColor: barrierColor,
       decoration: decoration,
-      padding: menuPadding,
       constraints: menuConstraints,
       width: menuWidth,
       animationDuration: animationDuration,

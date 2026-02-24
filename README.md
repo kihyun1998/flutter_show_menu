@@ -27,7 +27,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.3.1
+  flutter_show_menu: ^0.4.0
 ```
 
 ## Basic Usage
@@ -175,7 +175,6 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `barrierDismissible` | `bool` | `true` | Whether tapping outside the menu dismisses it |
 | `barrierColor` | `Color?` | `null` | Backdrop color behind the menu |
 | `decoration` | `BoxDecoration?` | `null` | Custom decoration for the menu container |
-| `padding` | `EdgeInsets?` | `EdgeInsets.symmetric(vertical: 4)` | Inner padding of the menu |
 | `constraints` | `BoxConstraints?` | `null` | Size constraints for the menu |
 | `width` | `double?` | `null` | Fixed width for the menu |
 | `animationDuration` | `Duration` | `150ms` | Duration of enter/exit animation |
@@ -227,7 +226,6 @@ A widget that wraps a child and shows an overlay menu on tap.
 | `barrierDismissible` | `bool` | `true` | Whether outside tap dismisses the menu |
 | `barrierColor` | `Color?` | `null` | Backdrop color |
 | `decoration` | `BoxDecoration?` | `null` | Menu container decoration |
-| `menuPadding` | `EdgeInsets?` | `EdgeInsets.symmetric(vertical: 4)` | Menu inner padding |
 | `menuConstraints` | `BoxConstraints?` | `null` | Menu size constraints |
 | `menuWidth` | `double?` | `null` | Fixed menu width |
 | `animationDuration` | `Duration` | `150ms` | Animation duration |
@@ -267,6 +265,7 @@ Base type for menu entries. Two subtypes:
 |-----------|------|-------------|
 | `backgroundColor` | `Color?` | Menu surface color (falls back to `surfaceContainer`) |
 | `borderRadius` | `BorderRadius?` | Menu surface border radius (falls back to `circular(8)`) |
+| `padding` | `EdgeInsets?` | Menu container inner padding (falls back to `symmetric(vertical: 4)`) |
 | `maxHeight` | `double?` | Max menu height; scrolls when exceeded |
 | `itemStyle` | `OverlayMenuItemStyle?` | Default item styling |
 | `headerStyle` | `OverlayMenuHeaderStyle?` | Style override for header items |

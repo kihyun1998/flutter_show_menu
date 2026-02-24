@@ -161,6 +161,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     final selColor = _selectedTextColor ?? Colors.deepPurple;
     return OverlayMenuStyle(
       borderRadius: BorderRadius.circular(_borderRadius),
+      padding: EdgeInsets.symmetric(
+        horizontal: _menuPaddingH,
+        vertical: _menuPaddingV,
+      ),
       maxHeight: _maxHeight > 0 ? _maxHeight : null,
       backgroundColor: _backgroundColor,
       itemStyle: OverlayMenuItemStyle(
@@ -338,10 +342,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       barrierDismissible: _barrierDismissible,
       barrierColor: _showBarrierColor ? Colors.black26 : null,
       width: _useCustomWidth ? _customWidth : null,
-      padding: EdgeInsets.symmetric(
-        horizontal: _menuPaddingH,
-        vertical: _menuPaddingV,
-      ),
       animationDuration: Duration(milliseconds: _animDuration.round()),
       style: _menuStyle,
     );

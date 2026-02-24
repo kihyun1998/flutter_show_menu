@@ -1,3 +1,8 @@
+## 0.4.0
+
+- **BREAKING**: Move `padding` from `showOverlayMenu` top-level parameter into `OverlayMenuStyle.padding`
+- **BREAKING**: Remove `menuPadding` from `OverlayMenuButton` (use `style: OverlayMenuStyle(padding: ...)` instead)
+
 ## 0.3.1
 
 - **feat**: Hide header/footer dividers when the items list is empty

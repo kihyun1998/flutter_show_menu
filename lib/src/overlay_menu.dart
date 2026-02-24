@@ -57,7 +57,6 @@ class OverlayMenuController {
 /// - [barrierDismissible] – Whether tapping outside closes the menu.
 /// - [barrierColor] – Color of the full-screen barrier behind the menu.
 /// - [decoration] – Extra [BoxDecoration] wrapped around the menu.
-/// - [padding] – Internal padding of the menu container.
 /// - [constraints] – Additional box constraints for the menu.
 /// - [width] – Fixed width for the menu.
 /// - [animationDuration] – Duration of the open/close animation.
@@ -75,7 +74,6 @@ Future<T?> showOverlayMenu<T>({
   bool barrierDismissible = true,
   Color? barrierColor,
   BoxDecoration? decoration,
-  EdgeInsets? padding,
   BoxConstraints? constraints,
   double? width,
   Duration animationDuration = const Duration(milliseconds: 150),
@@ -152,7 +150,6 @@ Future<T?> showOverlayMenu<T>({
       barrierDismissible: barrierDismissible,
       barrierColor: barrierColor,
       decoration: decoration,
-      padding: padding,
       constraints: constraints,
       width: width,
       animationDuration: animationDuration,
@@ -181,7 +178,6 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
     required this.onClose,
     this.barrierColor,
     this.decoration,
-    this.padding,
     this.constraints,
     this.width,
     required this.animationDuration,
@@ -199,7 +195,6 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
   final bool barrierDismissible;
   final Color? barrierColor;
   final BoxDecoration? decoration;
-  final EdgeInsets? padding;
   final BoxConstraints? constraints;
   final double? width;
   final Duration animationDuration;
@@ -377,7 +372,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       clipBehavior: Clip.antiAlias,
       color: bgColor,
       child: Padding(
-        padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 4),
+        padding: style?.padding ?? const EdgeInsets.symmetric(vertical: 4),
         child: IntrinsicWidth(
           child: _buildScrollableBody(style?.maxHeight),
         ),

@@ -11,6 +11,7 @@ class OverlayMenuStyle {
   const OverlayMenuStyle({
     this.backgroundColor,
     this.borderRadius,
+    this.padding,
     this.maxHeight,
     this.itemStyle,
     this.headerStyle,
@@ -28,6 +29,10 @@ class OverlayMenuStyle {
   /// Border radius of the menu surface.
   /// Falls back to `BorderRadius.circular(8)`.
   final BorderRadius? borderRadius;
+
+  /// Internal padding of the menu container.
+  /// Falls back to `EdgeInsets.symmetric(vertical: 4)`.
+  final EdgeInsets? padding;
 
   /// Maximum height of the menu. When content exceeds this, the menu scrolls.
   final double? maxHeight;
