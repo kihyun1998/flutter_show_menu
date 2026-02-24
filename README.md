@@ -28,7 +28,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.4.0
+  flutter_show_menu: ^0.4.1
 ```
 
 ## Basic Usage
@@ -259,6 +259,7 @@ Base type for menu entries. Two subtypes:
 |-----------|------|---------|-------------|
 | `color` | `Color?` | `null` | Divider color (falls back to style) |
 | `thickness` | `double?` | `null` | Divider thickness (falls back to style, then `1.0`) |
+| `height` | `double?` | `null` | Total height including surrounding space (falls back to style, then `thickness`) |
 | `indent` | `double?` | `null` | Leading indent |
 | `endIndent` | `double?` | `null` | Trailing indent |
 
@@ -277,6 +278,7 @@ Base type for menu entries. Two subtypes:
 | `dividerStyle` | `OverlayMenuDividerStyle?` | Divider defaults |
 | `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming (when `maxHeight` is set) |
 | `prefixBuilder` | `Widget Function(BuildContext, bool)?` | Default prefix builder for all items |
+| `prefixSpacing` | `double?` | Gap between prefix widget and item child (falls back to `12.0`) |
 
 ### `OverlayMenuItemStyle`
 
@@ -306,6 +308,7 @@ Base type for menu entries. Two subtypes:
 |-----------|------|-------------|
 | `color` | `Color?` | Divider color (falls back to theme default) |
 | `thickness` | `double?` | Divider thickness (falls back to `1.0`) |
+| `height` | `double?` | Total height including surrounding space (falls back to `thickness`) |
 | `indent` | `double?` | Leading indent (falls back to `0`) |
 | `endIndent` | `double?` | Trailing indent (falls back to `0`) |
 

@@ -100,6 +100,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   Color? _selectedBgColor;
   Color? _selectedTextColor;
   Color? _dividerColor;
+  double _dividerHeight = 1;
   double _dividerIndent = 0;
   double _dividerEndIndent = 0;
   Color? _scrollbarColor;
@@ -108,6 +109,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   bool _scrollbarAlwaysVisible = false;
   bool _showSelectedState = false;
   bool _showPrefixIcons = false;
+  double _prefixSpacing = 12;
   bool _showDividers = false;
   bool _showHeader = false;
   double _headerHeight = 48;
@@ -224,6 +226,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       dividerStyle: _showDividers
           ? OverlayMenuDividerStyle(
               color: _dividerColor,
+              height: _dividerHeight,
               indent: _dividerIndent,
               endIndent: _dividerEndIndent,
             )
@@ -243,6 +246,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               color: selected ? selColor : null,
             )
           : null,
+      prefixSpacing: _showPrefixIcons ? _prefixSpacing : null,
     );
   }
 
@@ -690,6 +694,13 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               ),
               const SizedBox(height: 8),
               _sliderRow(
+                'Height',
+                _dividerHeight,
+                1,
+                24,
+                (v) => setState(() => _dividerHeight = v),
+              ),
+              _sliderRow(
                 'Indent',
                 _dividerIndent,
                 0,
@@ -762,6 +773,14 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               contentPadding: EdgeInsets.zero,
               onChanged: (v) => setState(() => _showPrefixIcons = v),
             ),
+            if (_showPrefixIcons)
+              _sliderRow(
+                'Spacing',
+                _prefixSpacing,
+                0,
+                24,
+                (v) => setState(() => _prefixSpacing = v),
+              ),
           ],
         ),
 

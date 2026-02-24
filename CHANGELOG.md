@@ -1,3 +1,8 @@
+## 0.4.1
+
+- **feat**: `height` parameter for `OverlayMenuDivider` and `OverlayMenuDividerStyle` — control total divider height independently from line thickness
+- **feat**: `prefixSpacing` parameter for `OverlayMenuStyle` — configurable gap between prefix widget and item child (default `12.0`)
+
 ## 0.4.0
 
 - **BREAKING**: Move `padding` from `showOverlayMenu` top-level parameter into `OverlayMenuStyle.padding`

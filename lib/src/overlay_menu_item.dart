@@ -52,6 +52,7 @@ class OverlayMenuDivider<T> extends OverlayMenuEntry<T> {
   const OverlayMenuDivider({
     this.color,
     this.thickness,
+    this.height,
     this.indent,
     this.endIndent,
   });
@@ -61,6 +62,10 @@ class OverlayMenuDivider<T> extends OverlayMenuEntry<T> {
 
   /// Divider thickness (null → [OverlayMenuDividerStyle.thickness] → 1.0).
   final double? thickness;
+
+  /// Total height occupied by the divider, including surrounding space
+  /// (null → [OverlayMenuDividerStyle.height] → [thickness]).
+  final double? height;
 
   /// Leading indent.
   final double? indent;

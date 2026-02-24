@@ -20,6 +20,7 @@ class OverlayMenuStyle {
     this.dividerStyle,
     this.scrollbarStyle,
     this.prefixBuilder,
+    this.prefixSpacing,
   });
 
   /// Background color of the menu surface.
@@ -58,6 +59,9 @@ class OverlayMenuStyle {
   /// Default prefix widget builder for all items.
   /// Item-level [OverlayMenuItem.prefixBuilder] takes precedence.
   final Widget Function(BuildContext context, bool selected)? prefixBuilder;
+
+  /// Spacing between the prefix widget and the item child. Falls back to `12.0`.
+  final double? prefixSpacing;
 }
 
 /// Default style for individual menu items.
@@ -126,6 +130,7 @@ class OverlayMenuDividerStyle {
   const OverlayMenuDividerStyle({
     this.color,
     this.thickness,
+    this.height,
     this.indent,
     this.endIndent,
   });
@@ -135,6 +140,10 @@ class OverlayMenuDividerStyle {
 
   /// Divider thickness. Falls back to `1.0`.
   final double? thickness;
+
+  /// Total height occupied by the divider, including surrounding space.
+  /// Falls back to [thickness].
+  final double? height;
 
   /// Leading indent. Falls back to `0`.
   final double? indent;

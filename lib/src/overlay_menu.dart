@@ -257,7 +257,8 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
           }
           offset += h;
         case OverlayMenuDivider<T>():
-          final h = entry.thickness ?? ds?.thickness ?? 1.0;
+          final thickness = entry.thickness ?? ds?.thickness ?? 1.0;
+          final h = entry.height ?? ds?.height ?? thickness;
           offset += h;
       }
     }
@@ -528,10 +529,11 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final prefixBuilder = item.prefixBuilder ?? widget.style?.prefixBuilder;
     Widget content;
     if (prefixBuilder != null) {
+      final prefixSpacing = widget.style?.prefixSpacing ?? 12.0;
       content = Row(
         children: [
           prefixBuilder(context, isSelected),
-          const SizedBox(width: 12),
+          SizedBox(width: prefixSpacing),
           Expanded(child: item.child),
         ],
       );
@@ -595,12 +597,13 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   Widget _buildDivider(OverlayMenuDivider<T> divider) {
     final ds = widget.style?.dividerStyle;
+    final thickness = divider.thickness ?? ds?.thickness ?? 1.0;
     return Divider(
       color: divider.color ?? ds?.color,
-      thickness: divider.thickness ?? ds?.thickness ?? 1.0,
+      thickness: thickness,
       indent: divider.indent ?? ds?.indent ?? 0,
       endIndent: divider.endIndent ?? ds?.endIndent ?? 0,
-      height: divider.thickness ?? ds?.thickness ?? 1.0,
+      height: divider.height ?? ds?.height ?? thickness,
     );
   }
 }
