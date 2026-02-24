@@ -54,11 +54,13 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
     // 최종 clamp
     x = x.clamp(
       screenPadding.left,
-      max(screenPadding.left, screenSize.width - screenPadding.right - childSize.width),
+      max(screenPadding.left,
+          screenSize.width - screenPadding.right - childSize.width),
     );
     y = y.clamp(
       screenPadding.top,
-      max(screenPadding.top, screenSize.height - screenPadding.bottom - childSize.height),
+      max(screenPadding.top,
+          screenSize.height - screenPadding.bottom - childSize.height),
     );
 
     return Offset(x, y);
@@ -67,8 +69,7 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
   double _crossAxisHorizontal(double menuWidth) {
     return switch (alignment) {
       MenuAlignment.start => targetRect.left + offset.dx,
-      MenuAlignment.center =>
-        targetRect.center.dx - menuWidth / 2 + offset.dx,
+      MenuAlignment.center => targetRect.center.dx - menuWidth / 2 + offset.dx,
       MenuAlignment.end => targetRect.right - menuWidth + offset.dx,
     };
   }
@@ -76,8 +77,7 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
   double _crossAxisVertical(double menuHeight) {
     return switch (alignment) {
       MenuAlignment.start => targetRect.top + offset.dy,
-      MenuAlignment.center =>
-        targetRect.center.dy - menuHeight / 2 + offset.dy,
+      MenuAlignment.center => targetRect.center.dy - menuHeight / 2 + offset.dy,
       MenuAlignment.end => targetRect.bottom - menuHeight + offset.dy,
     };
   }

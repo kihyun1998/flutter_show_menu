@@ -250,8 +250,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
           : null,
       child: Container(
         height: item.height,
-        padding:
-            item.padding ?? const EdgeInsets.symmetric(horizontal: 16),
+        padding: item.padding ?? const EdgeInsets.symmetric(horizontal: 16),
         alignment: Alignment.centerLeft,
         child: DefaultTextStyle.merge(
           style: TextStyle(
