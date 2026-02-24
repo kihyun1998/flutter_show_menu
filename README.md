@@ -21,6 +21,7 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Auto-scroll to selected** — when reopening a scrollable menu, the selected item is automatically centered in the viewport
 - **Header / Footer** — fixed entries pinned above/below the scrollable area with independent styling
 - **Auto-close on navigation** — menu automatically dismisses when the route is popped or a new route is pushed
+- **Overlay child** — full-screen overlay above the barrier (e.g. drag-to-move area)
 - **Programmatic close** — `OverlayMenuController` for explicit dismissal with safe idempotent `close()`
 
 ## Install
@@ -175,6 +176,7 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `barrierDismissible` | `bool` | `true` | Whether tapping outside the menu dismisses it |
 | `barrierColor` | `Color?` | `null` | Backdrop color behind the menu |
 | `decoration` | `BoxDecoration?` | `null` | Custom decoration for the menu container |
+| `overlayChild` | `Widget?` | `null` | Full-screen overlay above the barrier (e.g. drag-to-move area) |
 | `constraints` | `BoxConstraints?` | `null` | Size constraints for the menu |
 | `width` | `double?` | `null` | Fixed width for the menu |
 | `animationDuration` | `Duration` | `150ms` | Duration of enter/exit animation |
@@ -226,6 +228,7 @@ A widget that wraps a child and shows an overlay menu on tap.
 | `barrierDismissible` | `bool` | `true` | Whether outside tap dismisses the menu |
 | `barrierColor` | `Color?` | `null` | Backdrop color |
 | `decoration` | `BoxDecoration?` | `null` | Menu container decoration |
+| `overlayChild` | `Widget?` | `null` | Full-screen overlay above the barrier (e.g. drag-to-move area) |
 | `menuConstraints` | `BoxConstraints?` | `null` | Menu size constraints |
 | `menuWidth` | `double?` | `null` | Fixed menu width |
 | `animationDuration` | `Duration` | `150ms` | Animation duration |

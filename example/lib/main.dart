@@ -117,6 +117,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   Color? _headerHoverColor;
   Color? _headerSplashColor;
 
+  bool _showOverlayChild = false;
+
   bool _showFooter = false;
   double _footerHeight = 48;
   double _footerPaddingH = 16;
@@ -344,6 +346,27 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       width: _useCustomWidth ? _customWidth : null,
       animationDuration: Duration(milliseconds: _animDuration.round()),
       style: _menuStyle,
+      overlayChild: _showOverlayChild
+          ? Column(
+              children: [
+                GestureDetector(
+                  onTap: () => debugPrint('overlayChild tapped!'),
+                  child: Container(
+                    height: 40,
+                    color: Colors.blue.withValues(alpha: 0.15),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'overlayChild area',
+                      style: TextStyle(fontSize: 12, color: Colors.blue),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: IgnorePointer(ignoring: true, child: Container()),
+                ),
+              ],
+            )
+          : null,
     );
     setState(() {
       _lastResult = result ?? 'dismissed';
@@ -901,6 +924,13 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               value: _showBarrierColor,
               contentPadding: EdgeInsets.zero,
               onChanged: (v) => setState(() => _showBarrierColor = v),
+            ),
+            SwitchListTile(
+              title: const Text('Overlay Child'),
+              dense: true,
+              value: _showOverlayChild,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) => setState(() => _showOverlayChild = v),
             ),
           ],
         ),

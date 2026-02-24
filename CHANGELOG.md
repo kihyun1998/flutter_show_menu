@@ -2,6 +2,7 @@
 
 - **BREAKING**: Move `padding` from `showOverlayMenu` top-level parameter into `OverlayMenuStyle.padding`
 - **BREAKING**: Remove `menuPadding` from `OverlayMenuButton` (use `style: OverlayMenuStyle(padding: ...)` instead)
+- **feat**: `overlayChild` parameter — full-screen overlay above the barrier (e.g. drag-to-move area)
 
 ## 0.3.1
 
