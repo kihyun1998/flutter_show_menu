@@ -1,3 +1,7 @@
+## 0.1.1
+
+- **feat**: Auto-scroll to selected item when menu opens (applies when `maxHeight` is set)
+
 ## 0.1.0
 
 - **feat**: `showOverlayMenu` — imperative function API replacing Flutter's `showMenu`

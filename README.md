@@ -18,12 +18,13 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Selected state** — per-item `selected` flag with customizable background, text style, and border
 - **Prefix builder** — per-item or style-level leading widget with selected state awareness
 - **Scrollable menu** — `maxHeight` with automatic scrolling and scrollbar theming
+- **Auto-scroll to selected** — when reopening a scrollable menu, the selected item is automatically centered in the viewport
 
 ## Install
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.1.0
+  flutter_show_menu: ^0.1.1
 ```
 
 ## Basic Usage

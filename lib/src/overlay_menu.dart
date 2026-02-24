@@ -116,6 +116,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     super.initState();
     if (widget.style?.maxHeight != null) {
       _scrollController = ScrollController();
+      _jumpToSelectedItem();
     }
     _controller = AnimationController(
       vsync: this,
@@ -128,6 +129,43 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     _opacity = Tween<double>(begin: 0, end: 1).animate(curved);
     _scale = Tween<double>(begin: 0.9, end: 1).animate(curved);
     _controller.forward();
+  }
+
+  void _jumpToSelectedItem() {
+    final maxHeight = widget.style!.maxHeight!;
+    final itemStyle = widget.style?.itemStyle;
+    final ds = widget.style?.dividerStyle;
+
+    double offset = 0;
+    double? selectedOffset;
+    double? selectedHeight;
+
+    for (final entry in widget.items) {
+      switch (entry) {
+        case OverlayMenuItem<T>():
+          final h = entry.height ?? itemStyle?.height ?? 48.0;
+          if (entry.selected && selectedOffset == null) {
+            selectedOffset = offset;
+            selectedHeight = h;
+          }
+          offset += h;
+        case OverlayMenuDivider<T>():
+          final h = entry.thickness ?? ds?.thickness ?? 1.0;
+          offset += h;
+      }
+    }
+
+    if (selectedOffset == null) return;
+
+    // Center the selected item in the viewport.
+    final target = selectedOffset - (maxHeight / 2) + (selectedHeight! / 2);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController != null && _scrollController!.hasClients) {
+        final max = _scrollController!.position.maxScrollExtent;
+        _scrollController!.jumpTo(target.clamp(0.0, max));
+      }
+    });
   }
 
   @override
