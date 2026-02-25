@@ -381,16 +381,15 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         style?.backgroundColor ?? theme.colorScheme.surfaceContainer;
     final radius = style?.borderRadius ?? BorderRadius.circular(8);
 
+    final padding = style?.padding ?? const EdgeInsets.symmetric(vertical: 4);
+
     Widget menu = Material(
       elevation: 8,
       borderRadius: radius,
       clipBehavior: Clip.antiAlias,
       color: bgColor,
-      child: Padding(
-        padding: style?.padding ?? const EdgeInsets.symmetric(vertical: 4),
-        child: IntrinsicWidth(
-          child: _buildScrollableBody(style?.maxHeight),
-        ),
+      child: IntrinsicWidth(
+        child: _buildScrollableBody(style?.maxHeight, padding),
       ),
     );
 
@@ -415,7 +414,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     return menu;
   }
 
-  Widget _buildScrollableBody(double? maxHeight) {
+  Widget _buildScrollableBody(double? maxHeight, EdgeInsets padding) {
     final hasItems = widget.items.isNotEmpty;
     final headerEntries = hasItems
         ? widget.header
@@ -431,20 +430,33 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final footerStyle = widget.style?.footerStyle;
 
     if (maxHeight == null) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (headerEntries != null)
-            ...headerEntries
-                .map((e) => _buildEntry(e, styleOverride: headerStyle)),
-          ...itemWidgets,
-          if (footerEntries != null)
-            ...footerEntries
-                .map((e) => _buildEntry(e, styleOverride: footerStyle)),
-        ],
+      return Padding(
+        padding: padding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (headerEntries != null)
+              ...headerEntries
+                  .map((e) => _buildEntry(e, styleOverride: headerStyle)),
+            Material(
+              type: MaterialType.transparency,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: itemWidgets,
+              ),
+            ),
+            if (footerEntries != null)
+              ...footerEntries
+                  .map((e) => _buildEntry(e, styleOverride: footerStyle)),
+          ],
+        ),
       );
     }
+
+    final horizontalPadding =
+        EdgeInsets.only(left: padding.left, right: padding.right);
 
     final column = Column(
       mainAxisSize: MainAxisSize.min,
@@ -455,9 +467,12 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final sb = widget.style?.scrollbarStyle;
     final scrollView = SingleChildScrollView(
       controller: _scrollController,
-      child: Material(
-        type: MaterialType.transparency,
-        child: column,
+      child: Padding(
+        padding: horizontalPadding,
+        child: Material(
+          type: MaterialType.transparency,
+          child: column,
+        ),
       ),
     );
 
@@ -494,13 +509,19 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          SizedBox(height: padding.top),
           if (headerEntries != null)
-            ...headerEntries
-                .map((e) => _buildEntry(e, styleOverride: headerStyle)),
+            ...headerEntries.map((e) => Padding(
+                  padding: horizontalPadding,
+                  child: _buildEntry(e, styleOverride: headerStyle),
+                )),
           Flexible(child: scrollable),
           if (footerEntries != null)
-            ...footerEntries
-                .map((e) => _buildEntry(e, styleOverride: footerStyle)),
+            ...footerEntries.map((e) => Padding(
+                  padding: horizontalPadding,
+                  child: _buildEntry(e, styleOverride: footerStyle),
+                )),
+          SizedBox(height: padding.bottom),
         ],
       ),
     );

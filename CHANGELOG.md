@@ -1,6 +1,7 @@
 ## 0.6.1
 
-- **fix**: Prevent item InkWell hover/splash from bleeding through header/footer in scrollable menus
+- **fix**: Prevent item InkWell hover/splash from bleeding through header/footer
+- **fix**: Scrollbar now hugs the right edge of the menu regardless of `padding`
 
 ## 0.6.0
 
