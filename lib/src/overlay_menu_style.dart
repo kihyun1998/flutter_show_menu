@@ -55,9 +55,7 @@ class OverlayMenuStyle {
 class OverlayMenuItemStyle {
   const OverlayMenuItemStyle({
     this.height,
-    this.padding,
     this.borderRadius,
-    this.textStyle,
     this.hoverColor,
     this.splashColor,
     this.highlightColor,
@@ -68,14 +66,8 @@ class OverlayMenuItemStyle {
   /// Default height. Falls back to `48.0`.
   final double? height;
 
-  /// Default padding. Falls back to `EdgeInsets.symmetric(horizontal: 16)`.
-  final EdgeInsets? padding;
-
   /// Border radius for the item's InkWell and selection decoration.
   final BorderRadius? borderRadius;
-
-  /// Default text style.
-  final TextStyle? textStyle;
 
   /// Hover highlight color for InkWell.
   final Color? hoverColor;

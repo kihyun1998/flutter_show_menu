@@ -26,7 +26,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.5.0
+  flutter_show_menu: ^0.6.0
 ```
 
 ## Basic Usage
@@ -87,7 +87,6 @@ final result = await showOverlayMenu<String>(
     itemStyle: OverlayMenuItemStyle(
       height: 44,
       borderRadius: BorderRadius.circular(8),
-      padding: EdgeInsets.symmetric(horizontal: 12),
       hoverColor: Colors.blue.withValues(alpha: 0.08),
     ),
     dividerStyle: OverlayMenuDividerStyle(color: Colors.grey.shade300),
@@ -241,7 +240,6 @@ Base type for menu entries. Two subtypes:
 | `onTap` | `VoidCallback?` | `null` | Additional callback on tap |
 | `enabled` | `bool` | `true` | Whether the item is tappable |
 | `height` | `double?` | `null` | Item height (falls back to style, then `48.0`) |
-| `padding` | `EdgeInsets?` | `null` | Item inner padding (falls back to style) |
 
 #### `OverlayMenuDivider<T>`
 
@@ -272,9 +270,7 @@ Base type for menu entries. Two subtypes:
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `height` | `double?` | Default item height (falls back to `48.0`) |
-| `padding` | `EdgeInsets?` | Default item padding (falls back to `horizontal: 16`) |
 | `borderRadius` | `BorderRadius?` | Item border radius for InkWell and selection |
-| `textStyle` | `TextStyle?` | Default text style |
 | `hoverColor` | `Color?` | Hover color |
 | `splashColor` | `Color?` | Splash color |
 | `highlightColor` | `Color?` | Highlight color |

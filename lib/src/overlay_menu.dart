@@ -518,31 +518,24 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
     // Resolve: item → itemStyle → hardcoded default
     final height = item.height ?? itemStyle?.height ?? 48.0;
-    final padding = item.padding ??
-        itemStyle?.padding ??
-        const EdgeInsets.symmetric(horizontal: 16);
-    final baseTextStyle = itemStyle?.textStyle;
     final itemBorderRadius = itemStyle?.borderRadius;
 
     final mouseCursor = item.enabled
         ? (itemStyle?.mouseCursor ?? SystemMouseCursors.click)
         : SystemMouseCursors.basic;
 
-    // Text style
-    TextStyle? resolvedTextStyle = baseTextStyle;
+    Widget content = item.child;
     if (!item.enabled) {
-      resolvedTextStyle = (resolvedTextStyle ?? const TextStyle())
-          .copyWith(color: theme.disabledColor);
+      content = DefaultTextStyle.merge(
+        style: TextStyle(color: theme.disabledColor),
+        child: content,
+      );
     }
 
     Widget child = Container(
       height: height,
-      padding: padding,
       alignment: Alignment.centerLeft,
-      child: DefaultTextStyle.merge(
-        style: resolvedTextStyle ?? const TextStyle(),
-        child: item.child,
-      ),
+      child: content,
     );
 
     return InkWell(

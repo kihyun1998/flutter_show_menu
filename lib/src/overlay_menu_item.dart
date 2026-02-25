@@ -16,7 +16,6 @@ class OverlayMenuItem<T> extends OverlayMenuEntry<T> {
     this.onTap,
     this.enabled = true,
     this.height,
-    this.padding,
   });
 
   /// The value to return when this item is selected.
@@ -33,9 +32,6 @@ class OverlayMenuItem<T> extends OverlayMenuEntry<T> {
 
   /// Item height (null → [OverlayMenuItemStyle.height] → 48.0).
   final double? height;
-
-  /// Internal padding of the item.
-  final EdgeInsets? padding;
 }
 
 /// A horizontal divider line inside an overlay menu.

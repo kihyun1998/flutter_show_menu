@@ -1,3 +1,8 @@
+## 0.6.0
+
+- **BREAKING**: Remove `padding` and `textStyle` from `OverlayMenuItemStyle` — handle padding and text styling directly in the item's `child` widget
+- **BREAKING**: Remove `padding` from `OverlayMenuItem` — use `Padding` widget inside `child` instead
+
 ## 0.5.0
 
 - **BREAKING**: Remove `selected` from `OverlayMenuItem` — use `initialValue` on `showOverlayMenu` instead
@@ -50,7 +55,7 @@
 - **feat**: `OverlayMenuItem` — menu item with value, child, enabled, onTap, selected state, prefixBuilder
 - **feat**: `OverlayMenuDivider` — horizontal divider entry with color, thickness, indent
 - **feat**: `OverlayMenuStyle` — grouped style options for menu container, items, selection, dividers, scrollbar
-  - `OverlayMenuItemStyle` — height, padding, borderRadius, textStyle, hover/splash/highlight/focus colors, mouseCursor
+  - `OverlayMenuItemStyle` — height, borderRadius, hover/splash/highlight/focus colors, mouseCursor
   - `OverlayMenuSelectedStyle` — backgroundColor, textStyle, border for selected items
   - `OverlayMenuDividerStyle` — color, thickness
   - `OverlayMenuScrollbarStyle` — thumbColor, thickness, radius, thumbVisibility

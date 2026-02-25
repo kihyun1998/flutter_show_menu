@@ -80,8 +80,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   double _borderRadius = 8;
   double _itemBorderRadius = 0;
   double _itemHeight = 48;
-  double _itemPaddingH = 16;
-  double _itemPaddingV = 0;
   double _menuPaddingH = 0;
   double _menuPaddingV = 4;
   double _maxHeight = 0; // 0 = no limit
@@ -107,8 +105,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   bool _showDividers = false;
   bool _showHeader = false;
   double _headerHeight = 48;
-  double _headerPaddingH = 16;
-  double _headerPaddingV = 0;
   double _headerBorderRadius = 0;
   Color? _headerHoverColor;
   Color? _headerSplashColor;
@@ -117,8 +113,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
   bool _showFooter = false;
   double _footerHeight = 48;
-  double _footerPaddingH = 16;
-  double _footerPaddingV = 0;
   double _footerBorderRadius = 0;
   Color? _footerHoverColor;
   Color? _footerSplashColor;
@@ -166,10 +160,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       backgroundColor: _backgroundColor,
       itemStyle: OverlayMenuItemStyle(
         height: _itemHeight,
-        padding: EdgeInsets.symmetric(
-          horizontal: _itemPaddingH,
-          vertical: _itemPaddingV,
-        ),
         borderRadius: _itemBorderRadius > 0
             ? BorderRadius.circular(_itemBorderRadius)
             : null,
@@ -179,10 +169,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       headerStyle: _showHeader
           ? OverlayMenuHeaderStyle(
               height: _headerHeight,
-              padding: EdgeInsets.symmetric(
-                horizontal: _headerPaddingH,
-                vertical: _headerPaddingV,
-              ),
               borderRadius: _headerBorderRadius > 0
                   ? BorderRadius.circular(_headerBorderRadius)
                   : null,
@@ -193,10 +179,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       footerStyle: _showFooter
           ? OverlayMenuFooterStyle(
               height: _footerHeight,
-              padding: EdgeInsets.symmetric(
-                horizontal: _footerPaddingH,
-                vertical: _footerPaddingV,
-              ),
               borderRadius: _footerBorderRadius > 0
                   ? BorderRadius.circular(_footerBorderRadius)
                   : null,
@@ -234,21 +216,29 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       entries.add(
         OverlayMenuItem<String>(
           value: 'item_$i',
-          child: Row(
-            children: [
-              Icon(
-                isSelected ? Icons.check_circle : _demoIcons[i % _demoIcons.length],
-                size: 20,
-                color: isSelected ? cs.primary : null,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Menu Item ${i + 1}',
-                style: isSelected
-                    ? TextStyle(fontWeight: FontWeight.w600, color: cs.primary)
-                    : null,
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(
+                  isSelected
+                      ? Icons.check_circle
+                      : _demoIcons[i % _demoIcons.length],
+                  size: 20,
+                  color: isSelected ? cs.primary : null,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Menu Item ${i + 1}',
+                  style: isSelected
+                      ? TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: cs.primary,
+                        )
+                      : null,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -261,12 +251,15 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     return [
       OverlayMenuItem<String>(
         value: 'search',
-        child: Row(
-          children: [
-            const Icon(Icons.search, size: 20),
-            const SizedBox(width: 12),
-            const Text('Search...'),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Icon(Icons.search, size: 20),
+              const SizedBox(width: 12),
+              const Text('Search...'),
+            ],
+          ),
         ),
       ),
       const OverlayMenuDivider<String>(),
@@ -279,12 +272,15 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       const OverlayMenuDivider<String>(),
       OverlayMenuItem<String>(
         value: 'create_new',
-        child: Row(
-          children: [
-            const Icon(Icons.add_circle_outline, size: 20),
-            const SizedBox(width: 12),
-            const Text('Create New'),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              const Icon(Icons.add_circle_outline, size: 20),
+              const SizedBox(width: 12),
+              const Text('Create New'),
+            ],
+          ),
         ),
       ),
     ];
@@ -577,20 +573,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               (v) => setState(() => _itemHeight = v),
             ),
             _sliderRow(
-              'Padding H',
-              _itemPaddingH,
-              0,
-              32,
-              (v) => setState(() => _itemPaddingH = v),
-            ),
-            _sliderRow(
-              'Padding V',
-              _itemPaddingV,
-              0,
-              16,
-              (v) => setState(() => _itemPaddingV = v),
-            ),
-            _sliderRow(
               'Border Radius',
               _itemBorderRadius,
               0,
@@ -724,20 +706,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 (v) => setState(() => _headerHeight = v),
               ),
               _sliderRow(
-                'Padding H',
-                _headerPaddingH,
-                0,
-                32,
-                (v) => setState(() => _headerPaddingH = v),
-              ),
-              _sliderRow(
-                'Padding V',
-                _headerPaddingV,
-                0,
-                16,
-                (v) => setState(() => _headerPaddingV = v),
-              ),
-              _sliderRow(
                 'Border Radius',
                 _headerBorderRadius,
                 0,
@@ -782,20 +750,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 32,
                 72,
                 (v) => setState(() => _footerHeight = v),
-              ),
-              _sliderRow(
-                'Padding H',
-                _footerPaddingH,
-                0,
-                32,
-                (v) => setState(() => _footerPaddingH = v),
-              ),
-              _sliderRow(
-                'Padding V',
-                _footerPaddingV,
-                0,
-                16,
-                (v) => setState(() => _footerPaddingV = v),
               ),
               _sliderRow(
                 'Border Radius',

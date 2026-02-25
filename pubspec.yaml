@@ -1,6 +1,6 @@
 name: flutter_show_menu
 description: "OverlayEntry-based showMenu replacement. Position menus top, bottom, left, or right of any widget with start, center, end alignment."
-version: 0.5.0
+version: 0.6.0
 homepage: https://github.com/kihyun1998/flutter_show_menu
 repository: https://github.com/kihyun1998/flutter_show_menu
 issue_tracker: https://github.com/kihyun1998/flutter_show_menu/issues
