@@ -279,6 +279,8 @@ Base type for menu entries. Two subtypes:
 | `focusColor` | `Color?` | Focus color |
 | `mouseCursor` | `MouseCursor?` | Mouse cursor (falls back to `SystemMouseCursors.click`) |
 
+> **Note:** Do not apply background colors directly in the item's `child` widget (e.g. `Container(color: ...)`). Child widgets are painted on top of the ink layer, which will cover InkWell hover/splash effects. Use `backgroundColor` and `selectedBackgroundColor` instead — they are painted on the ink layer so hover/splash renders correctly on top.
+
 ### `OverlayMenuDividerStyle`
 
 | Parameter | Type | Description |
