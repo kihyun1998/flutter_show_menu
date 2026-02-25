@@ -224,19 +224,30 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   }
 
   List<OverlayMenuEntry<String>> get _items {
+    final cs = Theme.of(context).colorScheme;
     final entries = <OverlayMenuEntry<String>>[];
     for (var i = 0; i < _itemCount; i++) {
       if (_showDividers && i > 0) {
         entries.add(const OverlayMenuDivider<String>());
       }
+      final isSelected = _selectedItem == 'item_$i';
       entries.add(
         OverlayMenuItem<String>(
           value: 'item_$i',
           child: Row(
             children: [
-              Icon(_demoIcons[i % _demoIcons.length], size: 20),
+              Icon(
+                isSelected ? Icons.check_circle : _demoIcons[i % _demoIcons.length],
+                size: 20,
+                color: isSelected ? cs.primary : null,
+              ),
               const SizedBox(width: 12),
-              Text('Menu Item ${i + 1}'),
+              Text(
+                'Menu Item ${i + 1}',
+                style: isSelected
+                    ? TextStyle(fontWeight: FontWeight.w600, color: cs.primary)
+                    : null,
+              ),
             ],
           ),
         ),
