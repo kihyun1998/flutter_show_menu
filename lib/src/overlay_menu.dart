@@ -455,7 +455,10 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final sb = widget.style?.scrollbarStyle;
     final scrollView = SingleChildScrollView(
       controller: _scrollController,
-      child: column,
+      child: Material(
+        type: MaterialType.transparency,
+        child: column,
+      ),
     );
 
     Widget scrollable;

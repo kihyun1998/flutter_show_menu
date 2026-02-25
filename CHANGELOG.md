@@ -1,3 +1,7 @@
+## 0.6.1
+
+- **fix**: Prevent item InkWell hover/splash from bleeding through header/footer in scrollable menus
+
 ## 0.6.0
 
 - **BREAKING**: Remove `padding` and `textStyle` from `OverlayMenuItemStyle` — handle padding and text styling directly in the item's `child` widget
