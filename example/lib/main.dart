@@ -92,6 +92,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
   // Style colors (null = disabled/default)
   Color? _backgroundColor;
+  Color? _itemBackgroundColor;
+  Color? _selectedBackgroundColor;
   Color? _hoverColor;
   Color? _splashColor;
   Color? _dividerColor;
@@ -163,6 +165,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         borderRadius: _itemBorderRadius > 0
             ? BorderRadius.circular(_itemBorderRadius)
             : null,
+        backgroundColor: _itemBackgroundColor,
+        selectedBackgroundColor: _selectedBackgroundColor,
         hoverColor: _hoverColor,
         splashColor: _splashColor,
       ),
@@ -578,6 +582,18 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               0,
               24,
               (v) => setState(() => _itemBorderRadius = v),
+            ),
+            const SizedBox(height: 8),
+            _colorPickerRow(
+              'Background',
+              _itemBackgroundColor,
+              (c) => setState(() => _itemBackgroundColor = c),
+            ),
+            const SizedBox(height: 8),
+            _colorPickerRow(
+              'Selected BG',
+              _selectedBackgroundColor,
+              (c) => setState(() => _selectedBackgroundColor = c),
             ),
             const SizedBox(height: 8),
             _colorPickerRow(

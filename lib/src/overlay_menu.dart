@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import 'menu_position.dart';
 import 'menu_position_delegate.dart';
 import 'overlay_menu_item.dart';
@@ -439,14 +441,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
             if (headerEntries != null)
               ...headerEntries
                   .map((e) => _buildEntry(e, styleOverride: headerStyle)),
-            Material(
-              type: MaterialType.transparency,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: itemWidgets,
-              ),
-            ),
+            ...itemWidgets,
             if (footerEntries != null)
               ...footerEntries
                   .map((e) => _buildEntry(e, styleOverride: footerStyle)),
@@ -469,10 +464,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       controller: _scrollController,
       child: Padding(
         padding: horizontalPadding,
-        child: Material(
-          type: MaterialType.transparency,
-          child: column,
-        ),
+        child: column,
       ),
     );
 
@@ -562,20 +554,35 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       child: content,
     );
 
-    return InkWell(
-      onTap: item.enabled
-          ? () {
-              item.onTap?.call();
-              _dismiss(item.value);
-            }
-          : null,
-      mouseCursor: mouseCursor,
-      borderRadius: itemBorderRadius,
-      hoverColor: itemStyle?.hoverColor,
-      splashColor: itemStyle?.splashColor,
-      highlightColor: itemStyle?.highlightColor,
-      focusColor: itemStyle?.focusColor,
-      child: child,
+    final isSelected =
+        widget.initialValue != null && item.value == widget.initialValue;
+    final inkColor = isSelected
+        ? itemStyle?.selectedBackgroundColor
+        : itemStyle?.backgroundColor;
+
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: inkColor,
+          borderRadius: itemBorderRadius,
+        ),
+        child: InkWell(
+          onTap: item.enabled
+              ? () {
+                  item.onTap?.call();
+                  _dismiss(item.value);
+                }
+              : null,
+          mouseCursor: mouseCursor,
+          borderRadius: itemBorderRadius,
+          hoverColor: itemStyle?.hoverColor,
+          splashColor: itemStyle?.splashColor,
+          highlightColor: itemStyle?.highlightColor,
+          focusColor: itemStyle?.focusColor,
+          child: child,
+        ),
+      ),
     );
   }
 

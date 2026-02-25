@@ -1,6 +1,7 @@
 ## 0.6.1
 
-- **fix**: Prevent item InkWell hover/splash from bleeding through header/footer
+- **feat**: `backgroundColor` and `selectedBackgroundColor` on `OverlayMenuItemStyle` — painted on the ink layer so InkWell hover/splash renders on top
+- **fix**: Wrap each item in `Material` + `Ink` so hover/splash work correctly with item background colors
 - **fix**: Scrollbar now hugs the right edge of the menu regardless of `padding`
 
 ## 0.6.0

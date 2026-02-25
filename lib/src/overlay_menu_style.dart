@@ -56,6 +56,8 @@ class OverlayMenuItemStyle {
   const OverlayMenuItemStyle({
     this.height,
     this.borderRadius,
+    this.backgroundColor,
+    this.selectedBackgroundColor,
     this.hoverColor,
     this.splashColor,
     this.highlightColor,
@@ -68,6 +70,14 @@ class OverlayMenuItemStyle {
 
   /// Border radius for the item's InkWell and selection decoration.
   final BorderRadius? borderRadius;
+
+  /// Background color for items. Painted on the ink layer so
+  /// InkWell hover/splash renders on top of it.
+  final Color? backgroundColor;
+
+  /// Background color for the selected item (matched by [initialValue]).
+  /// Painted on the ink layer so InkWell hover/splash renders on top of it.
+  final Color? selectedBackgroundColor;
 
   /// Hover highlight color for InkWell.
   final Color? hoverColor;

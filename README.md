@@ -271,6 +271,8 @@ Base type for menu entries. Two subtypes:
 |-----------|------|-------------|
 | `height` | `double?` | Default item height (falls back to `48.0`) |
 | `borderRadius` | `BorderRadius?` | Item border radius for InkWell and selection |
+| `backgroundColor` | `Color?` | Item background color (painted on ink layer) |
+| `selectedBackgroundColor` | `Color?` | Background color for the selected item matched by `initialValue` (painted on ink layer) |
 | `hoverColor` | `Color?` | Hover color |
 | `splashColor` | `Color?` | Splash color |
 | `highlightColor` | `Color?` | Highlight color |
