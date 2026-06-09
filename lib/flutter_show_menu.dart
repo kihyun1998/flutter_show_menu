@@ -11,10 +11,13 @@
 ///   [OverlayMenuStyle].
 /// - Automatic dismissal on route changes and programmatic close via
 ///   [OverlayMenuController].
+/// - App-wide dismissal of every open menu at once via [closeAllOverlayMenus]
+///   for non-route moments (session expiry, app backgrounding, etc.).
 library;
 
 export 'src/menu_position.dart';
-export 'src/overlay_menu.dart' show showOverlayMenu, OverlayMenuController;
+export 'src/overlay_menu.dart'
+    show showOverlayMenu, closeAllOverlayMenus, OverlayMenuController;
 export 'src/overlay_menu_button.dart';
 export 'src/overlay_menu_item.dart';
 export 'src/overlay_menu_style.dart';

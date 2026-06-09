@@ -1,3 +1,7 @@
+## 0.7.0
+
+- **feat**: `closeAllOverlayMenus()` — closes every open overlay menu app-wide at once, immediately and with a null result, without needing an `OverlayMenuController` reference. For non-route moments (session expiry, app backgrounding, event-driven cleanup); route changes already auto-close menus
+
 ## 0.6.1
 
 - **feat**: `backgroundColor` and `selectedBackgroundColor` on `OverlayMenuItemStyle` — painted on the ink layer so InkWell hover/splash renders on top
