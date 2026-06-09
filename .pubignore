@@ -1,0 +1,24 @@
+# Repo-internal tooling and process docs — kept in git, excluded from the
+# published package so consumers don't receive agent config or ADRs.
+CLAUDE.md
+CONTEXT.md
+todo.md
+docs/
+
+# IDE module file.
+*.iml
+
+# Build output and tool caches. Adding a .pubignore switches pub off git-based
+# file listing, so git's own ignore rules for these no longer apply — they must
+# be listed here explicitly. Unanchored patterns match at the root and under
+# example/ alike (root build/test_cache, example/build, etc.).
+build/
+.dart_tool/
+
+# Generated platform runners — only example/lib is needed for the pub.dev example.
+example/android/
+example/ios/
+example/linux/
+example/macos/
+example/windows/
+example/web/
