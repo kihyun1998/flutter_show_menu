@@ -26,7 +26,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.6.1
+  flutter_show_menu: ^0.7.0
 ```
 
 ## Basic Usage
@@ -200,6 +200,21 @@ controller.close();
 ```
 
 > **Note:** The menu also auto-closes when the current route is popped or a new route is pushed on top — no controller needed for navigation scenarios.
+
+### `closeAllOverlayMenus()`
+
+Closes **every** open overlay menu app-wide at once — immediately and with a `null` result — without needing an `OverlayMenuController` reference to each one.
+
+```dart
+import 'package:flutter_show_menu/flutter_show_menu.dart';
+
+// e.g. on session expiry, deep inside a service that holds no menu references:
+closeAllOverlayMenus();
+```
+
+Use it for **non-route** moments when every menu must disappear but you can't reach the controllers — session expiry, app backgrounding, an incoming event that resets the UI. It closes any number of open menus (zero, one, or many) and is a safe no-op when none are open.
+
+> **Note:** For navigation, you don't need this — menus already auto-close when the route changes (see the note above). `closeAllOverlayMenus()` exists for the cases where no route change happens.
 
 ### `OverlayMenuButton<T>`
 

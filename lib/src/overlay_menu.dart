@@ -39,6 +39,33 @@ class OverlayMenuController {
   }
 }
 
+/// The closers for every currently-open overlay menu.
+///
+/// Each [showOverlayMenu] call adds its closer here when the menu is inserted
+/// and removes it again the instant the menu closes — through any path
+/// (selection, barrier tap, controller, route change, or [closeAllOverlayMenus]).
+/// The set therefore always holds exactly the menus that are live.
+final Set<VoidCallback> _openMenuClosers = <VoidCallback>{};
+
+/// Closes every open overlay menu immediately, app-wide.
+///
+/// Each menu closes with a null result — exactly as it would on a route
+/// change — without playing the reverse animation. Awaiting callers receive
+/// null and `onCanceled` fires.
+///
+/// Use this for non-route moments when every menu must go but you hold no
+/// [OverlayMenuController] references: session expiry, app backgrounding,
+/// event-driven cleanup. For route changes the menus already auto-close, so
+/// this is unnecessary there.
+///
+/// Safe to call when no menus are open.
+void closeAllOverlayMenus() {
+  // Copy first: each closer removes itself from the set as it runs.
+  for (final closer in _openMenuClosers.toList()) {
+    closer();
+  }
+}
+
 /// Displays an OverlayEntry-based menu as a replacement for [showMenu].
 ///
 /// Positions the menu relative to the [context]'s RenderBox according to
@@ -94,6 +121,7 @@ Future<T?> showOverlayMenu<T>({
 
   late OverlayEntry entry;
   bool removed = false;
+  late final VoidCallback registryCloser;
 
   void removeEntry() {
     if (removed) return;
@@ -102,6 +130,7 @@ Future<T?> showOverlayMenu<T>({
   }
 
   void close([T? result]) {
+    _openMenuClosers.remove(registryCloser);
     removeEntry();
     controller?._isClosed = true;
     controller?._onClose = null;
@@ -109,6 +138,11 @@ Future<T?> showOverlayMenu<T>({
       completer.complete(result);
     }
   }
+
+  // Register this menu so closeAllOverlayMenus() can reach it without a
+  // controller reference. Deregistration happens inside close() above.
+  registryCloser = () => close();
+  _openMenuClosers.add(registryCloser);
 
   // Connect controller
   if (controller != null) {
