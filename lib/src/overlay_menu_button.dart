@@ -1,90 +1,73 @@
 import 'package:flutter/material.dart';
-import 'menu_position.dart';
+
+import 'open_menu.dart';
 import 'overlay_menu.dart';
+import 'overlay_menu_barrier.dart';
 import 'overlay_menu_item.dart';
+import 'overlay_menu_motion.dart';
+import 'overlay_menu_placement.dart';
 import 'overlay_menu_style.dart';
 
-/// A widget that wraps a child widget and shows an overlay menu when tapped.
+/// Wraps a child widget and shows an overlay menu when it is tapped.
+///
+/// A tap-to-open shortcut over [showOverlayMenu]; it takes the same
+/// configuration and behaves identically.
 class OverlayMenuButton<T> extends StatelessWidget {
   const OverlayMenuButton({
     super.key,
     required this.items,
+    required this.child,
     this.header,
     this.footer,
-    required this.child,
-    this.position = MenuPosition.bottom,
-    this.alignment = MenuAlignment.start,
-    this.offset = Offset.zero,
+    this.initialValue,
+    this.placement = const OverlayMenuPlacement(),
+    this.barrier = const OverlayMenuBarrier(),
+    this.motion = const OverlayMenuMotion(),
+    this.style,
+    this.controller,
     this.onSelected,
     this.onCanceled,
-    this.barrierDismissible = true,
-    this.barrierColor,
-    this.decoration,
-    this.overlayChild,
-    this.menuConstraints,
-    this.menuWidth,
-    this.animationDuration = const Duration(milliseconds: 150),
-    this.animationCurve = Curves.easeOutCubic,
     this.enabled = true,
-    this.style,
   });
 
-  /// List of menu items.
+  /// Selectable entries displayed in the scrollable area.
   final List<OverlayMenuEntry<T>> items;
-
-  /// List of entries fixed at the top of the scroll area.
-  final List<OverlayMenuEntry<T>>? header;
-
-  /// List of entries fixed at the bottom of the scroll area.
-  final List<OverlayMenuEntry<T>>? footer;
 
   /// The child widget that acts as the tap target.
   final Widget child;
 
-  /// Menu display direction.
-  final MenuPosition position;
+  /// Entries pinned above the scrollable area.
+  final List<OverlayMenuEntry<T>>? header;
 
-  /// Menu cross-axis alignment.
-  final MenuAlignment alignment;
+  /// Entries pinned below the scrollable area.
+  final List<OverlayMenuEntry<T>>? footer;
 
-  /// Fine-tuning offset for positioning.
-  final Offset offset;
+  /// Value of the item to scroll to when the menu opens.
+  final T? initialValue;
 
-  /// Callback when an item is selected.
+  /// Where the menu sits relative to this button.
+  final OverlayMenuPlacement placement;
+
+  /// The area behind the menu and how it behaves.
+  final OverlayMenuBarrier barrier;
+
+  /// How the menu animates in and out.
+  final OverlayMenuMotion motion;
+
+  /// Colors, sizing, item styles, scrollbar.
+  final OverlayMenuStyle? style;
+
+  /// Optional controller for programmatic Close.
+  final OverlayMenuController? controller;
+
+  /// Called when an item is selected.
   final ValueChanged<T>? onSelected;
 
-  /// Callback when the menu is closed without a selection.
+  /// Called when the menu Closes without a selection.
   final VoidCallback? onCanceled;
 
-  /// Whether tapping outside the menu dismisses it.
-  final bool barrierDismissible;
-
-  /// Barrier background color.
-  final Color? barrierColor;
-
-  /// Menu container decoration.
-  final BoxDecoration? decoration;
-
-  /// Full-screen overlay above the barrier (e.g. drag-to-move area).
-  final Widget? overlayChild;
-
-  /// Menu size constraints.
-  final BoxConstraints? menuConstraints;
-
-  /// Fixed menu width.
-  final double? menuWidth;
-
-  /// Animation duration.
-  final Duration animationDuration;
-
-  /// Animation curve.
-  final Curve animationCurve;
-
-  /// Whether the button is enabled.
+  /// Whether the button responds to taps.
   final bool enabled;
-
-  /// Visual style options for the menu.
-  final OverlayMenuStyle? style;
 
   Future<void> _show(BuildContext context) async {
     final result = await showOverlayMenu<T>(
@@ -92,18 +75,12 @@ class OverlayMenuButton<T> extends StatelessWidget {
       items: items,
       header: header,
       footer: footer,
-      position: position,
-      alignment: alignment,
-      offset: offset,
-      barrierDismissible: barrierDismissible,
-      barrierColor: barrierColor,
-      decoration: decoration,
-      overlayChild: overlayChild,
-      constraints: menuConstraints,
-      width: menuWidth,
-      animationDuration: animationDuration,
-      animationCurve: animationCurve,
+      initialValue: initialValue,
+      placement: placement,
+      barrier: barrier,
+      motion: motion,
       style: style,
+      controller: controller,
     );
 
     if (result != null) {

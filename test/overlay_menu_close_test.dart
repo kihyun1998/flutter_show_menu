@@ -320,7 +320,7 @@ void main() {
         items: [
           const OverlayMenuItem<String>(value: 'a', child: Text('Rebuild')),
         ],
-        animationDuration: _animation,
+        motion: const OverlayMenuMotion(duration: _animation),
       );
       await tester.pumpAndSettle();
 

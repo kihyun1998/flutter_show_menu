@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import 'menu_position.dart';
 import 'menu_position_delegate.dart';
 import 'open_menu.dart';
+import 'overlay_menu_barrier.dart';
 import 'overlay_menu_entry_view.dart';
 import 'overlay_menu_item.dart';
 import 'overlay_menu_metrics.dart';
+import 'overlay_menu_motion.dart';
+import 'overlay_menu_placement.dart';
 import 'overlay_menu_style.dart';
 
 /// Displays an OverlayEntry-based menu as a replacement for [showMenu].
 ///
 /// Positions the menu relative to the [context]'s RenderBox according to
-/// the given [position] direction and [alignment].
+/// [placement].
 ///
-/// Pass a [controller] to explicitly close the menu from outside.
-/// The menu automatically closes when the owning route is popped.
+/// Pass a [controller] to Close the menu from outside. The menu Closes
+/// automatically when the owning route is pushed over or popped.
 ///
 /// Parameters:
 ///
@@ -22,37 +25,21 @@ import 'overlay_menu_style.dart';
 /// - [items] – Selectable entries displayed in the scrollable area.
 /// - [header] – Entries pinned above the scrollable area.
 /// - [footer] – Entries pinned below the scrollable area.
-/// - [position] – Which side of the target the menu appears on.
-/// - [alignment] – Cross-axis alignment relative to the target.
-/// - [offset] – Additional pixel offset applied after positioning.
-/// - [barrierDismissible] – Whether tapping outside closes the menu.
-/// - [barrierColor] – Color of the full-screen barrier behind the menu.
-/// - [decoration] – Extra [BoxDecoration] wrapped around the menu.
-/// - [overlayChild] – Full-screen overlay above the barrier (e.g. drag-to-move area).
-/// - [constraints] – Additional box constraints for the menu.
-/// - [width] – Fixed width for the menu.
-/// - [animationDuration] – Duration of the open/close animation.
-/// - [animationCurve] – Curve of the open/close animation.
 /// - [initialValue] – Value of the item to scroll to when the menu opens.
-/// - [style] – Visual style options (colors, item sizes, scrollbar, etc.).
-/// - [controller] – Optional controller for programmatic dismissal.
+/// - [placement] – Where the menu sits relative to the target.
+/// - [barrier] – The area behind the menu and how it behaves.
+/// - [motion] – How the menu animates in and out.
+/// - [style] – Colors, sizing, item styles, scrollbar.
+/// - [controller] – Optional controller for programmatic Close.
 Future<T?> showOverlayMenu<T>({
   required BuildContext context,
   required List<OverlayMenuEntry<T>> items,
   List<OverlayMenuEntry<T>>? header,
   List<OverlayMenuEntry<T>>? footer,
   T? initialValue,
-  MenuPosition position = MenuPosition.bottom,
-  MenuAlignment alignment = MenuAlignment.start,
-  Offset offset = Offset.zero,
-  bool barrierDismissible = true,
-  Color? barrierColor,
-  BoxDecoration? decoration,
-  Widget? overlayChild,
-  BoxConstraints? constraints,
-  double? width,
-  Duration animationDuration = const Duration(milliseconds: 150),
-  Curve animationCurve = Curves.easeOutCubic,
+  OverlayMenuPlacement placement = const OverlayMenuPlacement(),
+  OverlayMenuBarrier barrier = const OverlayMenuBarrier(),
+  OverlayMenuMotion motion = const OverlayMenuMotion(),
   OverlayMenuStyle? style,
   OverlayMenuController? controller,
 }) {
@@ -73,17 +60,9 @@ Future<T?> showOverlayMenu<T>({
       header: header,
       footer: footer,
       initialValue: initialValue,
-      position: position,
-      alignment: alignment,
-      offset: offset,
-      barrierDismissible: barrierDismissible,
-      barrierColor: barrierColor,
-      decoration: decoration,
-      overlayChild: overlayChild,
-      constraints: constraints,
-      width: width,
-      animationDuration: animationDuration,
-      animationCurve: animationCurve,
+      placement: placement,
+      barrier: barrier,
+      motion: motion,
       style: style,
     ),
   );
@@ -101,17 +80,9 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
     this.header,
     this.footer,
     this.initialValue,
-    required this.position,
-    required this.alignment,
-    required this.offset,
-    required this.barrierDismissible,
-    this.barrierColor,
-    this.decoration,
-    this.overlayChild,
-    this.constraints,
-    this.width,
-    required this.animationDuration,
-    required this.animationCurve,
+    required this.placement,
+    required this.barrier,
+    required this.motion,
     this.style,
   });
 
@@ -121,17 +92,9 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
   final List<OverlayMenuEntry<T>>? header;
   final List<OverlayMenuEntry<T>>? footer;
   final T? initialValue;
-  final MenuPosition position;
-  final MenuAlignment alignment;
-  final Offset offset;
-  final bool barrierDismissible;
-  final Color? barrierColor;
-  final BoxDecoration? decoration;
-  final Widget? overlayChild;
-  final BoxConstraints? constraints;
-  final double? width;
-  final Duration animationDuration;
-  final Curve animationCurve;
+  final OverlayMenuPlacement placement;
+  final OverlayMenuBarrier barrier;
+  final OverlayMenuMotion motion;
   final OverlayMenuStyle? style;
 
   @override
@@ -154,11 +117,11 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     }
     _controller = AnimationController(
       vsync: this,
-      duration: widget.animationDuration,
+      duration: widget.motion.duration,
     );
     final curved = CurvedAnimation(
       parent: _controller,
-      curve: widget.animationCurve,
+      curve: widget.motion.curve,
     );
     _opacity = Tween<double>(begin: 0, end: 1).animate(curved);
     _scale = Tween<double>(begin: 0.9, end: 1).animate(curved);
@@ -207,23 +170,23 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   }
 
   Alignment _resolveScaleAlignment() {
-    return switch (widget.position) {
-      MenuPosition.bottom => switch (widget.alignment) {
+    return switch (widget.placement.position) {
+      MenuPosition.bottom => switch (widget.placement.alignment) {
           MenuAlignment.start => Alignment.topLeft,
           MenuAlignment.center => Alignment.topCenter,
           MenuAlignment.end => Alignment.topRight,
         },
-      MenuPosition.top => switch (widget.alignment) {
+      MenuPosition.top => switch (widget.placement.alignment) {
           MenuAlignment.start => Alignment.bottomLeft,
           MenuAlignment.center => Alignment.bottomCenter,
           MenuAlignment.end => Alignment.bottomRight,
         },
-      MenuPosition.left => switch (widget.alignment) {
+      MenuPosition.left => switch (widget.placement.alignment) {
           MenuAlignment.start => Alignment.topRight,
           MenuAlignment.center => Alignment.centerRight,
           MenuAlignment.end => Alignment.bottomRight,
         },
-      MenuPosition.right => switch (widget.alignment) {
+      MenuPosition.right => switch (widget.placement.alignment) {
           MenuAlignment.start => Alignment.topLeft,
           MenuAlignment.center => Alignment.centerLeft,
           MenuAlignment.end => Alignment.bottomLeft,
@@ -243,27 +206,27 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         Positioned.fill(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: widget.barrierDismissible
+            onTap: widget.barrier.dismissible
                 ? () => widget.menu.close(null, animated: true)
                 : null,
             child: ColoredBox(
-              color: widget.barrierColor ?? Colors.transparent,
+              color: widget.barrier.color ?? Colors.transparent,
             ),
           ),
         ),
 
         // Overlay child
-        if (widget.overlayChild != null)
-          Positioned.fill(child: widget.overlayChild!),
+        if (widget.barrier.overlayChild != null)
+          Positioned.fill(child: widget.barrier.overlayChild!),
 
         // Menu
         CustomSingleChildLayout(
           delegate: MenuPositionDelegate(
             targetRect: widget.targetRect,
-            position: widget.position,
-            alignment: widget.alignment,
+            position: widget.placement.position,
+            alignment: widget.placement.alignment,
             screenSize: screenSize,
-            offset: widget.offset,
+            offset: widget.placement.offset,
             screenPadding: screenPadding,
           ),
           child: FadeTransition(
@@ -299,20 +262,20 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       ),
     );
 
-    if (widget.decoration != null) {
+    if (style?.decoration != null) {
       menu = DecoratedBox(
-        decoration: widget.decoration!,
+        decoration: style!.decoration!,
         child: menu,
       );
     }
 
-    if (widget.width != null) {
-      menu = SizedBox(width: widget.width, child: menu);
+    if (style?.width != null) {
+      menu = SizedBox(width: style!.width, child: menu);
     }
 
-    if (widget.constraints != null) {
+    if (style?.constraints != null) {
       menu = ConstrainedBox(
-        constraints: widget.constraints!,
+        constraints: style!.constraints!,
         child: menu,
       );
     }

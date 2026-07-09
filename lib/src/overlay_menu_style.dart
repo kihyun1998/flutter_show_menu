@@ -6,13 +6,16 @@ typedef OverlayMenuHeaderStyle = OverlayMenuItemStyle;
 /// Style for footer items. Same shape as [OverlayMenuItemStyle].
 typedef OverlayMenuFooterStyle = OverlayMenuItemStyle;
 
-/// Groups visual style options for [showOverlayMenu].
+/// How the menu surface looks and how large it is allowed to be.
 class OverlayMenuStyle {
   const OverlayMenuStyle({
     this.backgroundColor,
     this.borderRadius,
     this.padding,
     this.maxHeight,
+    this.width,
+    this.constraints,
+    this.decoration,
     this.itemStyle,
     this.headerStyle,
     this.footerStyle,
@@ -34,6 +37,15 @@ class OverlayMenuStyle {
 
   /// Maximum height of the menu. When content exceeds this, the menu scrolls.
   final double? maxHeight;
+
+  /// Fixed width of the menu. Sizes to its content when null.
+  final double? width;
+
+  /// Extra box constraints applied around the menu.
+  final BoxConstraints? constraints;
+
+  /// Extra decoration wrapped around the menu surface.
+  final BoxDecoration? decoration;
 
   /// Default style for menu items.
   final OverlayMenuItemStyle? itemStyle;
