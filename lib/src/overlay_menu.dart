@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'menu_position.dart';
 import 'menu_position_delegate.dart';
 import 'overlay_menu_item.dart';
+import 'overlay_menu_metrics.dart';
 import 'overlay_menu_style.dart';
 
 /// Controller to programmatically close an open overlay menu.
@@ -280,39 +281,20 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   }
 
   void _jumpToInitialValue() {
-    final maxHeight = widget.style!.maxHeight!;
-    final itemStyle = widget.style?.itemStyle;
-    final ds = widget.style?.dividerStyle;
-
-    double offset = 0;
-    double? matchedOffset;
-    double? matchedHeight;
-
-    for (final entry in widget.items) {
-      switch (entry) {
-        case OverlayMenuItem<T>():
-          final h = entry.height ?? itemStyle?.height ?? 48.0;
-          if (entry.value == widget.initialValue && matchedOffset == null) {
-            matchedOffset = offset;
-            matchedHeight = h;
-          }
-          offset += h;
-        case OverlayMenuDivider<T>():
-          final thickness = entry.thickness ?? ds?.thickness ?? 1.0;
-          final h = entry.height ?? ds?.height ?? thickness;
-          offset += h;
-      }
-    }
-
-    if (matchedOffset == null) return;
-
-    // Center the matched item in the viewport.
-    final target = matchedOffset - (maxHeight / 2) + (matchedHeight! / 2);
+    final target = resolveScrollOffsetToValue<T>(
+      entries: widget.items,
+      initialValue: widget.initialValue,
+      viewportHeight: widget.style!.maxHeight!,
+      itemStyle: widget.style?.itemStyle,
+      dividerStyle: widget.style?.dividerStyle,
+    );
+    if (target == null) return;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController != null && _scrollController!.hasClients) {
-        final max = _scrollController!.position.maxScrollExtent;
-        _scrollController!.jumpTo(target.clamp(0.0, max));
+      final controller = _scrollController;
+      if (controller != null && controller.hasClients) {
+        final max = controller.position.maxScrollExtent;
+        controller.jumpTo(target.clamp(0.0, max));
       }
     });
   }
@@ -566,8 +548,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final itemStyle = styleOverride ?? widget.style?.itemStyle;
     final theme = Theme.of(context);
 
-    // Resolve: item → itemStyle → hardcoded default
-    final height = item.height ?? itemStyle?.height ?? 48.0;
+    final height = resolveEntryHeight(item, itemStyle: itemStyle);
     final itemBorderRadius = itemStyle?.borderRadius;
 
     final mouseCursor = item.enabled
@@ -622,13 +603,12 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   Widget _buildDivider(OverlayMenuDivider<T> divider) {
     final ds = widget.style?.dividerStyle;
-    final thickness = divider.thickness ?? ds?.thickness ?? 1.0;
     return Divider(
       color: divider.color ?? ds?.color,
-      thickness: thickness,
+      thickness: resolveDividerThickness(divider, ds),
       indent: divider.indent ?? ds?.indent ?? 0,
       endIndent: divider.endIndent ?? ds?.endIndent ?? 0,
-      height: divider.height ?? ds?.height ?? thickness,
+      height: resolveEntryHeight(divider, dividerStyle: ds),
     );
   }
 }
