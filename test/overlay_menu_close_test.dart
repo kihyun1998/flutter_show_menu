@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_show_menu/flutter_show_menu.dart';
+import 'package:flutter_show_menu/src/open_menu_registry.dart';
 
 const _animation = Duration(milliseconds: 150);
 
@@ -30,6 +31,14 @@ Future<_Host> _pumpHost(WidgetTester tester) async {
 }
 
 void main() {
+  // ADR-0001: no case may leave a menu in the registry. Reset before asserting
+  // so a single leak cannot cascade into every case that follows.
+  tearDown(() {
+    final leaked = OpenMenuRegistry.instance.length;
+    OpenMenuRegistry.instance.reset();
+    expect(leaked, 0, reason: 'a menu leaked into the open-menu registry');
+  });
+
   group('the result is latched when Close is requested', () {
     testWidgets('an item whose onTap pushes a route still returns its value',
         (tester) async {
