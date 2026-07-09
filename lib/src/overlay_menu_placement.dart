@@ -30,4 +30,17 @@ class OverlayMenuPlacement {
       offset: offset ?? this.offset,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is OverlayMenuPlacement &&
+        other.position == position &&
+        other.alignment == alignment &&
+        other.offset == offset;
+  }
+
+  @override
+  int get hashCode => Object.hash(position, alignment, offset);
 }

@@ -61,6 +61,71 @@ class OverlayMenuStyle {
 
   /// Scrollbar style. Only applies when [maxHeight] triggers scrolling.
   final OverlayMenuScrollbarStyle? scrollbarStyle;
+
+  OverlayMenuStyle copyWith({
+    Color? backgroundColor,
+    BorderRadius? borderRadius,
+    EdgeInsets? padding,
+    double? maxHeight,
+    double? width,
+    BoxConstraints? constraints,
+    BoxDecoration? decoration,
+    OverlayMenuItemStyle? itemStyle,
+    OverlayMenuHeaderStyle? headerStyle,
+    OverlayMenuFooterStyle? footerStyle,
+    OverlayMenuDividerStyle? dividerStyle,
+    OverlayMenuScrollbarStyle? scrollbarStyle,
+  }) {
+    return OverlayMenuStyle(
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      borderRadius: borderRadius ?? this.borderRadius,
+      padding: padding ?? this.padding,
+      maxHeight: maxHeight ?? this.maxHeight,
+      width: width ?? this.width,
+      constraints: constraints ?? this.constraints,
+      decoration: decoration ?? this.decoration,
+      itemStyle: itemStyle ?? this.itemStyle,
+      headerStyle: headerStyle ?? this.headerStyle,
+      footerStyle: footerStyle ?? this.footerStyle,
+      dividerStyle: dividerStyle ?? this.dividerStyle,
+      scrollbarStyle: scrollbarStyle ?? this.scrollbarStyle,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is OverlayMenuStyle &&
+        other.backgroundColor == backgroundColor &&
+        other.borderRadius == borderRadius &&
+        other.padding == padding &&
+        other.maxHeight == maxHeight &&
+        other.width == width &&
+        other.constraints == constraints &&
+        other.decoration == decoration &&
+        other.itemStyle == itemStyle &&
+        other.headerStyle == headerStyle &&
+        other.footerStyle == footerStyle &&
+        other.dividerStyle == dividerStyle &&
+        other.scrollbarStyle == scrollbarStyle;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        backgroundColor,
+        borderRadius,
+        padding,
+        maxHeight,
+        width,
+        constraints,
+        decoration,
+        itemStyle,
+        headerStyle,
+        footerStyle,
+        dividerStyle,
+        scrollbarStyle,
+      );
 }
 
 /// Default style for individual menu items.
@@ -106,6 +171,60 @@ class OverlayMenuItemStyle {
   /// Mouse cursor when hovering over enabled items.
   /// Falls back to `SystemMouseCursors.click`.
   final MouseCursor? mouseCursor;
+
+  OverlayMenuItemStyle copyWith({
+    double? height,
+    BorderRadius? borderRadius,
+    Color? backgroundColor,
+    Color? selectedBackgroundColor,
+    Color? hoverColor,
+    Color? splashColor,
+    Color? highlightColor,
+    Color? focusColor,
+    MouseCursor? mouseCursor,
+  }) {
+    return OverlayMenuItemStyle(
+      height: height ?? this.height,
+      borderRadius: borderRadius ?? this.borderRadius,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      selectedBackgroundColor:
+          selectedBackgroundColor ?? this.selectedBackgroundColor,
+      hoverColor: hoverColor ?? this.hoverColor,
+      splashColor: splashColor ?? this.splashColor,
+      highlightColor: highlightColor ?? this.highlightColor,
+      focusColor: focusColor ?? this.focusColor,
+      mouseCursor: mouseCursor ?? this.mouseCursor,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is OverlayMenuItemStyle &&
+        other.height == height &&
+        other.borderRadius == borderRadius &&
+        other.backgroundColor == backgroundColor &&
+        other.selectedBackgroundColor == selectedBackgroundColor &&
+        other.hoverColor == hoverColor &&
+        other.splashColor == splashColor &&
+        other.highlightColor == highlightColor &&
+        other.focusColor == focusColor &&
+        other.mouseCursor == mouseCursor;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        height,
+        borderRadius,
+        backgroundColor,
+        selectedBackgroundColor,
+        hoverColor,
+        splashColor,
+        highlightColor,
+        focusColor,
+        mouseCursor,
+      );
 }
 
 /// Style for menu dividers.
@@ -133,6 +252,37 @@ class OverlayMenuDividerStyle {
 
   /// Trailing indent. Falls back to `0`.
   final double? endIndent;
+
+  OverlayMenuDividerStyle copyWith({
+    Color? color,
+    double? thickness,
+    double? height,
+    double? indent,
+    double? endIndent,
+  }) {
+    return OverlayMenuDividerStyle(
+      color: color ?? this.color,
+      thickness: thickness ?? this.thickness,
+      height: height ?? this.height,
+      indent: indent ?? this.indent,
+      endIndent: endIndent ?? this.endIndent,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is OverlayMenuDividerStyle &&
+        other.color == color &&
+        other.thickness == thickness &&
+        other.height == height &&
+        other.indent == indent &&
+        other.endIndent == endIndent;
+  }
+
+  @override
+  int get hashCode => Object.hash(color, thickness, height, indent, endIndent);
 }
 
 /// Style for the menu scrollbar.
@@ -159,4 +309,33 @@ class OverlayMenuScrollbarStyle {
   /// Whether the scrollbar thumb is always visible.
   /// When `false` or `null`, the scrollbar only appears during scrolling.
   final bool? thumbVisibility;
+
+  OverlayMenuScrollbarStyle copyWith({
+    Color? thumbColor,
+    double? thickness,
+    Radius? radius,
+    bool? thumbVisibility,
+  }) {
+    return OverlayMenuScrollbarStyle(
+      thumbColor: thumbColor ?? this.thumbColor,
+      thickness: thickness ?? this.thickness,
+      radius: radius ?? this.radius,
+      thumbVisibility: thumbVisibility ?? this.thumbVisibility,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is OverlayMenuScrollbarStyle &&
+        other.thumbColor == thumbColor &&
+        other.thickness == thickness &&
+        other.radius == radius &&
+        other.thumbVisibility == thumbVisibility;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(thumbColor, thickness, radius, thumbVisibility);
 }
