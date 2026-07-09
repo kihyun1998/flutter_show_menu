@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'menu_position.dart';
 import 'menu_position_delegate.dart';
 import 'open_menu.dart';
+import 'overlay_menu_entry_view.dart';
 import 'overlay_menu_item.dart';
 import 'overlay_menu_metrics.dart';
 import 'overlay_menu_style.dart';
@@ -424,81 +425,14 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   Widget _buildEntry(OverlayMenuEntry<T> entry,
       {OverlayMenuItemStyle? styleOverride}) {
-    return switch (entry) {
-      OverlayMenuItem<T>() => _buildItem(entry, styleOverride: styleOverride),
-      OverlayMenuDivider<T>() => _buildDivider(entry),
-    };
-  }
-
-  Widget _buildItem(OverlayMenuItem<T> item,
-      {OverlayMenuItemStyle? styleOverride}) {
-    final itemStyle = styleOverride ?? widget.style?.itemStyle;
-    final theme = Theme.of(context);
-
-    final height = resolveEntryHeight(item, itemStyle: itemStyle);
-    final itemBorderRadius = itemStyle?.borderRadius;
-
-    final mouseCursor = item.enabled
-        ? (itemStyle?.mouseCursor ?? SystemMouseCursors.click)
-        : SystemMouseCursors.basic;
-
-    Widget content = item.child;
-    if (!item.enabled) {
-      content = DefaultTextStyle.merge(
-        style: TextStyle(color: theme.disabledColor),
-        child: content,
-      );
-    }
-
-    Widget child = Container(
-      height: height,
-      alignment: Alignment.centerLeft,
-      child: content,
-    );
-
-    final isSelected =
-        widget.initialValue != null && item.value == widget.initialValue;
-    final inkColor = isSelected
-        ? itemStyle?.selectedBackgroundColor
-        : itemStyle?.backgroundColor;
-
-    return Material(
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          color: inkColor,
-          borderRadius: itemBorderRadius,
-        ),
-        child: InkWell(
-          onTap: item.enabled
-              ? () {
-                  // Request the Close first so the result is latched before
-                  // onTap can run a side effect — pushing a route, say, whose
-                  // Auto-close would otherwise land here first with null.
-                  widget.menu.close(item.value, animated: true);
-                  item.onTap?.call();
-                }
-              : null,
-          mouseCursor: mouseCursor,
-          borderRadius: itemBorderRadius,
-          hoverColor: itemStyle?.hoverColor,
-          splashColor: itemStyle?.splashColor,
-          highlightColor: itemStyle?.highlightColor,
-          focusColor: itemStyle?.focusColor,
-          child: child,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDivider(OverlayMenuDivider<T> divider) {
-    final ds = widget.style?.dividerStyle;
-    return Divider(
-      color: divider.color ?? ds?.color,
-      thickness: resolveDividerThickness(divider, ds),
-      indent: divider.indent ?? ds?.indent ?? 0,
-      endIndent: divider.endIndent ?? ds?.endIndent ?? 0,
-      height: resolveEntryHeight(divider, dividerStyle: ds),
+    return OverlayMenuEntryView<T>(
+      entry: entry,
+      itemStyle: styleOverride ?? widget.style?.itemStyle,
+      dividerStyle: widget.style?.dividerStyle,
+      isSelected: entry is OverlayMenuItem<T> &&
+          widget.initialValue != null &&
+          entry.value == widget.initialValue,
+      onSelected: (value) => widget.menu.close(value, animated: true),
     );
   }
 }
