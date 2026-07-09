@@ -11,6 +11,38 @@ import 'overlay_menu_motion.dart';
 import 'overlay_menu_placement.dart';
 import 'overlay_menu_style.dart';
 
+/// The box [showOverlayMenu] anchors an Open Menu to.
+///
+/// Checked rather than cast: the failure is a programming error, and the
+/// caller needs to be told which context is wrong. The check runs in release
+/// builds too — an unmounted context would otherwise yield a stale render
+/// object there, opening the menu at the position of a widget that is gone.
+RenderBox _anchorBoxOf(BuildContext context) {
+  if (!context.mounted) {
+    throw FlutterError(
+      'showOverlayMenu was given a context that is no longer mounted.\n'
+      'The menu is anchored to the box of the widget that owns `context`, so '
+      'that widget must still be in the tree. This usually means the context '
+      'was captured and used after an await, or after the widget was '
+      'disposed. Check `context.mounted` before calling showOverlayMenu.',
+    );
+  }
+
+  final renderObject = context.findRenderObject();
+  if (renderObject is! RenderBox) {
+    throw FlutterError(
+      'showOverlayMenu was given a context with no RenderBox to anchor to.\n'
+      'Its render object is ${renderObject.runtimeType}, not a RenderBox. The '
+      '`context` passed to showOverlayMenu must belong to a box-laid-out '
+      'widget; a context taken from above a sliver, for example, will not do. '
+      'Wrap the anchor in a Builder that sits below any sliver and pass that '
+      "Builder's context.",
+    );
+  }
+
+  return renderObject;
+}
+
 /// Displays an OverlayEntry-based menu as a replacement for [showMenu].
 ///
 /// Positions the menu relative to the [context]'s RenderBox according to
@@ -43,7 +75,7 @@ Future<T?> showOverlayMenu<T>({
   OverlayMenuStyle? style,
   OverlayMenuController? controller,
 }) {
-  final renderBox = context.findRenderObject() as RenderBox;
+  final renderBox = _anchorBoxOf(context);
   final targetRect = renderBox.localToGlobal(Offset.zero) & renderBox.size;
   final overlay = Overlay.of(context);
 
