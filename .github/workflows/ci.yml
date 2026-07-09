@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same branch supersedes an in-flight run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned rather than floating on `stable`, so a Flutter release cannot turn a
+  # green branch red without a commit here.
+  FLUTTER_VERSION: 3.41.9
+  # The floor lives here and nowhere else. Raise it as coverage climbs.
+  COVERAGE_FLOOR: 80
+
+jobs:
+  verify:
+    name: analyze, test, coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Report toolchain
+        run: flutter --version
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Test with coverage
+        run: flutter test --coverage
+
+      - name: Enforce the coverage floor
+        run: dart run tool/check_coverage.dart --min ${{ env.COVERAGE_FLOOR }} --report
+
+      # Uploaded even when an earlier step failed, so a coverage regression can
+      # be inspected rather than merely reported. Warn rather than error when
+      # the report is absent: a failing test run has no lcov to upload, and the
+      # test failure is the message worth seeing.
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lcov
+          path: coverage/lcov.info
+          if-no-files-found: warn
