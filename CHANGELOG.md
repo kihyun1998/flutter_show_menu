@@ -1,3 +1,39 @@
+## 1.0.0
+
+### Breaking
+
+- **BREAKING**: `showOverlayMenu` and `OverlayMenuButton` take grouped configuration objects instead of 18 loose parameters. See the migration table below.
+- **BREAKING**: `width`, `constraints`, and `decoration` moved onto `OverlayMenuStyle`, rejoining `maxHeight`.
+- **BREAKING**: `OverlayMenuButton` no longer has `menuWidth` and `menuConstraints`. Use `style: OverlayMenuStyle(width: ..., constraints: ...)`.
+- **BREAKING**: `OverlayMenuController.close()` now plays the exit animation, as selecting an item and tapping the barrier already did. `isClosed` still becomes true immediately; the widget leaves after the animation. Route changes and `closeAllOverlayMenus()` remain instant.
+
+| Was | Now |
+| --- | --- |
+| `position:`, `alignment:`, `offset:` | `placement: OverlayMenuPlacement(...)` |
+| `barrierDismissible:`, `barrierColor:`, `overlayChild:` | `barrier: OverlayMenuBarrier(dismissible: ..., color: ..., overlayChild: ...)` |
+| `animationDuration:`, `animationCurve:` | `motion: OverlayMenuMotion(duration: ..., curve: ...)` |
+| `width:`, `constraints:`, `decoration:` | `style: OverlayMenuStyle(width: ..., constraints: ..., decoration: ...)` |
+
+All groups are const-constructible with defaults, so `showOverlayMenu(context: c, items: [...])` is unchanged.
+
+### Fixed
+
+- **fix**: An item whose `onTap` pushed a route returned `null` instead of its value. The push triggered a route auto-close that completed the future before the exit animation ended. The result is now fixed when the close is requested, so a navigating item still returns its selection.
+- **fix**: `closeAllOverlayMenus()` called during a menu's exit animation overwrote the selected value with `null`. It now tears the menu down immediately, as documented, while still delivering the value the user chose.
+- **fix**: Reusing one `OverlayMenuController` across two menus silently rebound it. Rebinding is now explicit and closes only the menu it is bound to.
+
+### Added
+
+- **feat**: `OverlayMenuButton` gains `initialValue` and `controller`, which `showOverlayMenu` had but the button had silently dropped.
+- **feat**: `OverlayMenuPlacement`, `OverlayMenuBarrier`, and `OverlayMenuMotion`, each with `copyWith`.
+
+### Internal
+
+- An open menu's lifetime is now a single module. "Closed" had four representations; it has one. Every close path — selection, barrier, controller, route change, close-all — goes through it, which is what `docs/adr/0001-global-close-all-registry.md` required and only a comment enforced.
+- Entry height and the initial-value scroll offset resolve in one pure module, so the arithmetic that predicts an item's position and the widget that lays it out can no longer disagree.
+- Tests: 9 → 69. `MenuPositionDelegate` and the entry view are covered for the first time; the open-menu registry can be observed and reset between cases.
+- See `docs/adr/0002-latch-the-result-when-close-is-requested.md` and `docs/adr/0003-group-menu-configuration-by-cohesion.md`.
+
 ## 0.7.0
 
 - **feat**: `closeAllOverlayMenus()` — closes every open overlay menu app-wide at once, immediately and with a null result, without needing an `OverlayMenuController` reference. For non-route moments (session expiry, app backgrounding, event-driven cleanup); route changes already auto-close menus

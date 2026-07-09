@@ -42,8 +42,10 @@ final result = await showOverlayMenu<String>(
     OverlayMenuItem(value: 'edit', child: Text('Edit')),
     OverlayMenuItem(value: 'delete', child: Text('Delete')),
   ],
-  position: MenuPosition.bottom,
-  alignment: MenuAlignment.start,
+  placement: OverlayMenuPlacement(
+    position: MenuPosition.bottom,
+    alignment: MenuAlignment.start,
+  ),
 );
 
 if (result != null) {
@@ -55,8 +57,10 @@ if (result != null) {
 
 ```dart
 OverlayMenuButton<String>(
-  position: MenuPosition.right,
-  alignment: MenuAlignment.center,
+  placement: OverlayMenuPlacement(
+    position: MenuPosition.right,
+    alignment: MenuAlignment.center,
+  ),
   items: [
     OverlayMenuItem(value: 'edit', child: Text('Edit')),
     OverlayMenuItem(value: 'share', child: Text('Share')),
@@ -161,21 +165,40 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `header` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned above the scrollable area |
 | `footer` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned below the scrollable area |
 | `initialValue` | `T?` | `null` | Value of the item to auto-scroll to when the menu opens |
-| `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
-| `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
-| `offset` | `Offset` | `Offset.zero` | Additional offset for fine-tuning position |
-| `barrierDismissible` | `bool` | `true` | Whether tapping outside the menu dismisses it |
-| `barrierColor` | `Color?` | `null` | Backdrop color behind the menu |
-| `decoration` | `BoxDecoration?` | `null` | Custom decoration for the menu container |
-| `overlayChild` | `Widget?` | `null` | Full-screen overlay above the barrier (e.g. drag-to-move area) |
-| `constraints` | `BoxConstraints?` | `null` | Size constraints for the menu |
-| `width` | `double?` | `null` | Fixed width for the menu |
-| `animationDuration` | `Duration` | `150ms` | Duration of enter/exit animation |
-| `animationCurve` | `Curve` | `Curves.easeOutCubic` | Animation curve |
-| `style` | `OverlayMenuStyle?` | `null` | Visual style options |
+| `placement` | `OverlayMenuPlacement` | `const OverlayMenuPlacement()` | Where the menu sits relative to the target |
+| `barrier` | `OverlayMenuBarrier` | `const OverlayMenuBarrier()` | The area behind the menu and how it behaves |
+| `motion` | `OverlayMenuMotion` | `const OverlayMenuMotion()` | How the menu animates in and out |
+| `style` | `OverlayMenuStyle?` | `null` | Colors, sizing, item styles, scrollbar |
 | `controller` | `OverlayMenuController?` | `null` | Controller for programmatic close |
 
 **Returns** `Future<T?>` — the selected item's value, or `null` if dismissed.
+
+### Configuration groups
+
+#### `OverlayMenuPlacement`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
+| `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
+| `offset` | `Offset` | `Offset.zero` | Pixel offset applied after positioning |
+
+#### `OverlayMenuBarrier`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `dismissible` | `bool` | `true` | Whether tapping outside the menu closes it |
+| `color` | `Color?` | `null` | Backdrop color behind the menu |
+| `overlayChild` | `Widget?` | `null` | Drawn above the barrier and below the menu (e.g. drag-to-move area) |
+
+#### `OverlayMenuMotion`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `duration` | `Duration` | `150ms` | Duration of the enter and exit animation |
+| `curve` | `Curve` | `Curves.easeOutCubic` | Curve of the enter and exit animation |
+
+Each group is const-constructible with defaults and has a `copyWith`.
 
 ### `OverlayMenuController`
 
@@ -183,8 +206,8 @@ Controller for programmatically closing an open menu. Safe to call `close()` mul
 
 | Property / Method | Type | Description |
 |-------------------|------|-------------|
-| `isClosed` | `bool` | Whether the menu has already been closed |
-| `close()` | `void` | Closes the menu. No-op if already closed |
+| `isClosed` | `bool` | Whether a close has been requested. True immediately, before the exit animation ends |
+| `close()` | `void` | Closes the menu, playing the exit animation. No-op if already closed |
 
 ```dart
 final controller = OverlayMenuController();
@@ -214,6 +237,8 @@ closeAllOverlayMenus();
 
 Use it for **non-route** moments when every menu must disappear but you can't reach the controllers — session expiry, app backgrounding, an incoming event that resets the UI. It closes any number of open menus (zero, one, or many) and is a safe no-op when none are open.
 
+A menu part-way through its exit animation is torn down at once, and still delivers the value the user had already selected — the result is fixed when the close is requested, not when the animation ends.
+
 > **Note:** For navigation, you don't need this — menus already auto-close when the route changes (see the note above). `closeAllOverlayMenus()` exists for the cases where no route change happens.
 
 ### `OverlayMenuButton<T>`
@@ -222,25 +247,23 @@ A widget that wraps a child and shows an overlay menu on tap.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
+Takes the same configuration as `showOverlayMenu`, plus a tap target and selection callbacks.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
 | `child` | `Widget` | **required** | The tap target widget |
 | `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries |
 | `header` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned above the scrollable area |
 | `footer` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned below the scrollable area |
-| `position` | `MenuPosition` | `bottom` | Menu position relative to child |
-| `alignment` | `MenuAlignment` | `start` | Cross-axis alignment |
-| `offset` | `Offset` | `Offset.zero` | Additional position offset |
+| `initialValue` | `T?` | `null` | Value of the item to auto-scroll to when the menu opens |
+| `placement` | `OverlayMenuPlacement` | `const OverlayMenuPlacement()` | Where the menu sits relative to the child |
+| `barrier` | `OverlayMenuBarrier` | `const OverlayMenuBarrier()` | The area behind the menu and how it behaves |
+| `motion` | `OverlayMenuMotion` | `const OverlayMenuMotion()` | How the menu animates in and out |
+| `style` | `OverlayMenuStyle?` | `null` | Colors, sizing, item styles, scrollbar |
+| `controller` | `OverlayMenuController?` | `null` | Controller for programmatic close |
 | `onSelected` | `ValueChanged<T>?` | `null` | Callback when an item is selected |
-| `onCanceled` | `VoidCallback?` | `null` | Callback when menu is dismissed without selection |
-| `barrierDismissible` | `bool` | `true` | Whether outside tap dismisses the menu |
-| `barrierColor` | `Color?` | `null` | Backdrop color |
-| `decoration` | `BoxDecoration?` | `null` | Menu container decoration |
-| `overlayChild` | `Widget?` | `null` | Full-screen overlay above the barrier (e.g. drag-to-move area) |
-| `menuConstraints` | `BoxConstraints?` | `null` | Menu size constraints |
-| `menuWidth` | `double?` | `null` | Fixed menu width |
-| `animationDuration` | `Duration` | `150ms` | Animation duration |
-| `animationCurve` | `Curve` | `Curves.easeOutCubic` | Animation curve |
+| `onCanceled` | `VoidCallback?` | `null` | Callback when menu is closed without selection |
 | `enabled` | `bool` | `true` | Whether the button responds to taps |
-| `style` | `OverlayMenuStyle?` | `null` | Visual style options |
 
 ### `OverlayMenuEntry<T>` (sealed)
 
@@ -274,6 +297,9 @@ Base type for menu entries. Two subtypes:
 | `borderRadius` | `BorderRadius?` | Menu surface border radius (falls back to `circular(8)`) |
 | `padding` | `EdgeInsets?` | Menu container inner padding (falls back to `symmetric(vertical: 4)`) |
 | `maxHeight` | `double?` | Max menu height; scrolls when exceeded |
+| `width` | `double?` | Fixed menu width; sizes to content when null |
+| `constraints` | `BoxConstraints?` | Extra box constraints around the menu |
+| `decoration` | `BoxDecoration?` | Extra decoration around the menu surface |
 | `itemStyle` | `OverlayMenuItemStyle?` | Default item styling |
 | `headerStyle` | `OverlayMenuHeaderStyle?` | Style override for header items |
 | `footerStyle` | `OverlayMenuFooterStyle?` | Style override for footer items |
