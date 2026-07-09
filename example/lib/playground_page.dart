@@ -108,6 +108,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
         vertical: _config.menuPaddingV,
       ),
       maxHeight: _config.maxHeight > 0 ? _config.maxHeight : null,
+      width: _config.useCustomWidth ? _config.customWidth : null,
       backgroundColor: _config.backgroundColor,
       itemStyle: OverlayMenuItemStyle(
         height: _config.itemHeight,
@@ -244,8 +245,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       context: context,
       items: _items,
       initialValue: _config.selectedItem,
-      position: MenuPosition.bottom,
-      alignment: MenuAlignment.end,
+      placement: const OverlayMenuPlacement(
+        position: MenuPosition.bottom,
+        alignment: MenuAlignment.end,
+      ),
       style: _menuStyle,
     ).then((result) {
       debugPrint('menu closed with: $result');
@@ -272,36 +275,40 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       header: _header,
       footer: _footer,
       initialValue: _config.selectedItem,
-      position: _config.position,
-      alignment: _config.alignment,
-      offset: Offset(_config.offsetX, _config.offsetY),
-      barrierDismissible: _config.barrierDismissible,
-      barrierColor: _config.showBarrierColor ? Colors.black26 : null,
-      width: _config.useCustomWidth ? _config.customWidth : null,
-      animationDuration:
-          Duration(milliseconds: _config.animDuration.round()),
-      style: _menuStyle,
-      overlayChild: _config.showOverlayChild
-          ? Column(
-              children: [
-                GestureDetector(
-                  onTap: () => debugPrint('overlayChild tapped!'),
-                  child: Container(
-                    height: 40,
-                    color: Colors.blue.withValues(alpha: 0.15),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'overlayChild area',
-                      style: TextStyle(fontSize: 12, color: Colors.blue),
+      placement: OverlayMenuPlacement(
+        position: _config.position,
+        alignment: _config.alignment,
+        offset: Offset(_config.offsetX, _config.offsetY),
+      ),
+      barrier: OverlayMenuBarrier(
+        dismissible: _config.barrierDismissible,
+        color: _config.showBarrierColor ? Colors.black26 : null,
+        overlayChild: _config.showOverlayChild
+            ? Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => debugPrint('overlayChild tapped!'),
+                    child: Container(
+                      height: 40,
+                      color: Colors.blue.withValues(alpha: 0.15),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'overlayChild area',
+                        style: TextStyle(fontSize: 12, color: Colors.blue),
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: IgnorePointer(ignoring: true, child: Container()),
-                ),
-              ],
-            )
-          : null,
+                  Expanded(
+                    child: IgnorePointer(ignoring: true, child: Container()),
+                  ),
+                ],
+              )
+            : null,
+      ),
+      motion: OverlayMenuMotion(
+        duration: Duration(milliseconds: _config.animDuration.round()),
+      ),
+      style: _menuStyle,
     );
     setState(() {
       _config.lastResult = result ?? 'dismissed';
