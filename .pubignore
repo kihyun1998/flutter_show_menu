@@ -1,9 +1,11 @@
 # Repo-internal tooling and process docs — kept in git, excluded from the
-# published package so consumers don't receive agent config or ADRs.
+# published package so consumers don't receive agent config, ADRs, or CI.
 CLAUDE.md
 CONTEXT.md
 todo.md
 docs/
+tool/
+.github/
 
 # IDE module file.
 *.iml
