@@ -1,71 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import 'menu_position.dart';
 import 'menu_position_delegate.dart';
+import 'open_menu.dart';
 import 'overlay_menu_item.dart';
 import 'overlay_menu_metrics.dart';
 import 'overlay_menu_style.dart';
-
-/// Controller to programmatically close an open overlay menu.
-///
-/// Pass this to the `controller` parameter of [showOverlayMenu].
-/// Call [close] to dismiss the menu. Safe to call even if already closed.
-///
-/// ```dart
-/// final controller = OverlayMenuController();
-/// showOverlayMenu(
-///   context: context,
-///   items: [...],
-///   controller: controller,
-/// );
-///
-/// // Later, when you want to close the menu:
-/// controller.close();
-/// ```
-class OverlayMenuController {
-  VoidCallback? _onClose;
-  bool _isClosed = false;
-
-  /// Whether the menu is already closed.
-  bool get isClosed => _isClosed;
-
-  /// Closes the menu. Safe to call even if already closed.
-  void close() {
-    if (_isClosed) return;
-    _isClosed = true;
-    _onClose?.call();
-    _onClose = null;
-  }
-}
-
-/// The closers for every currently-open overlay menu.
-///
-/// Each [showOverlayMenu] call adds its closer here when the menu is inserted
-/// and removes it again the instant the menu closes — through any path
-/// (selection, barrier tap, controller, route change, or [closeAllOverlayMenus]).
-/// The set therefore always holds exactly the menus that are live.
-final Set<VoidCallback> _openMenuClosers = <VoidCallback>{};
-
-/// Closes every open overlay menu immediately, app-wide.
-///
-/// Each menu closes with a null result — exactly as it would on a route
-/// change — without playing the reverse animation. Awaiting callers receive
-/// null and `onCanceled` fires.
-///
-/// Use this for non-route moments when every menu must go but you hold no
-/// [OverlayMenuController] references: session expiry, app backgrounding,
-/// event-driven cleanup. For route changes the menus already auto-close, so
-/// this is unnecessary there.
-///
-/// Safe to call when no menus are open.
-void closeAllOverlayMenus() {
-  // Copy first: each closer removes itself from the set as it runs.
-  for (final closer in _openMenuClosers.toList()) {
-    closer();
-  }
-}
 
 /// Displays an OverlayEntry-based menu as a replacement for [showMenu].
 ///
@@ -118,69 +58,15 @@ Future<T?> showOverlayMenu<T>({
   final renderBox = context.findRenderObject() as RenderBox;
   final targetRect = renderBox.localToGlobal(Offset.zero) & renderBox.size;
   final overlay = Overlay.of(context);
-  final completer = Completer<T?>();
 
-  late OverlayEntry entry;
-  bool removed = false;
-  late final VoidCallback registryCloser;
+  final menu = OpenMenu<T>(
+    controller: controller,
+    route: ModalRoute.of<Object?>(context),
+  );
 
-  void removeEntry() {
-    if (removed) return;
-    removed = true;
-    entry.remove();
-  }
-
-  void close([T? result]) {
-    _openMenuClosers.remove(registryCloser);
-    removeEntry();
-    controller?._isClosed = true;
-    controller?._onClose = null;
-    if (!completer.isCompleted) {
-      completer.complete(result);
-    }
-  }
-
-  // Register this menu so closeAllOverlayMenus() can reach it without a
-  // controller reference. Deregistration happens inside close() above.
-  registryCloser = () => close();
-  _openMenuClosers.add(registryCloser);
-
-  // Connect controller
-  if (controller != null) {
-    controller._isClosed = false;
-    controller._onClose = () => close();
-  }
-
-  // Auto-close menu when the route is popped or a new route is pushed
-  final route = ModalRoute.of(context);
-  void onRouteStatusChanged(AnimationStatus status) {
-    if (status == AnimationStatus.reverse) {
-      close(); // Current route popped
-    }
-  }
-
-  void onSecondaryStatusChanged(AnimationStatus status) {
-    if (status == AnimationStatus.forward) {
-      close(); // New route pushed
-    }
-  }
-
-  if (route != null) {
-    route.animation?.addStatusListener(onRouteStatusChanged);
-    route.secondaryAnimation?.addStatusListener(onSecondaryStatusChanged);
-    completer.future.whenComplete(() {
-      try {
-        route.animation?.removeStatusListener(onRouteStatusChanged);
-        route.secondaryAnimation
-            ?.removeStatusListener(onSecondaryStatusChanged);
-      } catch (_) {
-        // Ignore if the route is already disposed
-      }
-    });
-  }
-
-  entry = OverlayEntry(
+  final entry = OverlayEntry(
     builder: (context) => _OverlayMenuWidget<T>(
+      menu: menu,
       targetRect: targetRect,
       items: items,
       header: header,
@@ -198,18 +84,17 @@ Future<T?> showOverlayMenu<T>({
       animationDuration: animationDuration,
       animationCurve: animationCurve,
       style: style,
-      onClose: (result) {
-        close(result);
-      },
     ),
   );
+  menu.entry = entry;
 
   overlay.insert(entry);
-  return completer.future;
+  return menu.result;
 }
 
 class _OverlayMenuWidget<T> extends StatefulWidget {
   const _OverlayMenuWidget({
+    required this.menu,
     required this.targetRect,
     required this.items,
     this.header,
@@ -219,7 +104,6 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
     required this.alignment,
     required this.offset,
     required this.barrierDismissible,
-    required this.onClose,
     this.barrierColor,
     this.decoration,
     this.overlayChild,
@@ -230,6 +114,7 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
     this.style,
   });
 
+  final OpenMenu<T> menu;
   final Rect targetRect;
   final List<OverlayMenuEntry<T>> items;
   final List<OverlayMenuEntry<T>>? header;
@@ -247,7 +132,6 @@ class _OverlayMenuWidget<T> extends StatefulWidget {
   final Duration animationDuration;
   final Curve animationCurve;
   final OverlayMenuStyle? style;
-  final ValueChanged<T?> onClose;
 
   @override
   State<_OverlayMenuWidget<T>> createState() => _OverlayMenuWidgetState<T>();
@@ -278,6 +162,10 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     _opacity = Tween<double>(begin: 0, end: 1).animate(curved);
     _scale = Tween<double>(begin: 0.9, end: 1).animate(curved);
     _controller.forward();
+
+    // Tell the menu's lifetime that an exit animation is available. Until this
+    // runs — and after dispose — an animated Close degrades to an instant one.
+    widget.menu.attachExitAnimator(_playExit);
   }
 
   void _jumpToInitialValue() {
@@ -301,23 +189,20 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   @override
   void dispose() {
+    widget.menu.detachExitAnimator();
     _scrollController?.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  bool _dismissed = false;
-
-  Future<void> _dismiss([T? result]) async {
-    if (_dismissed) return;
-    _dismissed = true;
+  Future<void> _playExit() async {
     try {
       await _controller.reverse();
     } on TickerCanceled {
-      // Entry was removed and disposed externally (controller / route pop)
-      return;
+      // An instant Close tore the menu down mid-animation and the ticker died
+      // with it. There is nothing left to animate, and the result was latched
+      // before this ever started.
     }
-    widget.onClose(result);
   }
 
   Alignment _resolveScaleAlignment() {
@@ -357,7 +242,9 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         Positioned.fill(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: widget.barrierDismissible ? () => _dismiss() : null,
+            onTap: widget.barrierDismissible
+                ? () => widget.menu.close(null, animated: true)
+                : null,
             child: ColoredBox(
               color: widget.barrierColor ?? Colors.transparent,
             ),
@@ -585,8 +472,11 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         child: InkWell(
           onTap: item.enabled
               ? () {
+                  // Request the Close first so the result is latched before
+                  // onTap can run a side effect — pushing a route, say, whose
+                  // Auto-close would otherwise land here first with null.
+                  widget.menu.close(item.value, animated: true);
                   item.onTap?.call();
-                  _dismiss(item.value);
                 }
               : null,
           mouseCursor: mouseCursor,
