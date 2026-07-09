@@ -16,7 +16,8 @@
 library;
 
 export 'src/menu_position.dart';
-export 'src/open_menu.dart' show closeAllOverlayMenus, OverlayMenuController;
+export 'src/open_menu.dart' show OverlayMenuController;
+export 'src/open_menu_registry.dart' show closeAllOverlayMenus;
 export 'src/overlay_menu.dart' show showOverlayMenu;
 export 'src/overlay_menu_barrier.dart';
 export 'src/overlay_menu_button.dart';

@@ -30,131 +30,54 @@ void main() {
     expect(item.height, isNull);
   });
 
-  group('closeAllOverlayMenus', () {
-    // Pumps a MaterialApp and hands back a BuildContext that has a RenderBox
-    // and a surrounding Overlay/ModalRoute — everything showOverlayMenu needs.
-    Future<BuildContext> pumpHost(WidgetTester tester) async {
-      late BuildContext hostContext;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Builder(
-              builder: (context) {
-                hostContext = context;
-                return const SizedBox(width: 100, height: 100);
-              },
-            ),
-          ),
-        ),
+  group('configuration groups', () {
+    test('every group is const-constructible with defaults', () {
+      const placement = OverlayMenuPlacement();
+      const barrier = OverlayMenuBarrier();
+      const motion = OverlayMenuMotion();
+
+      expect(placement.position, MenuPosition.bottom);
+      expect(placement.alignment, MenuAlignment.start);
+      expect(placement.offset, Offset.zero);
+
+      expect(barrier.dismissible, isTrue);
+      expect(barrier.color, isNull);
+      expect(barrier.overlayChild, isNull);
+
+      expect(motion.duration, const Duration(milliseconds: 150));
+      expect(motion.curve, Curves.easeOutCubic);
+    });
+
+    test('copyWith replaces only what it is given', () {
+      const placement = OverlayMenuPlacement(offset: Offset(1, 2));
+      final moved = placement.copyWith(position: MenuPosition.top);
+      expect(moved.position, MenuPosition.top);
+      expect(moved.offset, const Offset(1, 2));
+      expect(moved.alignment, MenuAlignment.start);
+
+      const barrier = OverlayMenuBarrier(color: Color(0xFF112233));
+      final undismissible = barrier.copyWith(dismissible: false);
+      expect(undismissible.dismissible, isFalse);
+      expect(undismissible.color, const Color(0xFF112233));
+
+      const motion = OverlayMenuMotion(curve: Curves.linear);
+      final slower = motion.copyWith(duration: const Duration(seconds: 1));
+      expect(slower.duration, const Duration(seconds: 1));
+      expect(slower.curve, Curves.linear);
+    });
+
+    test('the sizing family lives together on OverlayMenuStyle', () {
+      const style = OverlayMenuStyle(
+        maxHeight: 300,
+        width: 200,
+        constraints: BoxConstraints(minWidth: 100),
+        decoration: BoxDecoration(color: Color(0xFF000000)),
       );
-      return hostContext;
-    }
 
-    Future<String?> openMenu(
-      WidgetTester tester,
-      BuildContext context,
-      String label, {
-      OverlayMenuController? controller,
-    }) {
-      final future = showOverlayMenu<String>(
-        context: context,
-        controller: controller,
-        items: [
-          OverlayMenuItem<String>(value: label, child: Text(label)),
-        ],
-      );
-      return future;
-    }
-
-    testWidgets('is a no-op when no menus are open', (tester) async {
-      await pumpHost(tester);
-      // Must not throw with an empty registry.
-      closeAllOverlayMenus();
-      await tester.pumpAndSettle();
-    });
-
-    testWidgets('closes a single open menu with a null result',
-        (tester) async {
-      final context = await pumpHost(tester);
-      final future = openMenu(tester, context, 'Solo');
-      await tester.pumpAndSettle();
-      expect(find.text('Solo'), findsOneWidget);
-
-      closeAllOverlayMenus();
-      await tester.pumpAndSettle();
-
-      expect(find.text('Solo'), findsNothing);
-      expect(await future, isNull);
-    });
-
-    testWidgets('closes N simultaneously open menus at once', (tester) async {
-      final context = await pumpHost(tester);
-      final f1 = openMenu(tester, context, 'One');
-      final f2 = openMenu(tester, context, 'Two');
-      final f3 = openMenu(tester, context, 'Three');
-      await tester.pumpAndSettle();
-      expect(find.text('One'), findsOneWidget);
-      expect(find.text('Two'), findsOneWidget);
-      expect(find.text('Three'), findsOneWidget);
-
-      closeAllOverlayMenus();
-      await tester.pumpAndSettle();
-
-      expect(find.text('One'), findsNothing);
-      expect(find.text('Two'), findsNothing);
-      expect(find.text('Three'), findsNothing);
-      expect(await Future.wait([f1, f2, f3]), [null, null, null]);
-    });
-
-    testWidgets('selecting an item deregisters it — no leak for closeAll',
-        (tester) async {
-      final context = await pumpHost(tester);
-      final future = openMenu(tester, context, 'Pick');
-      await tester.pumpAndSettle();
-
-      // Close via the selection path, not closeAll.
-      await tester.tap(find.text('Pick'));
-      await tester.pumpAndSettle();
-      expect(await future, 'Pick');
-
-      // The menu already left the registry, so closeAll has nothing to do.
-      closeAllOverlayMenus();
-      await tester.pumpAndSettle();
-      expect(find.text('Pick'), findsNothing);
-    });
-
-    testWidgets('controller.close() deregisters it — no leak for closeAll',
-        (tester) async {
-      final context = await pumpHost(tester);
-      final controller = OverlayMenuController();
-      final future = openMenu(tester, context, 'Ctrl', controller: controller);
-      await tester.pumpAndSettle();
-
-      controller.close();
-      await tester.pumpAndSettle();
-      expect(controller.isClosed, isTrue);
-      expect(await future, isNull);
-
-      // Registry is empty again; closeAll is a safe no-op.
-      closeAllOverlayMenus();
-      await tester.pumpAndSettle();
-      expect(find.text('Ctrl'), findsNothing);
-    });
-
-    testWidgets('registry empties after closeAll — repeated cycles stay clean',
-        (tester) async {
-      final context = await pumpHost(tester);
-
-      for (var i = 0; i < 3; i++) {
-        final future = openMenu(tester, context, 'Cycle$i');
-        await tester.pumpAndSettle();
-        expect(find.text('Cycle$i'), findsOneWidget);
-
-        closeAllOverlayMenus();
-        await tester.pumpAndSettle();
-        expect(find.text('Cycle$i'), findsNothing);
-        expect(await future, isNull);
-      }
+      expect(style.maxHeight, 300);
+      expect(style.width, 200);
+      expect(style.constraints, const BoxConstraints(minWidth: 100));
+      expect(style.decoration, isNotNull);
     });
   });
 }

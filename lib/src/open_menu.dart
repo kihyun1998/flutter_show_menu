@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import 'open_menu_registry.dart';
+
 /// Where an Open Menu is in its life.
 ///
 /// One variable, not a flag per collaborator. `closing` means the Close has
@@ -12,32 +14,6 @@ enum _Phase { open, closing, closed }
 /// Plays the menu's exit animation and completes when it has finished — or
 /// when its ticker was cancelled because the menu was torn down first.
 typedef ExitAnimator = Future<void> Function();
-
-/// The Open Menus currently live, app-wide.
-///
-/// A menu joins on construction and leaves when it tears down, through every
-/// Close path there is. See `docs/adr/0001-global-close-all-registry.md`.
-final Set<OpenMenu<Object?>> _openMenus = <OpenMenu<Object?>>{};
-
-/// Closes every open overlay menu immediately, app-wide.
-///
-/// Each menu closes with a null result — exactly as it would on a route
-/// change — without playing the reverse animation. A menu already part-way
-/// through an exit animation is torn down at once; a result it had already
-/// latched (a selection, say) is still delivered.
-///
-/// Use this for non-route moments when every menu must go but you hold no
-/// [OverlayMenuController] references: session expiry, app backgrounding,
-/// event-driven cleanup. For route changes the menus already auto-close, so
-/// this is unnecessary there.
-///
-/// Safe to call when no menus are open.
-void closeAllOverlayMenus() {
-  // Copy first: tearing a menu down removes it from the set.
-  for (final menu in _openMenus.toList()) {
-    menu.close(null, animated: false);
-  }
-}
 
 /// Controller to programmatically close an open overlay menu.
 ///
@@ -109,7 +85,7 @@ class OpenMenu<T> {
     controller?._bind(this);
     _route?.animation?.addStatusListener(_onRouteStatus);
     _route?.secondaryAnimation?.addStatusListener(_onSecondaryRouteStatus);
-    _openMenus.add(this);
+    OpenMenuRegistry.instance.register(this);
   }
 
   final OverlayMenuController? _controller;
@@ -163,7 +139,7 @@ class OpenMenu<T> {
     if (_phase == _Phase.closed) return;
     _phase = _Phase.closed;
 
-    _openMenus.remove(this);
+    OpenMenuRegistry.instance.deregister(this);
     _stopListeningToRoute();
     _exitAnimator = null;
     _entry?.remove();
