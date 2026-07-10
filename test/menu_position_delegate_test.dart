@@ -51,7 +51,8 @@ void main() {
 
     test('top anchors above the target', () {
       expect(
-        _positionFor(position: MenuPosition.top, alignment: MenuAlignment.start),
+        _positionFor(
+            position: MenuPosition.top, alignment: MenuAlignment.start),
         const Offset(300, 170), // target.top - 80
       );
       expect(
@@ -273,7 +274,8 @@ void main() {
         delegate(alignment: MenuAlignment.end).shouldRelayout(old),
         isTrue,
       );
-      expect(delegate(screen: const Size(400, 300)).shouldRelayout(old), isTrue);
+      expect(
+          delegate(screen: const Size(400, 300)).shouldRelayout(old), isTrue);
       expect(delegate(offset: const Offset(1, 1)).shouldRelayout(old), isTrue);
       expect(
         delegate(screenPadding: const EdgeInsets.all(1)).shouldRelayout(old),

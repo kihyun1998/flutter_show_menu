@@ -122,9 +122,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final inks = tester.widgetList<Ink>(find.byType(Ink)).toList();
-      final colors = inks
-          .map((ink) => (ink.decoration as BoxDecoration?)?.color)
-          .toList();
+      final colors =
+          inks.map((ink) => (ink.decoration as BoxDecoration?)?.color).toList();
 
       expect(colors, [null, const Color(0xFF00FF00)]);
     });

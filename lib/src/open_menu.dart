@@ -163,8 +163,7 @@ class OpenMenu<T> {
   void _stopListeningToRoute() {
     try {
       _route?.animation?.removeStatusListener(_onRouteStatus);
-      _route?.secondaryAnimation
-          ?.removeStatusListener(_onSecondaryRouteStatus);
+      _route?.secondaryAnimation?.removeStatusListener(_onSecondaryRouteStatus);
     } catch (_) {
       // The route is already disposed; its listeners went with it.
     }
