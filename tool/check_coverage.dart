@@ -1,12 +1,22 @@
 // Fails when total line coverage in an lcov report falls below a floor.
 //
-// The floor lives here and in the workflow that calls this script — nowhere
-// else. Run it the same way CI does:
+// The floor lives in the workflow that calls this script and nowhere else. Run
+// it the same way CI does:
 //
 //   flutter test --coverage
-//   dart run tool/check_coverage.dart --min 80
+//   dart run tool/check_coverage.dart --min 100 --report
 //
 // Pass --report to print per-file coverage regardless of the outcome.
+//
+// lib/ is fully covered and the floor is 100, so any uncovered line fails the
+// build. For a line that genuinely cannot be exercised, wrap it:
+//
+//   // coverage:ignore-start
+//   ...
+//   // coverage:ignore-end
+//
+// Those lines leave the report entirely rather than counting as uncovered, so
+// the exception is an explicit edit a reviewer sees.
 import 'dart:io';
 
 void main(List<String> args) {

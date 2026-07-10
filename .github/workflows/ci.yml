@@ -14,8 +14,11 @@ env:
   # Pinned rather than floating on `stable`, so a Flutter release cannot turn a
   # green branch red without a commit here.
   FLUTTER_VERSION: 3.41.9
-  # The floor lives here and nowhere else. Raise it as coverage climbs.
-  COVERAGE_FLOOR: 80
+  # The floor lives here and nowhere else. lib/ is fully covered, so anything
+  # less is a regression. A line that genuinely cannot be exercised is excluded
+  # with a `// coverage:ignore-start` / `ignore-end` pair, which drops it from
+  # the denominator and leaves the exception visible in the diff.
+  COVERAGE_FLOOR: 100
 
 jobs:
   verify:
