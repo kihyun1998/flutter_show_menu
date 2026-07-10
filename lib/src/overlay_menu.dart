@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'menu_position.dart';
 import 'menu_position_delegate.dart';
+import 'menu_scale_origin.dart';
 import 'open_menu.dart';
 import 'overlay_menu_barrier.dart';
 import 'overlay_menu_entry_view.dart';
@@ -140,6 +140,10 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   late final Animation<double> _scale;
   ScrollController? _scrollController;
 
+  /// Filled in during layout, read during paint. The menu cannot know at build
+  /// time whether it will be flipped: that needs its own size.
+  final MenuScaleOrigin _scaleOrigin = MenuScaleOrigin();
+
   @override
   void initState() {
     super.initState();
@@ -205,31 +209,6 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   /// performed is the one that counts.
   Future<void> _playExit() => _controller.reverse();
 
-  Alignment _resolveScaleAlignment() {
-    return switch (widget.placement.position) {
-      MenuPosition.bottom => switch (widget.placement.alignment) {
-          MenuAlignment.start => Alignment.topLeft,
-          MenuAlignment.center => Alignment.topCenter,
-          MenuAlignment.end => Alignment.topRight,
-        },
-      MenuPosition.top => switch (widget.placement.alignment) {
-          MenuAlignment.start => Alignment.bottomLeft,
-          MenuAlignment.center => Alignment.bottomCenter,
-          MenuAlignment.end => Alignment.bottomRight,
-        },
-      MenuPosition.left => switch (widget.placement.alignment) {
-          MenuAlignment.start => Alignment.topRight,
-          MenuAlignment.center => Alignment.centerRight,
-          MenuAlignment.end => Alignment.bottomRight,
-        },
-      MenuPosition.right => switch (widget.placement.alignment) {
-          MenuAlignment.start => Alignment.topLeft,
-          MenuAlignment.center => Alignment.centerLeft,
-          MenuAlignment.end => Alignment.bottomLeft,
-        },
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -263,13 +242,14 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
             alignment: widget.placement.alignment,
             screenSize: screenSize,
             offset: widget.placement.offset,
+            scaleOrigin: _scaleOrigin,
             screenPadding: screenPadding,
           ),
           child: FadeTransition(
             opacity: _opacity,
-            child: ScaleTransition(
+            child: MenuScaleTransition(
               scale: _scale,
-              alignment: _resolveScaleAlignment(),
+              origin: _scaleOrigin,
               child: _buildMenu(context),
             ),
           ),
