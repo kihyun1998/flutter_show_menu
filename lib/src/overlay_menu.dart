@@ -196,15 +196,14 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     super.dispose();
   }
 
-  Future<void> _playExit() async {
-    try {
-      await _controller.reverse();
-    } on TickerCanceled {
-      // An instant Close tore the menu down mid-animation and the ticker died
-      // with it. There is nothing left to animate, and the result was latched
-      // before this ever started.
-    }
-  }
+  /// Plays the exit animation. Completes only when it finishes.
+  ///
+  /// An instant Close tears the menu down mid-animation, disposing this ticker.
+  /// The returned future then never completes and never errors: TickerFuture
+  /// delivers TickerCanceled to `orCancel`, not to the future awaited here. So
+  /// there is nothing to catch, and the teardown that the instant Close already
+  /// performed is the one that counts.
+  Future<void> _playExit() => _controller.reverse();
 
   Alignment _resolveScaleAlignment() {
     return switch (widget.placement.position) {
