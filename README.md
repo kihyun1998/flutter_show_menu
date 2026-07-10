@@ -160,7 +160,7 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `context` | `BuildContext` | **required** | BuildContext of the target widget |
+| `context` | `BuildContext` | **required** | BuildContext of the target widget. Must be mounted and have a `RenderBox` — the menu is anchored to its box |
 | `items` | `List<OverlayMenuEntry<T>>` | **required** | List of menu entries (items and dividers) |
 | `header` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned above the scrollable area |
 | `footer` | `List<OverlayMenuEntry<T>>?` | `null` | Fixed entries pinned below the scrollable area |
@@ -171,7 +171,13 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `style` | `OverlayMenuStyle?` | `null` | Colors, sizing, item styles, scrollbar |
 | `controller` | `OverlayMenuController?` | `null` | Controller for programmatic close |
 
-**Returns** `Future<T?>` — the selected item's value, or `null` if dismissed.
+**Returns** `Future<T?>` — the selected item's value, or `null` if dismissed. The value is
+fixed the moment the close is requested, so an item whose `onTap` navigates still returns
+its selection.
+
+**Throws** a `FlutterError` when `context` is unmounted, or when its render object is not a
+`RenderBox` — a context taken from above a sliver, for instance. Wrap the anchor in a
+`Builder` that sits below any sliver and pass that `Builder`'s context.
 
 ### Configuration groups
 
@@ -198,7 +204,14 @@ When the menu overflows the screen edge, it automatically **flips** to the oppos
 | `duration` | `Duration` | `150ms` | Duration of the enter and exit animation |
 | `curve` | `Curve` | `Curves.easeOutCubic` | Curve of the enter and exit animation |
 
-Each group is const-constructible with defaults and has a `copyWith`.
+Every configuration class — the three above, `OverlayMenuStyle`, and its nested
+`OverlayMenuItemStyle`, `OverlayMenuDividerStyle`, and `OverlayMenuScrollbarStyle` — is
+const-constructible with defaults and provides `copyWith`, `==`, and `hashCode`. Equality
+composes, so two styles differing only in a nested field compare unequal.
+
+Two fields compare by identity, because their own types do: `OverlayMenuMotion.curve`
+(`Curve` defines no `==`) and `OverlayMenuBarrier.overlayChild` (`Widget` compares by
+identity).
 
 ### `OverlayMenuController`
 
