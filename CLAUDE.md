@@ -22,6 +22,10 @@ Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agent
 
 **역방향도 신호다: 같은 우회가 두 군데 이상에서 독립적으로 나타나면, 그건 공개 API 의 기본값이 함정이라는 증거다.** 사람들이 올바른 옵션을 발견한 게 아니라 버그를 발견하고 돌아간 것이다. 옵션을 하나 더 얹어 도망치지 말고 기본값을 의심하라.
 
+**그러나 반대 병도 있다 — "근본 층에서 고쳐라" 는 "전부 상류로 밀어라" 가 아니다.** 물을 것은 *어느 층이 상류인가* 가 아니라 **누구의 불변식이 깨졌는가** 다. 상류가 이상해 보여도 그게 상류의 *의도한 계약*이면 근본 층은 이쪽이다. 실증(#8): unmount 된 context 를 넘기면 Flutter 가 `Cannot get renderObject of inactive element.` 를 던지지만 그건 `assert` 안이라 release 에선 발동하지 않는다 — SDK 의 결함처럼 보인다. 그러나 깨진 불변식은 이쪽 것이었다. *anchor context 는 `RenderBox` 를 가진다* 는 계약을 `showOverlayMenu` 가 명시하지도 검사하지도 않은 채 무조건 캐스트했다. 고칠 자리는 여기였고, 여기서 `FlutterError` 가드로 고쳤다. **계약을 결함으로 오진하면 우회를 없애는 대신 계약을 없앤다.**
+
+**크로스 repo 인용에는 repo 접두사를 붙인다.** 맨 `#88` 은 GitHub 에서 *이* repo 의 88 번으로 링크된다. 남의 트래커를 가리킬 땐 `just_tooltip#88` 로 쓴다.
+
 이 패키지에는 아직 소비처가 없다 — 로컬 형제 repo 93 개 중 0 개, pub.dev dependents 0 개(2026-07-10 확인). 소비처가 생기면 이 원칙에 두 단계가 붙는다: 발행 전 `pubspec_overrides.yaml` 로 하류 스위트 실검증, 발행 후 하류가 들고 있는 우회 제거. 없는 동안은 이 flow 에 그 단계가 없다 — *생략한 게 아니라 대상이 없다.*
 
 ## 작업 flow
