@@ -16,6 +16,7 @@ tool/
 # example/ alike (root build/test_cache, example/build, etc.).
 build/
 .dart_tool/
+coverage/
 
 # Generated platform runners — only example/lib is needed for the pub.dev example.
 example/android/
