@@ -22,6 +22,7 @@ All groups are const-constructible with defaults, so `showOverlayMenu(context: c
 - **fix**: `closeAllOverlayMenus()` called during a menu's exit animation overwrote the selected value with `null`. It now tears the menu down immediately, as documented, while still delivering the value the user chose.
 - **fix**: Reusing one `OverlayMenuController` across two menus silently rebound it. Rebinding is now explicit and closes only the menu it is bound to.
 - **fix**: `initialValue` centred its item against `maxHeight` rather than against the scroll viewport, which is smaller — the menu's padding and any header or footer sit outside it. The entry was pushed down by half the difference: 4px with default padding, 52px with a 48px header and footer. It now centres against the real viewport.
+- **fix**: A menu flipped to the opposite side of its target — because it would have overrun the screen — still scaled open from the corner it would have used unflipped. It appeared to grow *into* the widget it was anchored to rather than out of it, by 10% of its height: 5.6px for a small menu, 30px for a 300px one. The scale origin now follows the side the menu actually landed on. See `docs/adr/0004-resolve-the-scale-origin-during-layout.md`.
 
 ### Changed
 
