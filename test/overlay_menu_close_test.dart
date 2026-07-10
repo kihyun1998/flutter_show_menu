@@ -320,7 +320,8 @@ void main() {
   });
 
   group('cleanup', () {
-    testWidgets('the exit animation still runs when the menu outlives a rebuild',
+    testWidgets(
+        'the exit animation still runs when the menu outlives a rebuild',
         (tester) async {
       final host = await _pumpHost(tester);
 

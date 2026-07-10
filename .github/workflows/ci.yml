@@ -35,6 +35,11 @@ jobs:
       - name: Report toolchain
         run: flutter --version
 
+      # Before the slower steps: a formatting slip should fail in seconds, not
+      # after a full test run. Needs no resolved dependencies, only a parser.
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
       - name: Resolve dependencies
         run: flutter pub get
 

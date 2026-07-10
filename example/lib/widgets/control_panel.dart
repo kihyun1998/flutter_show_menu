@@ -220,8 +220,7 @@ class ControlPanel extends StatelessWidget {
             ColorPickerRow(
               label: 'Background',
               current: config.itemBackgroundColor,
-              onChanged: (c) =>
-                  _update(() => config.itemBackgroundColor = c),
+              onChanged: (c) => _update(() => config.itemBackgroundColor = c),
             ),
             const SizedBox(height: 8),
             ColorPickerRow(
@@ -287,8 +286,7 @@ class ControlPanel extends StatelessWidget {
                 value: config.dividerEndIndent,
                 min: 0,
                 max: 32,
-                onChanged: (v) =>
-                    _update(() => config.dividerEndIndent = v),
+                onChanged: (v) => _update(() => config.dividerEndIndent = v),
               ),
             ],
           ],
@@ -314,8 +312,7 @@ class ControlPanel extends StatelessWidget {
                 value: config.scrollbarThickness,
                 min: 2,
                 max: 12,
-                onChanged: (v) =>
-                    _update(() => config.scrollbarThickness = v),
+                onChanged: (v) => _update(() => config.scrollbarThickness = v),
                 divisions: 10,
               ),
               SliderRow(
@@ -323,8 +320,7 @@ class ControlPanel extends StatelessWidget {
                 value: config.scrollbarRadius,
                 min: 0,
                 max: 12,
-                onChanged: (v) =>
-                    _update(() => config.scrollbarRadius = v),
+                onChanged: (v) => _update(() => config.scrollbarRadius = v),
               ),
               SwitchListTile(
                 title: const Text('Always Visible'),
@@ -365,22 +361,19 @@ class ControlPanel extends StatelessWidget {
                 value: config.headerBorderRadius,
                 min: 0,
                 max: 24,
-                onChanged: (v) =>
-                    _update(() => config.headerBorderRadius = v),
+                onChanged: (v) => _update(() => config.headerBorderRadius = v),
               ),
               const SizedBox(height: 8),
               ColorPickerRow(
                 label: 'Hover',
                 current: config.headerHoverColor,
-                onChanged: (c) =>
-                    _update(() => config.headerHoverColor = c),
+                onChanged: (c) => _update(() => config.headerHoverColor = c),
               ),
               const SizedBox(height: 8),
               ColorPickerRow(
                 label: 'Splash',
                 current: config.headerSplashColor,
-                onChanged: (c) =>
-                    _update(() => config.headerSplashColor = c),
+                onChanged: (c) => _update(() => config.headerSplashColor = c),
               ),
             ],
           ],
@@ -414,22 +407,19 @@ class ControlPanel extends StatelessWidget {
                 value: config.footerBorderRadius,
                 min: 0,
                 max: 24,
-                onChanged: (v) =>
-                    _update(() => config.footerBorderRadius = v),
+                onChanged: (v) => _update(() => config.footerBorderRadius = v),
               ),
               const SizedBox(height: 8),
               ColorPickerRow(
                 label: 'Hover',
                 current: config.footerHoverColor,
-                onChanged: (c) =>
-                    _update(() => config.footerHoverColor = c),
+                onChanged: (c) => _update(() => config.footerHoverColor = c),
               ),
               const SizedBox(height: 8),
               ColorPickerRow(
                 label: 'Splash',
                 current: config.footerSplashColor,
-                onChanged: (c) =>
-                    _update(() => config.footerSplashColor = c),
+                onChanged: (c) => _update(() => config.footerSplashColor = c),
               ),
             ],
           ],
@@ -466,24 +456,21 @@ class ControlPanel extends StatelessWidget {
               dense: true,
               value: config.barrierDismissible,
               contentPadding: EdgeInsets.zero,
-              onChanged: (v) =>
-                  _update(() => config.barrierDismissible = v),
+              onChanged: (v) => _update(() => config.barrierDismissible = v),
             ),
             SwitchListTile(
               title: const Text('Barrier Color'),
               dense: true,
               value: config.showBarrierColor,
               contentPadding: EdgeInsets.zero,
-              onChanged: (v) =>
-                  _update(() => config.showBarrierColor = v),
+              onChanged: (v) => _update(() => config.showBarrierColor = v),
             ),
             SwitchListTile(
               title: const Text('Overlay Child'),
               dense: true,
               value: config.showOverlayChild,
               contentPadding: EdgeInsets.zero,
-              onChanged: (v) =>
-                  _update(() => config.showOverlayChild = v),
+              onChanged: (v) => _update(() => config.showOverlayChild = v),
             ),
           ],
         ),
