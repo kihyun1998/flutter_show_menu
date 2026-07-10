@@ -165,21 +165,26 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   }
 
   void _jumpToInitialValue() {
-    final target = resolveScrollOffsetToValue<T>(
-      entries: widget.items,
-      initialValue: widget.initialValue,
-      viewportHeight: widget.style!.maxHeight!,
-      itemStyle: widget.style?.itemStyle,
-      dividerStyle: widget.style?.dividerStyle,
-    );
-    if (target == null) return;
-
+    // Deferred to the first frame: only then does the scroll position know how
+    // tall the viewport really is. It is not `maxHeight` — the menu's padding
+    // and any header or footer are pinned outside the scrollable area, and
+    // centring against `maxHeight` would push the entry down by half of what
+    // they occupy.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = _scrollController;
-      if (controller != null && controller.hasClients) {
-        final max = controller.position.maxScrollExtent;
-        controller.jumpTo(target.clamp(0.0, max));
-      }
+      if (controller == null || !controller.hasClients) return;
+
+      final position = controller.position;
+      final target = resolveScrollOffsetToValue<T>(
+        entries: widget.items,
+        initialValue: widget.initialValue,
+        viewportHeight: position.viewportDimension,
+        itemStyle: widget.style?.itemStyle,
+        dividerStyle: widget.style?.dividerStyle,
+      );
+      if (target == null) return;
+
+      controller.jumpTo(target.clamp(0.0, position.maxScrollExtent));
     });
   }
 
