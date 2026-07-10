@@ -30,6 +30,18 @@ void main() {
     expect(item.height, isNull);
   });
 
+  test('OverlayMenuDivider defaults every field to null', () {
+    // Built at runtime: a const divider is evaluated at compile time, so its
+    // constructor never runs.
+    final divider = OverlayMenuDivider<String>(color: null);
+
+    expect(divider.color, isNull);
+    expect(divider.thickness, isNull);
+    expect(divider.height, isNull);
+    expect(divider.indent, isNull);
+    expect(divider.endIndent, isNull);
+  });
+
   group('configuration groups', () {
     test('every group is const-constructible with defaults', () {
       const placement = OverlayMenuPlacement();

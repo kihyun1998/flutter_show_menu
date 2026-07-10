@@ -11,8 +11,13 @@ import 'open_menu_registry.dart';
 /// playing. `closed` means the resources are gone and the result delivered.
 enum _Phase { open, closing, closed }
 
-/// Plays the menu's exit animation and completes when it has finished — or
-/// when its ticker was cancelled because the menu was torn down first.
+/// Plays the menu's exit animation, completing when it has finished.
+///
+/// It never completes if the menu is torn down first — an instant Close
+/// disposes the ticker, and a cancelled ticker leaves its future unresolved
+/// rather than erroring. The teardown that the instant Close performed is
+/// therefore the only one that runs; [OpenMenu.close] makes that safe by
+/// keeping teardown idempotent.
 typedef ExitAnimator = Future<void> Function();
 
 /// Controller to programmatically close an open overlay menu.
@@ -130,6 +135,8 @@ class OpenMenu<T> {
         if (animator == null) {
           _teardown();
         } else {
+          // Runs only when the animation finishes. If an instant Close preempts
+          // it, that Close tears down and this future never resolves.
           animator().whenComplete(_teardown);
         }
     }
