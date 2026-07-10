@@ -21,17 +21,24 @@ All groups are const-constructible with defaults, so `showOverlayMenu(context: c
 - **fix**: An item whose `onTap` pushed a route returned `null` instead of its value. The push triggered a route auto-close that completed the future before the exit animation ended. The result is now fixed when the close is requested, so a navigating item still returns its selection.
 - **fix**: `closeAllOverlayMenus()` called during a menu's exit animation overwrote the selected value with `null`. It now tears the menu down immediately, as documented, while still delivering the value the user chose.
 - **fix**: Reusing one `OverlayMenuController` across two menus silently rebound it. Rebinding is now explicit and closes only the menu it is bound to.
+- **fix**: `initialValue` centred its item against `maxHeight` rather than against the scroll viewport, which is smaller — the menu's padding and any header or footer sit outside it. The entry was pushed down by half the difference: 4px with default padding, 52px with a 48px header and footer. It now centres against the real viewport.
+
+### Changed
+
+- **change**: Passing a `context` that is unmounted, or whose render object is not a `RenderBox`, now fails with a `FlutterError` naming `showOverlayMenu` and what to pass instead. It previously threw `type 'Null' is not a subtype of type 'RenderBox'`, or — in release builds, where Flutter's own check is an assert — silently opened the menu at the position of a widget that was gone.
 
 ### Added
 
 - **feat**: `OverlayMenuButton` gains `initialValue` and `controller`, which `showOverlayMenu` had but the button had silently dropped.
-- **feat**: `OverlayMenuPlacement`, `OverlayMenuBarrier`, and `OverlayMenuMotion`, each with `copyWith`.
+- **feat**: `OverlayMenuPlacement`, `OverlayMenuBarrier`, and `OverlayMenuMotion`.
+- **feat**: Value semantics — `==`, `hashCode`, and `copyWith` — on all four configuration objects and on `OverlayMenuItemStyle`, `OverlayMenuDividerStyle`, and `OverlayMenuScrollbarStyle`. Equality composes, so two styles differing only in a nested field compare unequal. `OverlayMenuMotion.curve` and `OverlayMenuBarrier.overlayChild` compare by identity, as their own types do.
 
 ### Internal
 
 - An open menu's lifetime is now a single module. "Closed" had four representations; it has one. Every close path — selection, barrier, controller, route change, close-all — goes through it, which is what `docs/adr/0001-global-close-all-registry.md` required and only a comment enforced.
 - Entry height and the initial-value scroll offset resolve in one pure module, so the arithmetic that predicts an item's position and the widget that lays it out can no longer disagree.
-- Tests: 9 → 69. `MenuPositionDelegate` and the entry view are covered for the first time; the open-menu registry can be observed and reset between cases.
+- The exit animator no longer catches `TickerCanceled`. It was unreachable: `TickerFuture` delivers that error to `orCancel`, never to the future the animation returns.
+- Tests: 9 → 148, and `lib/` is at 100% line coverage. CI runs formatting, analysis, the suite, and a coverage floor on every pull request.
 - See `docs/adr/0002-latch-the-result-when-close-is-requested.md` and `docs/adr/0003-group-menu-configuration-by-cohesion.md`.
 
 ## 0.7.0
