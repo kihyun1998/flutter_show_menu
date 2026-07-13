@@ -1,3 +1,9 @@
+## 1.0.1
+
+### Fixed
+
+- **fix**: The declared Flutter floor was dishonest. `pubspec.yaml` allowed `flutter: ">=3.10.0"`, but the code uses `WidgetStatePropertyAll` (in `Scrollbar` theming), which is the Flutter 3.22 rename of `MaterialStatePropertyAll` and does not exist before 3.22. A user on 3.10–3.21 could resolve this package and then hit a compile error. The floor is now `>=3.22.0`, the real minimum the code requires.
+
 ## 1.0.0
 
 ### Breaking

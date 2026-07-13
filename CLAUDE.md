@@ -34,8 +34,7 @@ lives in **`CONTEXT.md`**; decisions in **`docs/adr/`**.
   defect but ours to state and check (#8).
 
 There are **no consumers yet** — theflow's downstream steps are N/A (no target),
-not skipped. There is a known dishonest `flutter` floor (see `docs/agents/theflow.md`
-Step 7).
+not skipped.
 
 ## Agent skills
 

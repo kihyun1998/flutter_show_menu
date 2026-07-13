@@ -34,7 +34,7 @@ theflow's downstream verification/migration steps are **N/A — no target**, not
 | Change type | Real source to read |
 |---|---|
 | **Layout / animation / painting** | Flutter SDK source directly. Precedents proven from source, not memory: `Ticker`/`TickerFuture` (`await controller.reverse()` **never** throws `TickerCanceled` — #9); `AlignmentGeometry` declares private abstract members so a paint-time custom alignment is **impossible** (#18, ADR-0004); `framework.dart` rebuild compares the **widget** not its config (#7); an unmounted element's `renderObject` throws only inside an `assert` (release returns stale — #8) |
-| **API introduced-in version** | `cd /d/flutter && git log -S "<sig>"` + `git tag --contains`. This repo already ships an API newer than its declared floor (Step 7) |
+| **API introduced-in version** | `cd /d/flutter && git log -S "<sig>"` + `git tag --contains`. The floor-vs-code mismatch this once hid (`WidgetStatePropertyAll` under a `>=3.10.0` floor) was proven and fixed to `>=3.22.0` this exact way (#24, Step 7) |
 | **Published state** | `curl -s https://pub.dev/api/packages/flutter_show_menu` |
 
 ## Step 2 — boundary rule
@@ -111,13 +111,16 @@ flutter test --coverage
 dart run tool/check_coverage.dart --min 100 --report
 ```
 
-- **The `flutter` environment floor is dishonest — a real defect.** `pubspec.yaml`
-  declares `flutter: ">=3.10.0"`, but `lib/src/overlay_menu.dart:359,362,366` use
-  `WidgetStatePropertyAll` — the `WidgetState*` rename landed in **Flutter 3.22**
-  (before that it was `MaterialStatePropertyAll`). A 3.10–3.21 user gets a compile
-  error. Raise the floor to the real minimum (≥ 3.22; confirm with `git log -S
-  "WidgetStatePropertyAll"` + `git tag --contains`). Nobody's CI catches a floor.
-  Track it as an issue before touching it (Step 1).
+- **A dishonest `flutter` floor is invisible to every gate — no CI catches a floor
+  (#24, fixed).** `pubspec.yaml` once declared `flutter: ">=3.10.0"` while
+  `lib/src/overlay_menu.dart:359,362,366` used `WidgetStatePropertyAll` — the
+  `WidgetState*` rename that landed in **Flutter 3.22** (before that,
+  `MaterialStatePropertyAll`), so a 3.10–3.21 user got a compile error. Raised to
+  `>=3.22.0` after proving 3.22 is the earliest containing tag from SDK source
+  (`git log -S "class WidgetStatePropertyAll"` → commit `6190c5eea1e`;
+  `git tag --contains` → first stable `3.22.0`, none in 3.10–3.21). `analyze`,
+  pub.dev, and CI all build against an *installed* SDK, never the declared floor —
+  the honesty of a floor is a human contract, checked by hand.
 - **Format runs after `pub get`** — `dart format` reads the language version from
   `package_config`; this only reproduces in a clean `git worktree`.
 - **Coverage floor is 100** — deleting `test/menu_chrome_test.dart` yields exactly
@@ -132,5 +135,5 @@ dart run tool/check_coverage.dart --min 100 --report
 
 ## War-story index
 
-The per-incident evidence (#5, #7, #8, #9, #18, and the 1.0.0 release) lives in
-[`lessons.md`](lessons.md), indexed by step.
+The per-incident evidence (#5, #7, #8, #9, #18, #24, and the 1.0.0 release) lives
+in [`lessons.md`](lessons.md), indexed by step.

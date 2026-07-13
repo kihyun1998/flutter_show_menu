@@ -86,3 +86,11 @@
 - **1.0.0 태그 (불변 포인터)**: 태그·GitHub 릴리스가 이미 원격에 있었으나 첨부 0 개였고 `dry-run`
   이 `The previous version is 0.7.0`(= pub.dev 는 1.0.0 을 모른다)을 알렸다. 1.0.1 로 도망가면
   0.7.0 과 첫 공개 릴리스 사이에 이유 없는 구멍이 남아 태그를 옮겼다.
+- **#24 (게이트가 못 잡는 정직성 — floor)**: `pubspec.yaml` 이 `flutter: ">=3.10.0"` 을 선언하는데
+  코드는 `WidgetStatePropertyAll`(3.22 의 `MaterialState*` rename)을 썼다 — 3.10–3.21 사용자는
+  해석은 되고 컴파일에서 터진다. `analyze`·pub.dev·CI 는 전부 *설치된* SDK 로 빌드하지 선언된 floor
+  로 빌드하지 않아 아무 게이트도 이걸 못 잡는다. 이슈 본문의 "3.22" 도 근거로 믿지 않고 SDK 소스에서
+  확정했다: `git log -S "class WidgetStatePropertyAll"` → 커밋 `6190c5eea1e`, `git tag --contains`
+  → 최초 stable `3.22.0`, 3.10–3.21 에는 없음(반증까지). floor 를 `>=3.22.0` 으로 올리고 정직성을
+  서술하던 표면(CLAUDE.md·theflow.md Step 1/7)을 과거형으로 뒤집었다. floor 의 정직성은 도구가
+  아니라 사람이 손으로 지키는 계약이다.
