@@ -1,5 +1,8 @@
 # flutter_show_menu
 
+[![pub package](https://img.shields.io/pub/v/flutter_show_menu.svg)](https://pub.dev/packages/flutter_show_menu)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A drop-in replacement for Flutter's built-in `showMenu` using `OverlayEntry`.
 
 Position menus relative to any widget with full control over direction, alignment, animation, and styling.
@@ -26,7 +29,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^0.7.0
+  flutter_show_menu: ^1.0.1
 ```
 
 ## Basic Usage
