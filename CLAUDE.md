@@ -14,7 +14,7 @@ to lessons.
 `flutter_show_menu` shows menus through an **`OverlayEntry`** (not a Navigator
 route) — a drop-in `showMenu` replacement that positions a menu top/bottom/left/
 right of any widget with start/center/end alignment. The full domain language
-lives in **`CONTEXT.md`**; decisions in **`docs/adr/`**.
+lives in **`GLOSSARY.md`**; decisions in **`docs/adr/`**.
 
 - **`Close` latches its result the moment it is *requested*** (ADR-0002), not when
   the exit animation ends; a second Close arriving first cannot change it. Every
@@ -47,5 +47,5 @@ Canonical label vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`,
 `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
 
 ### Domain docs
-Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See
+Single-context: one `GLOSSARY.md` + `docs/adr/` at the repo root. See
 `docs/agents/domain.md`.

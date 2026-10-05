@@ -4,7 +4,7 @@ Project-specific data for the `theflow` skill. The skill holds the portable
 *method*; this file holds the *bindings*. Per-incident evidence lives in
 [`lessons.md`](lessons.md).
 
-Identity and the domain language live in **`CONTEXT.md`** (Overlay Menu · Open
+Identity and the domain language live in **`GLOSSARY.md`** (Overlay Menu · Open
 Menu · Close · Animated/Instant Close · Auto-close · Close All · Controller ·
 Open Menu Registry). Decisions live in **`docs/adr/`** (0001 close-all registry,
 0002 latch the result when Close is requested, 0003 group config by cohesion,
@@ -93,7 +93,7 @@ theflow's downstream verification/migration steps are **N/A — no target**, not
   return being latched at Close-request time.
 - **`docs/adr/`** — an ADR's *Consequences* must be a **currently-true** sentence;
   flip it when the decision flips (#9 made a recorded "live guard" false).
-- **`CONTEXT.md` glossary** — a concept the glossary leaves undefined is filled
+- **`GLOSSARY.md` glossary** — a concept the glossary leaves undefined is filled
   arbitrarily by code: **Close** said "delivers a result" but was silent on *when*
   it is fixed — that silence was where two result-loss bugs lived (ADR-0002).
 - **`.pubignore`** — disables git-based listing when present; `coverage/` shipped
