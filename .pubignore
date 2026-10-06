@@ -1,7 +1,7 @@
 # Repo-internal tooling and process docs — kept in git, excluded from the
 # published package so consumers don't receive agent config, ADRs, or CI.
 CLAUDE.md
-CONTEXT.md
+GLOSSARY.md
 todo.md
 docs/
 tool/
