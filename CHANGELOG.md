@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Fixed
+
+- **fix**: Reusing an `OverlayMenuController` for a new menu while its previous menu was still open, or still playing its exit animation, left the new menu impossible to close through the Controller. When the old menu Closed, it marked the Controller closed even though the Controller now belonged to the new menu. A menu now marks only a Controller that is still bound to it.
+
 ### Docs
 
 - `OverlayMenuButton.onCanceled` is documented as firing on any null result, which includes selecting an item whose value is null, not only on a Close without a selection.

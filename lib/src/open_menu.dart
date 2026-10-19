@@ -59,7 +59,9 @@ class OverlayMenuController {
     _isClosed = false;
   }
 
-  void _markClosed() => _isClosed = true;
+  void _markClosed(OpenMenu<Object?> menu) {
+    if (identical(_menu, menu)) _isClosed = true;
+  }
 
   void _unbind(OpenMenu<Object?> menu) {
     if (identical(_menu, menu)) _menu = null;
@@ -119,7 +121,7 @@ class OpenMenu<T> {
       case _Phase.open:
         _phase = _Phase.closing;
         _result = result;
-        _controller?._markClosed();
+        _controller?._markClosed(this);
 
         final animator = animated ? _exitAnimator : null;
         if (animator == null) {
@@ -141,7 +143,7 @@ class OpenMenu<T> {
     _exitAnimator = null;
     _entry?.remove();
     _entry = null;
-    _controller?._markClosed();
+    _controller?._markClosed(this);
     _controller?._unbind(this);
 
     if (!_completer.isCompleted) _completer.complete(_result);

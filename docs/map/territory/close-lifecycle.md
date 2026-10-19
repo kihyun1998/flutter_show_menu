@@ -26,7 +26,8 @@ two Closes overlap.
   Animated Close is ignored. While `closed`, every Close is ignored.
 - Teardown runs once, in this order: leave the registry, stop listening to
   the route, drop the exit animator, remove the overlay entry, mark the
-  Controller closed and unbind it, then complete the result with the latched
+  Controller closed and unbind it if it is still bound to this menu (see
+  [Controller](controller.md)), then complete the result with the latched
   value.
 - When an Instant Close preempts an exit animation, the `whenComplete`
   attached to that animation never runs (see
