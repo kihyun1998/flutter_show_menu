@@ -5,6 +5,8 @@ GLOSSARY.md
 todo.md
 docs/
 tool/
+# Tests the tool/ scripts, so it cannot resolve its import once tool/ is gone.
+test/check_map_test.dart
 .github/
 
 # IDE module file.
