@@ -45,6 +45,8 @@ and [Step 7](../../agents/theflow.md#step-7--gate-matrix), not in a record.
 
 ## Blast radius
 
+- [Public surface](public-surface.md): what the barrel exports is what a
+  version number promises.
 - [Menu body layout](menu-body-layout.md): its use of
   `WidgetStatePropertyAll` is what sets the floor.
 - [CI gates](ci-gates.md): CI's pinned SDK is not the floor, so a green

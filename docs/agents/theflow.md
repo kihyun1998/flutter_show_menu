@@ -11,9 +11,9 @@ Open Menu Registry). Decisions live in **[`docs/adr/`](../adr/)**.
 ## Crate / module map
 
 Single Flutter package, **no external dependencies**. An `OverlayEntry`-based
-`showMenu` replacement. Public surface (barrel): `showOverlayMenu`,
-`OverlayMenuController`, `closeAllOverlayMenus`, `MenuPosition`, `OverlayMenu*`
-(`Button`/`Item`/`Barrier`/`Motion`/`Placement`/`Style`).
+`showMenu` replacement. The public surface (what the barrel exports, and what
+it hides) is its own territory:
+[`public-surface.md`](../map/territory/public-surface.md).
 
 What each part of `lib/src/` does, what moves when you touch it, and what decided
 it live in the **territory map**: [`docs/map/README.md`](../map/README.md). Open the
