@@ -184,6 +184,22 @@ void main() {
     expect(_check(only: ['docs/map/territory/alpha.md']), isEmpty);
   });
 
+  test('a code span in a heading keeps its text in the slug', () {
+    expect(slugsOf('## The `Close` path\n'), {'the-close-path'});
+  });
+
+  test('a backticked name off a bullet line under Code fails', () {
+    _writeGoodMap();
+    final note = File('${_repo.path}/docs/map/territory/alpha.md');
+    note.writeAsStringSync(
+      note.readAsStringSync().replaceFirst(
+            '- `lib/a.dart` — `Alpha.beta`',
+            '- `lib/a.dart` — `Alpha`,\n  `gamma`',
+          ),
+    );
+    expect(_check(), [contains('`gamma` is not on a bullet line')]);
+  });
+
   test('GitHub slugs drop punctuation and number duplicates', () {
     expect(slugsOf('## Known holes / open\n## A\n## A\n'),
         containsAll(['known-holes--open', 'a', 'a-1']));
