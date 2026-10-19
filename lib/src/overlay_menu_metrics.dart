@@ -19,8 +19,8 @@ double resolveDividerThickness(
 
 /// The vertical space [entry] occupies once its style fallbacks are resolved.
 ///
-/// The widgets that lay entries out and the arithmetic that predicts where
-/// they land both read this, so the two cannot drift.
+/// The widgets and the scroll arithmetic both read this; see
+/// `docs/map/territory/entry-metrics.md`.
 double resolveEntryHeight<T>(
   OverlayMenuEntry<T> entry, {
   OverlayMenuItemStyle? itemStyle,

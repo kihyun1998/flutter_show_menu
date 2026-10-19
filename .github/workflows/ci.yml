@@ -11,13 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Pinned rather than floating on `stable`, so a Flutter release cannot turn a
-  # green branch red without a commit here.
+  # Pinned, deliberately; see docs/map/territory/ci-gates.md.
   FLUTTER_VERSION: 3.41.9
-  # The floor lives here and nowhere else. lib/ is fully covered, so anything
-  # less is a regression. A line that genuinely cannot be exercised is excluded
-  # with a `// coverage:ignore-start` / `ignore-end` pair, which drops it from
-  # the denominator and leaves the exception visible in the diff.
+  # The floor lives here and nowhere else; see docs/map/territory/ci-gates.md.
   COVERAGE_FLOOR: 100
 
 jobs:
@@ -41,11 +37,7 @@ jobs:
       - name: Resolve dependencies
         run: flutter pub get
 
-      # Must follow `pub get`. dart format reads the package's language version
-      # from .dart_tool/package_config.json, and Dart 3.7's tall style applies
-      # only at language version 3.7+. Without it the formatter assumes the
-      # latest version and reformats the whole repo. Still ahead of the test
-      # run, so a formatting slip fails fast.
+      # Must follow `pub get`; see docs/map/territory/ci-gates.md.
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
 
@@ -61,10 +53,7 @@ jobs:
       - name: Check the territory map
         run: dart run tool/check_map.dart
 
-      # Uploaded even when an earlier step failed, so a coverage regression can
-      # be inspected rather than merely reported. Warn rather than error when
-      # the report is absent: a failing test run has no lcov to upload, and the
-      # test failure is the message worth seeing.
+      # `always()` and `warn` are deliberate; see docs/map/territory/ci-gates.md.
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4

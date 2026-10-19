@@ -17,8 +17,10 @@ two Closes overlap.
 
 ## Design model
 
-- One phase variable: `open` → `closing` (result latched, exit animation may
-  be playing) → `closed` (resources released, result delivered).
+- One phase variable, not a flag per collaborator: `open` → `closing`
+  (result latched, exit animation may be playing) → `closed` (resources
+  released, result delivered). "Closed" once had four representations
+  (`GLOSSARY.md`, "Flagged ambiguities").
 - The first Close stores the result and decides whether the exit animation
   plays. While `closing`, an Instant Close tears down at once and an
   Animated Close is ignored. While `closed`, every Close is ignored.

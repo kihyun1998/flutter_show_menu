@@ -20,7 +20,8 @@ Close the menu, and it can hold a caller widget between itself and the menu.
   `null` result. With it false, a tap on the barrier does nothing.
 - `color` paints the barrier and defaults to transparent.
 - `overlayChild` fills the screen above the barrier and below the menu. The
-  use it was added for is a drag-to-move area on desktop. It comes before
+  use it was added for is a drag-to-move area on desktop, and a drag handle
+  must not Close the menu. It comes before
   the barrier in hit-test order, so a pointer the child hits never reaches
   the barrier. A pointer the child does not hit still does.
 

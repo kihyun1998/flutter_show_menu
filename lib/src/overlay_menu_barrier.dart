@@ -33,7 +33,7 @@ class OverlayMenuBarrier {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    // Widget has no value equality, so overlayChild compares by identity.
+    // overlayChild compares by identity.
     return other is OverlayMenuBarrier &&
         other.dismissible == dismissible &&
         other.color == color &&

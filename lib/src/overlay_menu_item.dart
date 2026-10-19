@@ -51,7 +51,7 @@ class OverlayMenuDivider<T> extends OverlayMenuEntry<T> {
   final double? thickness;
 
   /// Total height occupied by the divider, including surrounding space
-  /// (null → [OverlayMenuDividerStyle.height] → [thickness]).
+  /// (null → [OverlayMenuDividerStyle.height] → the resolved thickness).
   final double? height;
 
   /// Leading indent.

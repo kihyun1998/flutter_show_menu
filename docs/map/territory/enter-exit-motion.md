@@ -20,7 +20,8 @@ and plays the same animation in reverse on an Animated Close. One
 - The forward animation starts in `initState`. In the same place the widget
   registers its exit animator with the Open Menu, and it withdraws it in
   `dispose`. While no animator is registered, an Animated Close falls back to
-  an Instant one.
+  an Instant one. [ADR-0002](../../adr/0002-latch-the-result-when-close-is-requested.md#decision)
+  says why that is correct.
 - The exit animator is `reverse()`. If an Instant Close disposes the ticker
   mid-animation, the future it returned never completes and never errors, so
   there is nothing to catch.

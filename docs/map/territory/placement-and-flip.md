@@ -31,9 +31,15 @@ Read from the source; nothing in a record says it.
   text direction.
 - Flip: only along the main axis, only once, only to the opposite side, and
   only when the requested side would overrun the safe area on that side. The
-  flipped position adds the same offset, without changing its sign.
-- Clamp: after any flip, both axes are clamped into the safe area. A menu
-  larger than the safe area is pinned to its top-left corner.
+  menu jumps sides instead of just being clamped, so as not to cover the
+  widget it is anchored to. That is the intent, not a guarantee: a menu
+  taller than the room on either side is clamped back over its anchor. The flipped position adds the same offset,
+  without changing its sign.
+- Clamp: after any flip, both axes are clamped into the safe area. That is
+  the only correction the cross axis gets, since flip never touches it. A
+  menu larger than the safe area is pinned to its top-left corner. The
+  `max()` in the clamp bounds keeps the lower limit at or below the upper
+  one; without it `num.clamp` throws an `ArgumentError`.
 - The side the menu landed on is written for [Scale origin](scale-origin.md)
   during layout, from `getPositionForChild`.
 - `shouldRelayout` compares every geometric input. It does not compare the

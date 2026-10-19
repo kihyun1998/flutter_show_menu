@@ -244,7 +244,7 @@ class OverlayMenuDividerStyle {
   final double? thickness;
 
   /// Total height occupied by the divider, including surrounding space.
-  /// Falls back to [thickness].
+  /// Falls back to the divider's resolved thickness.
   final double? height;
 
   /// Leading indent. Falls back to `0`.

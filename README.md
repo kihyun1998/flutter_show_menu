@@ -190,7 +190,7 @@ its selection.
 |-----------|------|---------|-------------|
 | `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
-| `offset` | `Offset` | `Offset.zero` | Pixel offset applied after positioning |
+| `offset` | `Offset` | `Offset.zero` | Pixel offset added on each axis; the menu is flipped and clamped to the screen afterwards |
 
 #### `OverlayMenuBarrier`
 
@@ -278,7 +278,7 @@ Takes the same configuration as `showOverlayMenu`, plus a tap target and selecti
 | `style` | `OverlayMenuStyle?` | `null` | Colors, sizing, item styles, scrollbar |
 | `controller` | `OverlayMenuController?` | `null` | Controller for programmatic close |
 | `onSelected` | `ValueChanged<T>?` | `null` | Callback when an item is selected |
-| `onCanceled` | `VoidCallback?` | `null` | Callback when menu is closed without selection |
+| `onCanceled` | `VoidCallback?` | `null` | Callback when menu closes with a null result: no selection, or an item whose value is null |
 | `enabled` | `bool` | `true` | Whether the button responds to taps |
 
 ### `OverlayMenuEntry<T>` (sealed)
@@ -301,7 +301,7 @@ Base type for menu entries. Two subtypes:
 |-----------|------|---------|-------------|
 | `color` | `Color?` | `null` | Divider color (falls back to style) |
 | `thickness` | `double?` | `null` | Divider thickness (falls back to style, then `1.0`) |
-| `height` | `double?` | `null` | Total height including surrounding space (falls back to style, then `thickness`) |
+| `height` | `double?` | `null` | Total height including surrounding space (falls back to style, then the resolved thickness) |
 | `indent` | `double?` | `null` | Leading indent |
 | `endIndent` | `double?` | `null` | Trailing indent |
 
@@ -344,7 +344,7 @@ Base type for menu entries. Two subtypes:
 |-----------|------|-------------|
 | `color` | `Color?` | Divider color (falls back to theme default) |
 | `thickness` | `double?` | Divider thickness (falls back to `1.0`) |
-| `height` | `double?` | Total height including surrounding space (falls back to `thickness`) |
+| `height` | `double?` | Total height including surrounding space (falls back to the divider's resolved thickness) |
 | `indent` | `double?` | Leading indent (falls back to `0`) |
 | `endIndent` | `double?` | Trailing indent (falls back to `0`) |
 

@@ -13,10 +13,8 @@ import 'overlay_menu_style.dart';
 
 /// The box [showOverlayMenu] anchors an Open Menu to.
 ///
-/// Checked rather than cast: the failure is a programming error, and the
-/// caller needs to be told which context is wrong. The check runs in release
-/// builds too — an unmounted context would otherwise yield a stale render
-/// object there, opening the menu at the position of a widget that is gone.
+/// Checked, not cast, and in release builds too — deliberately; see
+/// `docs/map/territory/anchor-contract.md`.
 RenderBox _anchorBoxOf(BuildContext context) {
   if (!context.mounted) {
     throw FlutterError(
@@ -140,8 +138,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   late final Animation<double> _scale;
   ScrollController? _scrollController;
 
-  /// Filled in during layout, read during paint. The menu cannot know at build
-  /// time whether it will be flipped: that needs its own size.
+  /// Filled in during layout, read during paint.
   final MenuScaleOrigin _scaleOrigin = MenuScaleOrigin();
 
   @override
@@ -162,18 +159,13 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     _opacity = Tween<double>(begin: 0, end: 1).animate(curved);
     _scale = Tween<double>(begin: 0.9, end: 1).animate(curved);
     _controller.forward();
-
-    // Tell the menu's lifetime that an exit animation is available. Until this
-    // runs — and after dispose — an animated Close degrades to an instant one.
     widget.menu.attachExitAnimator(_playExit);
   }
 
   void _jumpToInitialValue() {
-    // Deferred to the first frame: only then does the scroll position know how
-    // tall the viewport really is. It is not `maxHeight` — the menu's padding
-    // and any header or footer are pinned outside the scrollable area, and
-    // centring against `maxHeight` would push the entry down by half of what
-    // they occupy.
+    // Deferred to the first frame, and centred in the real viewport rather
+    // than `maxHeight` — deliberately; see
+    // `docs/map/territory/entry-metrics.md`.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = _scrollController;
       if (controller == null || !controller.hasClients) return;
@@ -202,11 +194,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
 
   /// Plays the exit animation. Completes only when it finishes.
   ///
-  /// An instant Close tears the menu down mid-animation, disposing this ticker.
-  /// The returned future then never completes and never errors: TickerFuture
-  /// delivers TickerCanceled to `orCancel`, not to the future awaited here. So
-  /// there is nothing to catch, and the teardown that the instant Close already
-  /// performed is the one that counts.
+  /// No `catch`, deliberately; see `docs/map/territory/enter-exit-motion.md`.
   Future<void> _playExit() => _controller.reverse();
 
   @override

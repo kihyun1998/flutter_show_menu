@@ -47,4 +47,9 @@ that menu and report whether it is already closed.
 
 ## Known holes / open
 
-**None.**
+- Teardown marks the Controller closed even when it has already been
+  rebound to a newer menu. Only the unbind is guarded by the identity
+  check. Reusing a Controller while the old menu is still animating out
+  therefore leaves `isClosed` true for the new menu, and `close()` no longer
+  reaches it. `test/overlay_menu_close_test.dart` covers reuse only after
+  the first menu has fully closed.

@@ -22,8 +22,10 @@ any of them.
   from the set. Each menu gets an Instant Close with a `null` result. If a
   menu had already latched a selection, that selection is still delivered.
 - The test seams are `length`, so a test can assert the registry is empty
-  between cases (ADR-0001 asks for that), and `reset`, which empties the set
-  without closing anything and is meant for `tearDown`.
+  between cases (ADR-0001 asks for that) instead of checking indirectly by
+  looking for widgets, and `reset`, which empties the set without closing
+  anything. `reset` is meant for `tearDown`, so one failing case cannot leak
+  a menu into the next.
 
 ## Code
 

@@ -27,7 +27,7 @@ Future<BuildContext> _pumpHost(WidgetTester tester) async {
 }
 
 void main() {
-  // These three moved onto OverlayMenuStyle in 1.0.0, rejoining maxHeight.
+  // These three live on OverlayMenuStyle, beside maxHeight.
   // See docs/adr/0003-group-menu-configuration-by-cohesion.md.
 
   testWidgets('style.decoration wraps the menu surface', (tester) async {

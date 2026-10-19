@@ -67,9 +67,8 @@ void main() {
     expect(find.text('Apple'), findsNothing);
   });
 
-  // The button used to redeclare showOverlayMenu's parameters by hand, and had
-  // silently dropped these two. Sharing the configuration makes that
-  // impossible; these pin the behaviour rather than the mere existence.
+  // What the button once dropped (ADR-0003). These pin the behaviour
+  // rather than the mere existence.
   group('parity with showOverlayMenu', () {
     testWidgets('accepts a Controller and Closes through it', (tester) async {
       final controller = OverlayMenuController();
