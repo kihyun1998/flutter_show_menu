@@ -1,3 +1,11 @@
+## Unreleased
+
+### Docs
+
+- `OverlayMenuButton.onCanceled` is documented as firing on any null result, which includes selecting an item whose value is null, not only on a Close without a selection.
+- `OverlayMenuPlacement.offset` is documented as added before the menu is flipped and clamped to the screen, not after positioning.
+- `OverlayMenuDividerStyle.height` (and `OverlayMenuDivider.height`) is documented as falling back to the divider's resolved thickness.
+
 ## 1.0.1
 
 ### Fixed

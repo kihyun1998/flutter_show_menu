@@ -2,7 +2,6 @@
 # published package so consumers don't receive agent config, ADRs, or CI.
 CLAUDE.md
 GLOSSARY.md
-todo.md
 docs/
 tool/
 # Tests the tool/ scripts, so it cannot resolve its import once tool/ is gone.
