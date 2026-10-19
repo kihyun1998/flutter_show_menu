@@ -2,7 +2,7 @@
 
 ### Fixed
 
-- **fix**: A menu that flipped to the opposite side of its target, because it would have overrun the screen, re-applied `placement.offset` without mirroring it, so a main-axis gap became an overlap of the same size (an 8px gap below became 8px over the target once flipped above). The main-axis component is now mirrored on a flip; the cross-axis component is unchanged.
+- **fix**: A menu that flipped to the opposite side of its target, because it would have overrun the screen, re-applied `placement.offset` without mirroring it, so a main-axis gap became an overlap of the same size (an 8px gap below became 8px over the target once flipped above). The main-axis component is now mirrored on a flip; the cross-axis component is unchanged. See `docs/adr/0005-a-flip-mirrors-the-main-axis-offset.md`.
 - **fix**: Reusing an `OverlayMenuController` for a new menu while its previous menu was still open, or still playing its exit animation, left the new menu impossible to close through the Controller. When the old menu Closed, it marked the Controller closed even though the Controller now belonged to the new menu. A menu now marks only a Controller that is still bound to it.
 
 ### Docs

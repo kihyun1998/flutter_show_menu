@@ -8,15 +8,15 @@ would run off the screen, and finally clamped into the safe area.
 
 ## Governing decisions
 
-**None.** The flip's offset rule was the maintainer's call on #28, chosen
-over keeping it absolute, dropping it on a flip, or redefining `offset`
-relative to the target; no record holds it.
-[ADR-0004](../../adr/0004-resolve-the-scale-origin-during-layout.md#decision)
-decides that the *scale origin* follows the side the menu landed on, not
-the flip rule itself.
-[ADR-0003](../../adr/0003-group-menu-configuration-by-cohesion.md#decision)
-groups `position`, `alignment` and `offset` into `OverlayMenuPlacement`
-without deciding the geometry.
+- [ADR-0005 — a flip mirrors the main-axis offset](../../adr/0005-a-flip-mirrors-the-main-axis-offset.md#decision)
+  decides what a flip does to the offset. Nothing decides the rest of the
+  geometry: when to flip, the clamp, or the alignment.
+- [ADR-0004](../../adr/0004-resolve-the-scale-origin-during-layout.md#decision)
+  decides that the *scale origin* follows the side the menu landed on, not
+  the flip rule itself.
+- [ADR-0003](../../adr/0003-group-menu-configuration-by-cohesion.md#decision)
+  groups `position`, `alignment` and `offset` into `OverlayMenuPlacement`
+  without deciding the geometry.
 
 ## Design model
 
