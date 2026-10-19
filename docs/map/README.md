@@ -107,7 +107,8 @@ is scored by recall.
 
 ## Notes
 
-Territories: [anchor contract](territory/anchor-contract.md) ·
+Territories: [public surface](territory/public-surface.md) ·
+[anchor contract](territory/anchor-contract.md) ·
 [placement and flip](territory/placement-and-flip.md) ·
 [scale origin](territory/scale-origin.md) ·
 [enter/exit motion](territory/enter-exit-motion.md) ·
