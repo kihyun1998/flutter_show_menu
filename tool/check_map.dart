@@ -108,7 +108,7 @@ List<MapFinding> checkMap({
 Set<String> slugsOf(String markdown) {
   final seen = <String, int>{};
   final slugs = <String>{};
-  for (final line in _lines(_blankCode(markdown))) {
+  for (final line in _lines(_blankFences(markdown))) {
     final match = RegExp(r'^#{1,6}\s+(.*?)\s*#*\s*$').firstMatch(line);
     if (match == null) continue;
     final base = match
@@ -170,7 +170,16 @@ Iterable<MapFinding> _checkCode(String root, String note, String text) sync* {
 
   final symbol = RegExp(r'^[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)*(\(\))?$');
   for (final (line, content) in section.lines) {
-    if (!content.trimLeft().startsWith('- ')) continue;
+    if (!content.trimLeft().startsWith('- ')) {
+      for (final token in RegExp(r'`([^`]+)`').allMatches(content)) {
+        yield MapFinding(
+          note,
+          line,
+          '`${token.group(1)}` is not on a bullet line',
+        );
+      }
+      continue;
+    }
     String? file;
     String? source;
     for (final token in RegExp(r'`([^`]+)`').allMatches(content)) {
@@ -290,16 +299,17 @@ Set<String> _linkTargets(String note, String text) {
 
 /// [text] with code spans and fenced blocks replaced by spaces, so offsets and
 /// line numbers survive.
-String _blankCode(String text) {
-  String blank(Match m) => m.group(0)!.replaceAll(RegExp(r'[^\r\n]'), ' ');
-  return text
-      .replaceAllMapped(
-        RegExp(r'^ {0,3}(```|~~~).*?^ {0,3}\1[^\r\n]*$',
-            multiLine: true, dotAll: true),
-        blank,
-      )
-      .replaceAllMapped(RegExp(r'(`+)[^\r\n]*?\1'), blank);
-}
+String _blankCode(String text) =>
+    _blankFences(text).replaceAllMapped(RegExp(r'(`+)[^\r\n]*?\1'), _blank);
+
+/// [text] with fenced blocks replaced by spaces.
+String _blankFences(String text) => text.replaceAllMapped(
+      RegExp(r'^ {0,3}(```|~~~).*?^ {0,3}\1[^\r\n]*$',
+          multiLine: true, dotAll: true),
+      _blank,
+    );
+
+String _blank(Match m) => m.group(0)!.replaceAll(RegExp(r'[^\r\n]'), ' ');
 
 String? _kindOf(String path) {
   final parts = path.split('/');

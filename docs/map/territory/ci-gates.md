@@ -56,6 +56,12 @@ predates the map check. The workflow's comments point here.
 
 ## Known holes / open
 
+- The map check silently skips some link forms: nested brackets in the
+  text, single-quote or parenthesised titles, angle-bracket targets, and
+  reference-style links. A broken link written in one of those forms passes.
+  A link inside a heading also leaks its target into that heading's slug.
+  No current note uses any of them.
+
 - [lessons, Step 6/7](../../agents/lessons.md#step-67--정합성--게이트)
   measured why the floor is 100 and not 99: deleting one test file leaves
   exactly 99.0%, which a floor of 99 would pass.
