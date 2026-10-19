@@ -19,9 +19,11 @@ that menu and report whether it is already closed.
 - `isClosed` turns true when a Close is *requested*, by any trigger, not
   when the exit animation ends.
 - Showing a new menu with the same Controller rebinds it and resets
-  `isClosed` to false. When a menu tears down, it unbinds the Controller only
-  if the Controller is still bound to that menu, so an old menu's teardown
-  cannot unbind a newer one.
+  `isClosed` to false. A menu marks the Controller closed (on its Close
+  request and again at teardown) and unbinds it only while the Controller
+  is still bound to that menu. So an old menu, whether still open or
+  animating out, cannot close or unbind a Controller that has moved on to a
+  newer one (#27).
 
 ## Code
 
@@ -47,9 +49,4 @@ that menu and report whether it is already closed.
 
 ## Known holes / open
 
-- Teardown marks the Controller closed even when it has already been
-  rebound to a newer menu. Only the unbind is guarded by the identity
-  check. Reusing a Controller while the old menu is still animating out
-  therefore leaves `isClosed` true for the new menu, and `close()` no longer
-  reaches it. `test/overlay_menu_close_test.dart` covers reuse only after
-  the first menu has fully closed.
+**None.**
