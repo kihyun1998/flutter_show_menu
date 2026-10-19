@@ -36,6 +36,16 @@ lives in **`GLOSSARY.md`**; decisions in **`docs/adr/`**.
 There are **no consumers yet** — theflow's downstream steps are N/A (no target),
 not skipped.
 
+## Comments
+
+A comment says what the code is. Why it is this way, what it deliberately leaves
+out, the trap and the measured value go to the territory note under `docs/map/`.
+Where none seems to hold it, search the folder and the code symbol first; only
+then start a new note, named for what the system does there, not for the file.
+History goes to the commit message. Comments written before this rule still carry
+the rest: never delete one whose content the map does not yet hold — move it
+first (`decant`).
+
 ## Agent skills
 
 ### Issue tracker
