@@ -3,9 +3,10 @@
 ## Working discipline — theflow
 
 Substantive changes (bug fix / feature / behavior change) follow the **`theflow`**
-skill — run `/theflow` at the start. This repo's bindings (module map, reference
-routing, boundary rule, proof methods, surfaces, gate matrix) live in
-**`docs/agents/theflow.md`**; the per-incident evidence (#5, #7, #8, #9, #18 …)
+skill — run `/theflow` at the start. This repo's bindings (reference routing,
+boundary rule, proof methods, surfaces, gate matrix) live in
+**`docs/agents/theflow.md`**, and the module map is the territory map under
+[`docs/map/`](docs/map/README.md); the per-incident evidence (#5, #7, #8, #9, #18 …)
 in **`docs/agents/lessons.md`**. Read both before starting; add new war-stories
 to lessons.
 

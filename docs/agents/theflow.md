@@ -6,9 +6,7 @@ Project-specific data for the `theflow` skill. The skill holds the portable
 
 Identity and the domain language live in **`GLOSSARY.md`** (Overlay Menu · Open
 Menu · Close · Animated/Instant Close · Auto-close · Close All · Controller ·
-Open Menu Registry). Decisions live in **`docs/adr/`** (0001 close-all registry,
-0002 latch the result when Close is requested, 0003 group config by cohesion,
-0004 resolve the scale origin during layout).
+Open Menu Registry). Decisions live in **[`docs/adr/`](../adr/)**.
 
 ## Crate / module map
 
@@ -17,14 +15,10 @@ Single Flutter package, **no external dependencies**. An `OverlayEntry`-based
 `OverlayMenuController`, `closeAllOverlayMenus`, `MenuPosition`, `OverlayMenu*`
 (`Button`/`Item`/`Barrier`/`Motion`/`Placement`/`Style`).
 
-| Module (`lib/src/`) | Role |
-|---|---|
-| `overlay_menu.dart` | `showOverlayMenu` — builds the overlay; **guards the anchor `context` has a `RenderBox`** (#8) |
-| `open_menu.dart` / `open_menu_registry.dart` | `OverlayMenuController` (one menu) / `closeAllOverlayMenus` + the app-wide **Open Menu Registry** (ADR-0001) |
-| `menu_position*.dart` | `MenuPosition` + the position delegate (`getPositionForChild`) |
-| `menu_scale_origin.dart` | the **custom render object** that resolves the scale origin **during layout** (ADR-0004 / #18) |
-| `overlay_menu_motion.dart` | enter/exit animation; Close latches the result at **request** time (ADR-0002) |
-| `overlay_menu_barrier` / `_button` / `_item` / `_entry_view` / `_metrics` / `_placement` / `_style` | chrome, hit target, layout metrics, styling |
+What each part of `lib/src/` does, what moves when you touch it, and what decided
+it live in the **territory map**: [`docs/map/README.md`](../map/README.md). Open the
+territory for what you are changing before Step 1, and run
+`dart run tool/check_map.dart` after editing a note.
 
 **No consumers yet** (derive at Step 10; do not store a list). Until one exists,
 theflow's downstream verification/migration steps are **N/A — no target**, not skipped.
@@ -109,11 +103,12 @@ dart format --output=none --set-exit-if-changed .
 flutter analyze --fatal-infos --fatal-warnings
 flutter test --coverage
 dart run tool/check_coverage.dart --min 100 --report
+dart run tool/check_map.dart
 ```
 
 - **A dishonest `flutter` floor is invisible to every gate — no CI catches a floor
   (#24, fixed).** `pubspec.yaml` once declared `flutter: ">=3.10.0"` while
-  `lib/src/overlay_menu.dart:359,362,366` used `WidgetStatePropertyAll` — the
+  `lib/src/overlay_menu.dart` (`_buildScrollableBody`) used `WidgetStatePropertyAll` — the
   `WidgetState*` rename that landed in **Flutter 3.22** (before that,
   `MaterialStatePropertyAll`), so a 3.10–3.21 user got a compile error. Raised to
   `>=3.22.0` after proving 3.22 is the earliest containing tag from SDK source
@@ -127,8 +122,11 @@ dart run tool/check_coverage.dart --min 100 --report
   99.0% (518/523); a floor of 99 would pass (`99.0 < 99.0` is false).
   `// coverage:ignore-*` removes from the denominator.
 - **`analyze` runs `--fatal-infos --fatal-warnings`** — an `info` reddens CI.
-- Release: `flutter pub publish --dry-run` **0 warnings**, archive excludes
-  `build/`/`.dart_tool/`/`coverage/`/`docs/`/`tool/`/`.github/`. A **tag is an
+- **The map check fails a PR whose note names a symbol that no longer exists**, so
+  a `lib/` rename that a note mentions needs the note updated in the same PR.
+- Release: `flutter pub publish --dry-run` **0 warnings**, archive excludes what
+  `.pubignore` lists (build caches, `coverage/`, `docs/`, `tool/` and its test,
+  `.github/`). A **tag is an
   immutable pointer** — 1.0.0 was tagged/released with 0 attachments while pub.dev
   still showed 0.7.0 as latest; the tag was *moved*, not abandoned for 1.0.1.
 - `flutter pub publish` is irreversible — **the agent does not run it; the user does.**

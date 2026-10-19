@@ -8,8 +8,8 @@ analyze, the test suite, the coverage floor, and the map check.
 ## Governing decisions
 
 **None.** The gates are listed in
-[theflow, Step 7](../../agents/theflow.md#step-7--gate-matrix), which
-predates the map check. The workflow's comments point here.
+[theflow, Step 7](../../agents/theflow.md#step-7--gate-matrix). The
+workflow's comments point here.
 
 ## Design model
 
