@@ -58,6 +58,9 @@ jobs:
       - name: Enforce the coverage floor
         run: dart run tool/check_coverage.dart --min ${{ env.COVERAGE_FLOOR }} --report
 
+      - name: Check the territory map
+        run: dart run tool/check_map.dart
+
       # Uploaded even when an earlier step failed, so a coverage regression can
       # be inspected rather than merely reported. Warn rather than error when
       # the report is absent: a failing test run has no lcov to upload, and the
