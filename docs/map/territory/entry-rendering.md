@@ -25,10 +25,12 @@ draw their entries through the same view.
   text in the theme's `disabledColor`.
 - An item's background is painted with `Ink` inside a transparent
   `Material`, so hover and splash draw on top of it. The selected item uses
-  `selectedBackgroundColor`. "Selected" means its value `==` the menu's
-  `initialValue`.
+  `selectedBackgroundColor`. "Selected" means the menu's `initialValue` is
+  non-null and the item's value `==` it.
 - The header and footer pass their own item style. Dividers always use the
   menu's divider style.
+- The view knows nothing about the barrier, the open/close animation or the
+  scroll view, so it can be pumped on its own.
 - Heights come from [Entry metrics](entry-metrics.md). The view does not
   compute any itself.
 

@@ -16,7 +16,8 @@ class OverlayMenuPlacement {
   /// Cross-axis alignment relative to the target.
   final MenuAlignment alignment;
 
-  /// Pixel offset applied after positioning.
+  /// Pixel offset added to the position on each axis. The menu is flipped
+  /// and clamped to the screen afterwards.
   final Offset offset;
 
   OverlayMenuPlacement copyWith({

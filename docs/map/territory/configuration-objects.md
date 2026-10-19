@@ -16,7 +16,8 @@ classes nested in it. All of them have `==`, `hashCode` and `copyWith`.
   `showOverlayMenu(context: c, items: [...])`, needs none of them.
 - Equality checks `runtimeType` first and then every field. `Curve` and
   `overlayChild` compare by identity, because their own types have no value
-  equality.
+  equality. The const curves on `Curves` are canonicalised, so they still
+  compare equal.
 - `copyWith` resolves each field as `argument ?? this.field`, so it cannot
   set a field back to `null`.
 - Calling `copyWith()` with no arguments must return an equal object. The

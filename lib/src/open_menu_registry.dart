@@ -4,11 +4,6 @@ import 'open_menu.dart';
 
 /// The Open Menus currently live, app-wide.
 ///
-/// A menu joins on construction and leaves when it tears down — through every
-/// Close path there is: selection, barrier tap, Controller, route Auto-close,
-/// and Close All. The set therefore always holds exactly the menus that are
-/// live.
-///
 /// There is one instance, by design. See
 /// `docs/adr/0001-global-close-all-registry.md`.
 class OpenMenuRegistry {
@@ -24,22 +19,18 @@ class OpenMenuRegistry {
 
   /// Closes every live menu immediately, with a null result.
   void closeAll() {
-    // Copy first: tearing a menu down removes it from the set.
+    // Copied first, deliberately; see
+    // `docs/map/territory/close-all-registry.md`.
     for (final menu in _menus.toList()) {
       menu.close(null, animated: false);
     }
   }
 
   /// How many menus are live.
-  ///
-  /// ADR-0001 requires that tests leave the registry empty between cases.
-  /// Without this they can only check it indirectly, by looking for widgets.
   @visibleForTesting
   int get length => _menus.length;
 
-  /// Forgets every menu without closing it.
-  ///
-  /// For `tearDown`, so one failing case cannot leak a menu into the next.
+  /// Forgets every menu without closing it. For `tearDown`.
   @visibleForTesting
   void reset() => _menus.clear();
 }

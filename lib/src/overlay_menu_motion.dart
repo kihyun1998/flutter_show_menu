@@ -29,8 +29,8 @@ class OverlayMenuMotion {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    // Curve has no value equality of its own, so curves compare by identity.
-    // The const curves on Curves are canonicalised and therefore compare equal.
+    // Curves compare by identity; see
+    // `docs/map/territory/configuration-objects.md`.
     return other is OverlayMenuMotion &&
         other.duration == duration &&
         other.curve == curve;

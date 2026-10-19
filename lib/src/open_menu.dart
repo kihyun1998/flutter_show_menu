@@ -6,18 +6,14 @@ import 'open_menu_registry.dart';
 
 /// Where an Open Menu is in its life.
 ///
-/// One variable, not a flag per collaborator. `closing` means the Close has
-/// been requested and the result is latched; the exit animation may still be
-/// playing. `closed` means the resources are gone and the result delivered.
+/// `closing` means the Close has been requested and the result is latched;
+/// the exit animation may still be playing. `closed` means the resources are
+/// gone and the result delivered.
 enum _Phase { open, closing, closed }
 
-/// Plays the menu's exit animation, completing when it has finished.
-///
-/// It never completes if the menu is torn down first — an instant Close
-/// disposes the ticker, and a cancelled ticker leaves its future unresolved
-/// rather than erroring. The teardown that the instant Close performed is
-/// therefore the only one that runs; [OpenMenu.close] makes that safe by
-/// keeping teardown idempotent.
+/// Plays the menu's exit animation, completing when it has finished — and
+/// never, if the menu is torn down first. See
+/// `docs/map/territory/enter-exit-motion.md`.
 typedef ExitAnimator = Future<void> Function();
 
 /// Controller to programmatically close an open overlay menu.
@@ -74,13 +70,8 @@ class OverlayMenuController {
 ///
 /// Owns the overlay entry, the awaited result, the registry membership, the
 /// [OverlayMenuController] binding, and the route listeners that drive
-/// Auto-close. Every Close path — selection, barrier tap, Controller, route
-/// change, Close All — goes through [close], which is the only place any of
-/// those five are released.
-///
-/// The result is latched when a Close is *requested*, not when the exit
-/// animation ends. An instant Close arriving mid-animation cuts the animation
-/// short but never changes the latched result.
+/// Auto-close. Every Close goes through [close]; see
+/// `docs/map/invariant/one-close-path.md`.
 class OpenMenu<T> {
   OpenMenu({
     OverlayMenuController? controller,
@@ -109,8 +100,7 @@ class OpenMenu<T> {
   set entry(OverlayEntry value) => _entry = value;
 
   /// Registered by the menu widget once it can animate. Without one, an
-  /// animated Close degrades to an instant Close — which is what should
-  /// happen when the widget is not mounted.
+  /// animated Close is instant.
   void attachExitAnimator(ExitAnimator animator) => _exitAnimator = animator;
 
   void detachExitAnimator() => _exitAnimator = null;
@@ -135,8 +125,8 @@ class OpenMenu<T> {
         if (animator == null) {
           _teardown();
         } else {
-          // Runs only when the animation finishes. If an instant Close preempts
-          // it, that Close tears down and this future never resolves.
+          // Never runs when an Instant Close preempts the animation —
+          // deliberately; see `docs/map/territory/close-lifecycle.md`.
           animator().whenComplete(_teardown);
         }
     }
@@ -172,7 +162,8 @@ class OpenMenu<T> {
       _route?.animation?.removeStatusListener(_onRouteStatus);
       _route?.secondaryAnimation?.removeStatusListener(_onSecondaryRouteStatus);
     } catch (_) {
-      // The route is already disposed; its listeners went with it.
+      // Assumes the route may already be disposed. Unproven; see
+      // `docs/map/territory/route-auto-close.md`.
     }
   }
 }

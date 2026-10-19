@@ -114,7 +114,7 @@ void main() {
   });
 
   // Layer 2: flip. The menu jumps to the opposite side of the target rather
-  // than being merely clamped, so it never covers the thing it anchors to.
+  // than being merely clamped.
   group('flip on overflow', () {
     test('bottom flips above when it would overrun the bottom edge', () {
       expect(

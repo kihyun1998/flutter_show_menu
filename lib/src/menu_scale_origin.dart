@@ -3,12 +3,10 @@ import 'package:flutter/widgets.dart';
 
 import 'menu_position.dart';
 
-/// The corner the menu scales open from, so the animation reads as the menu
-/// emerging from the widget it is anchored to.
+/// The corner the menu scales open from: the one nearest the widget it is
+/// anchored to.
 ///
 /// [position] is where the menu **ended up**, not where it was asked to go.
-/// When the delegate flips a menu to the opposite side of its target, the
-/// nearest edge flips with it.
 Alignment resolveScaleOrigin(MenuPosition position, MenuAlignment alignment) {
   return switch (position) {
     MenuPosition.bottom => switch (alignment) {
@@ -35,21 +33,16 @@ Alignment resolveScaleOrigin(MenuPosition position, MenuAlignment alignment) {
 }
 
 /// Carries the scale origin from layout, where the flip is decided, to paint,
-/// where the transform is applied.
-///
-/// A menu cannot know at build time whether it will overflow the screen and be
-/// flipped: that needs its own size, which only layout produces. Paint runs
-/// after layout in the same frame, so reading the origin there is always
-/// current — no extra rebuild and no wrong first frame.
+/// where the transform is applied. See
+/// `docs/adr/0004-resolve-the-scale-origin-during-layout.md`.
 class MenuScaleOrigin {
   Alignment value = Alignment.center;
 }
 
 /// Scales its child about [origin], read at paint time.
 ///
-/// [ScaleTransition] takes its alignment from the widget tree, which is built
-/// before layout has decided whether the menu flips. This reads the origin
-/// after layout instead, so the first painted frame is already correct.
+/// Not a [ScaleTransition], deliberately; see
+/// `docs/adr/0004-resolve-the-scale-origin-during-layout.md`.
 class MenuScaleTransition extends SingleChildRenderObjectWidget {
   const MenuScaleTransition({
     super.key,
@@ -65,15 +58,15 @@ class MenuScaleTransition extends SingleChildRenderObjectWidget {
   RenderMenuScale createRenderObject(BuildContext context) =>
       RenderMenuScale(scale: scale, origin: origin);
 
-  // No updateRenderObject. The menu's State creates its animation and its
-  // origin once and never swaps them, so a rebuild carries the same instances
-  // and there is nothing to update.
+  // No updateRenderObject, deliberately; see
+  // `docs/adr/0004-resolve-the-scale-origin-during-layout.md`.
 }
 
 class RenderMenuScale extends RenderProxyBox {
   RenderMenuScale({required this.scale, required this.origin});
 
-  /// Final by design — see [MenuScaleTransition].
+  /// Final by design — see
+  /// `docs/adr/0004-resolve-the-scale-origin-during-layout.md`.
   final Animation<double> scale;
   final MenuScaleOrigin origin;
 
@@ -110,8 +103,8 @@ class RenderMenuScale extends RenderProxyBox {
     );
   }
 
-  // localToGlobal walks this, so without it the rendered geometry would not
-  // reflect the scale — and neither would a test that measures it.
+  // Required, not optional; see
+  // `docs/adr/0004-resolve-the-scale-origin-during-layout.md`.
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
     transform.multiply(_transform);

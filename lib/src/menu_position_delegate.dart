@@ -57,8 +57,8 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
     x = flipped.dx;
     y = flipped.dy;
 
-    // The nearest edge follows the side the menu landed on, not the side it
-    // asked for. Paint reads this after layout, in the same frame.
+    // The side the menu landed on, not the one it asked for; see
+    // `docs/map/territory/scale-origin.md`.
     scaleOrigin?.value = resolveScaleOrigin(landedOn, alignment);
 
     // Final clamp to safe area

@@ -19,7 +19,9 @@ what the anchor must be.
 
 - An unmounted context, or one whose render object is not a `RenderBox`,
   throws a `FlutterError` that names `showOverlayMenu` and says what to pass
-  instead. The check runs in release builds too, because Flutter's own check
+  instead. It is checked rather than cast because the failure is a
+  programming error, and the caller needs to be told which context is
+  wrong. The check runs in release builds too, because Flutter's own check
   for an inactive element is an `assert`. Without ours, release would read a
   stale render object and open the menu where a widget used to be.
 - The anchor rectangle is read once, in global coordinates, when the menu is

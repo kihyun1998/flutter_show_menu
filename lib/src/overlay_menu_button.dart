@@ -63,7 +63,8 @@ class OverlayMenuButton<T> extends StatelessWidget {
   /// Called when an item is selected.
   final ValueChanged<T>? onSelected;
 
-  /// Called when the menu Closes without a selection.
+  /// Called when the menu Closes with a null result: without a selection, or
+  /// on an item whose value is null.
   final VoidCallback? onCanceled;
 
   /// Whether the button responds to taps.

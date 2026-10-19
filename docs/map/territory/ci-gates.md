@@ -7,23 +7,32 @@ analyze, the test suite, the coverage floor, and the map check.
 
 ## Governing decisions
 
-**None.** The gates are described in
-[theflow, Step 7](../../agents/theflow.md#step-7--gate-matrix) and in the
-workflow's own comments.
+**None.** The gates are listed in
+[theflow, Step 7](../../agents/theflow.md#step-7--gate-matrix), which
+predates the map check. The workflow's comments point here.
 
 ## Design model
 
 - Formatting is checked after `pub get`, because `dart format` reads the
-  language version from the package config.
+  package's language version from `.dart_tool/package_config.json`. Dart
+  3.7's tall style applies only at language version 3.7 and above, and
+  without the package config the formatter assumes the latest version and
+  reformats the whole repo. The check still runs before the tests, so a
+  formatting slip fails fast.
 - `analyze` runs with `--fatal-infos --fatal-warnings`, so an info-level
   lint fails the build.
-- The coverage floor is 100 and is set only in the workflow. A line wrapped
-  in `coverage:ignore` leaves the denominator entirely, so every exception
-  shows up in the diff.
+- The coverage floor is 100 and is set only in the workflow. `lib/` is
+  fully covered, so anything less is a regression. A line wrapped
+  in a `coverage:ignore-start` / `ignore-end` pair leaves the denominator
+  entirely, and the pair itself keeps the exception visible in the diff.
 - The Flutter version is pinned, so a new Flutter release cannot turn a
   green branch red.
 - The map check runs over every note under `docs/map`, listed fresh each
   time.
+- The lcov report is uploaded even when an earlier step failed, so a
+  coverage regression can be inspected rather than merely reported. A
+  missing report is a warning, not an error: a failing test run has no lcov
+  to upload, and the test failure is the message worth seeing.
 
 ## Code
 

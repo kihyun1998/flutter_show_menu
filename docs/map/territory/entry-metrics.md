@@ -24,9 +24,10 @@ offset centres the item carrying `initialValue`.
   half the viewport, plus half the item. The result is not clamped; the
   caller clamps it to the real scroll extent.
 - The jump happens after the first frame, because only then does the scroll
-  position know how tall the viewport is. See
-  [Menu body layout](menu-body-layout.md) for what makes it smaller than
-  `maxHeight`.
+  position know how tall the viewport is. It is not `maxHeight`: the menu's
+  padding and any header or footer are pinned outside the scrollable area
+  (see [Menu body layout](menu-body-layout.md)), and centring against
+  `maxHeight` would push the entry down by half of what they occupy (#5).
 - Only `items` count toward the offset. The header and footer are outside
   the scroll view.
 

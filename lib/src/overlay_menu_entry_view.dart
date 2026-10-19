@@ -5,11 +5,6 @@ import 'overlay_menu_metrics.dart';
 import 'overlay_menu_style.dart';
 
 /// Renders one [OverlayMenuEntry], whichever kind it is.
-///
-/// The menu body, its header, and its footer all draw their entries through
-/// this — the header and footer by passing their own [itemStyle]. It knows
-/// nothing about the barrier, the open/close animation, or the scroll view, so
-/// it can be pumped on its own.
 class OverlayMenuEntryView<T> extends StatelessWidget {
   const OverlayMenuEntryView({
     super.key,
@@ -75,9 +70,8 @@ class OverlayMenuEntryView<T> extends StatelessWidget {
         child: InkWell(
           onTap: item.enabled
               ? () {
-                  // Select first, then run the item's side effect. The caller
-                  // latches the result on select, so a side effect that closes
-                  // the menu — pushing a route, say — cannot overtake it.
+                  // Select first, then the item's side effect — deliberately;
+                  // see `docs/map/invariant/result-latched-at-request.md`.
                   onSelected(item.value);
                   item.onTap?.call();
                 }
