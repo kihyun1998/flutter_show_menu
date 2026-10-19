@@ -160,6 +160,56 @@ void main() {
       );
     });
 
+    // An 8px main-axis gap stays an 8px gap on the side the menu lands on, and
+    // the 5px cross-axis offset is untouched (#28).
+    test('a flip above keeps the main-axis gap', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(300, 540, 100, 50),
+          offset: const Offset(5, 8),
+        ),
+        const Offset(305, 452), // target.top - 80 - 8
+      );
+    });
+
+    test('a flip below keeps the main-axis gap', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.top,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(300, 10, 100, 50),
+          offset: const Offset(5, -8),
+        ),
+        const Offset(305, 68), // target.bottom + 8
+      );
+    });
+
+    test('a flip left keeps the main-axis gap', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.right,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(650, 250, 100, 50),
+          offset: const Offset(8, 5),
+        ),
+        const Offset(522, 255), // target.left - 120 - 8
+      );
+    });
+
+    test('a flip right keeps the main-axis gap', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.left,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(50, 250, 100, 50),
+          offset: const Offset(-8, 5),
+        ),
+        const Offset(158, 255), // target.right + 8
+      );
+    });
+
     test('screenPadding tightens the edge that triggers the flip', () {
       // bottom = 530 clears the raw screen edge but not the 34px safe area.
       expect(

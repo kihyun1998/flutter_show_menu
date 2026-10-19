@@ -190,7 +190,7 @@ its selection.
 |-----------|------|---------|-------------|
 | `position` | `MenuPosition` | `bottom` | Which side of the target the menu appears on |
 | `alignment` | `MenuAlignment` | `start` | Cross-axis alignment of the menu |
-| `offset` | `Offset` | `Offset.zero` | Pixel offset added on each axis; the menu is flipped and clamped to the screen afterwards |
+| `offset` | `Offset` | `Offset.zero` | Pixel offset added on each axis; the menu is flipped and clamped to the screen afterwards. A flip mirrors the main-axis component, so a gap stays a gap |
 
 #### `OverlayMenuBarrier`
 

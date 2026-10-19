@@ -17,7 +17,8 @@ class OverlayMenuPlacement {
   final MenuAlignment alignment;
 
   /// Pixel offset added to the position on each axis. The menu is flipped
-  /// and clamped to the screen afterwards.
+  /// and clamped to the screen afterwards. A flip to the opposite side mirrors
+  /// the main-axis component, so a gap from the target stays a gap.
   final Offset offset;
 
   OverlayMenuPlacement copyWith({
