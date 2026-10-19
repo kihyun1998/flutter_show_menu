@@ -93,7 +93,8 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
   }
 
   /// Moves the menu to the opposite side of the target when it would overrun
-  /// the screen, and reports the side it ended up on.
+  /// the screen, mirroring the main-axis offset, and reports the side it ended
+  /// up on.
   (Offset, MenuPosition) _flipIfNeeded(double x, double y, Size childSize) {
     final minX = screenPadding.left;
     final maxX = screenSize.width - screenPadding.right - childSize.width;
@@ -105,22 +106,22 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
     switch (position) {
       case MenuPosition.bottom:
         if (y > maxY) {
-          y = targetRect.top - childSize.height + offset.dy;
+          y = targetRect.top - childSize.height - offset.dy;
           landedOn = MenuPosition.top;
         }
       case MenuPosition.top:
         if (y < minY) {
-          y = targetRect.bottom + offset.dy;
+          y = targetRect.bottom - offset.dy;
           landedOn = MenuPosition.bottom;
         }
       case MenuPosition.right:
         if (x > maxX) {
-          x = targetRect.left - childSize.width + offset.dx;
+          x = targetRect.left - childSize.width - offset.dx;
           landedOn = MenuPosition.left;
         }
       case MenuPosition.left:
         if (x < minX) {
-          x = targetRect.right + offset.dx;
+          x = targetRect.right - offset.dx;
           landedOn = MenuPosition.right;
         }
     }
