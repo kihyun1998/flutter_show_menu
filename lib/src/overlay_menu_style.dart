@@ -36,6 +36,9 @@ class OverlayMenuStyle {
   final EdgeInsets? padding;
 
   /// Maximum height of the menu. When content exceeds this, the menu scrolls.
+  ///
+  /// When null, the limit is the screen minus its padding: a menu taller than
+  /// that scrolls too. The header and footer stay in place either way.
   final double? maxHeight;
 
   /// Fixed width of the menu. Sizes to its content when null.
@@ -59,7 +62,7 @@ class OverlayMenuStyle {
   /// Style for dividers.
   final OverlayMenuDividerStyle? dividerStyle;
 
-  /// Scrollbar style. Only applies when [maxHeight] triggers scrolling.
+  /// Scrollbar style for the scrolling entries.
   final OverlayMenuScrollbarStyle? scrollbarStyle;
 
   OverlayMenuStyle copyWith({

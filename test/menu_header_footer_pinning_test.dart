@@ -98,7 +98,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(SingleChildScrollView), findsNothing);
     expect(
       tester.getRect(find.text('Header')).bottom,
       lessThanOrEqualTo(tester.getRect(find.text('Item 0')).top),
@@ -107,6 +106,35 @@ void main() {
       tester.getRect(find.text('Footer')).top,
       greaterThanOrEqualTo(tester.getRect(find.text('Item 2')).bottom),
     );
+
+    closeAllOverlayMenus();
+    await tester.pumpAndSettle();
+  });
+
+  // Without maxHeight a menu taller than the screen scrolls the same way
+  // (#46): only the entries move.
+  testWidgets('without maxHeight a long menu keeps its header and footer', (
+    tester,
+  ) async {
+    final anchor = await _pumpHost(tester);
+    showOverlayMenu<String>(
+      context: anchor,
+      items: _items(30),
+      header: [_entry('Header')],
+      footer: [_entry('Footer')],
+    );
+    await tester.pumpAndSettle();
+
+    final headerBefore = tester.getRect(find.text('Header'));
+    final footerBefore = tester.getRect(find.text('Footer'));
+    expect(footerBefore.bottom, lessThanOrEqualTo(600));
+
+    await tester.drag(
+        find.byType(SingleChildScrollView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+
+    expect(tester.getRect(find.text('Header')), headerBefore);
+    expect(tester.getRect(find.text('Footer')), footerBefore);
 
     closeAllOverlayMenus();
     await tester.pumpAndSettle();

@@ -148,14 +148,12 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               endIndent: _config.dividerEndIndent,
             )
           : null,
-      scrollbarStyle: _config.maxHeight > 0
-          ? OverlayMenuScrollbarStyle(
-              thumbColor: _config.scrollbarColor,
-              thickness: _config.scrollbarThickness,
-              radius: Radius.circular(_config.scrollbarRadius),
-              thumbVisibility: _config.scrollbarAlwaysVisible,
-            )
-          : null,
+      scrollbarStyle: OverlayMenuScrollbarStyle(
+        thumbColor: _config.scrollbarColor,
+        thickness: _config.scrollbarThickness,
+        radius: Radius.circular(_config.scrollbarRadius),
+        thumbVisibility: _config.scrollbarAlwaysVisible,
+      ),
     );
   }
 

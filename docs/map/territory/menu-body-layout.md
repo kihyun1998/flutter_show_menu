@@ -7,21 +7,24 @@ surface, and when the items scroll.
 
 ## Governing decisions
 
-**None.**
+- [ADR-0008](../../adr/0008-a-menu-without-maxheight-scrolls-within-the-safe-area.md#decision)
+  makes a menu without `maxHeight` scroll within the safe area, in the same
+  layout as with it.
 
 ## Design model
 
-Read from the source; nothing in a record says it.
+Read from the source, except where a record is linked.
 
-- With no `maxHeight`, the body is a single padded column: header, items,
-  footer. Nothing scrolls.
-- With `maxHeight`, only the items scroll. The column becomes: the top
-  padding, the header, the scrolling items, the footer, the bottom padding.
-  Horizontal padding is applied to each header and footer entry and inside
-  the scroll view. The scroll viewport is therefore `maxHeight` minus the
-  vertical padding, the header and the footer. That viewport is what
+- Only the items scroll. The column is: the top padding, the header, the
+  scrolling items, the footer, the bottom padding. Horizontal padding is
+  applied to each header and footer entry and inside the scroll view. The
+  scroll viewport is therefore the menu's height limit minus the vertical
+  padding, the header and the footer. That viewport is what
   [Entry metrics](entry-metrics.md) centres `initialValue` against.
-- The scroll controller exists only when `maxHeight` is set.
+- The height limit is `maxHeight`, or the safe area the
+  [placement](placement-and-flip.md) delegate allows when `maxHeight` is
+  null (ADR-0008). A menu that fits is sized by its entries either way.
+- The scroll controller always exists.
 - When `items` is empty, dividers are dropped from the header and the
   footer.
 - The scroll view always has a `Scrollbar`. It is themed only when
@@ -62,7 +65,5 @@ Read from the source; nothing in a record says it.
 
 - No record says why header and footer dividers are dropped only when
   `items` is empty.
-- With no `maxHeight`, a body taller than the safe area overflows the
-  column: debug paints the overflow stripes, and release cuts the entries
-  off with no way to scroll to them
-  ([#46](https://github.com/kihyun1998/flutter_show_menu/issues/46)).
+- A header and footer taller than the height limit leave the scroll
+  viewport no room, and the column overflows.

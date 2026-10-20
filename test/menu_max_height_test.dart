@@ -73,15 +73,13 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('without maxHeight the menu grows and never scrolls', (
+  testWidgets('without maxHeight a menu that fits is sized by its entries', (
     tester,
   ) async {
     final anchor = await _pumpHost(tester);
     showOverlayMenu<String>(context: anchor, items: _items(10));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SingleChildScrollView), findsNothing);
-    expect(find.byType(Scrollbar), findsNothing);
     expect(
       tester.getSize(_menuSurface()).height,
       10 * _itemHeight + _verticalPadding,
@@ -89,6 +87,28 @@ void main() {
 
     closeAllOverlayMenus();
     await tester.pumpAndSettle();
+  });
+
+  // The safe area is the limit when maxHeight is not set (#46).
+  testWidgets('without maxHeight a menu taller than the screen scrolls', (
+    tester,
+  ) async {
+    final anchor = await _pumpHost(tester);
+    String? selected;
+    showOverlayMenu<String>(context: anchor, items: _items(30))
+        .then((v) => selected = v);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(tester.getSize(_menuSurface()).height, 600); // the test screen
+
+    await tester.drag(
+        find.byType(SingleChildScrollView), const Offset(0, -2000));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Item 29'));
+    await tester.pumpAndSettle();
+
+    expect(selected, 'v29');
   });
 
   testWidgets('every entry is laid out even when the menu scrolls', (
