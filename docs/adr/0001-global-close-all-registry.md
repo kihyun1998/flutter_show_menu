@@ -17,3 +17,4 @@ Introduce a public top-level `closeAllOverlayMenus()` backed by a single app-wid
 
 - The library now carries **global mutable state** (a static registry). Registration/deregistration must funnel through the single `close()` path or menus leak into the registry; tests must ensure the registry empties between cases.
 - App-global scope means `closeAllOverlayMenus()` Closes menus across every Overlay/Navigator, by design — there is no context-scoped variant.
+- *Amended by [ADR-0002](0002-latch-the-result-when-close-is-requested.md#consequences):* a menu now registers in the `OpenMenu` constructor, before its entry is inserted, and deregisters in `OpenMenu._teardown`, which every Close path reaches; a menu part-way through an Animated Close stays registered. The Decision above records the original shape.
