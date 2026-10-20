@@ -124,6 +124,9 @@ dart run tool/check_map.dart
 - **`analyze` runs `--fatal-infos --fatal-warnings`** — an `info` reddens CI.
 - **The map check fails a PR whose note names a symbol that no longer exists**, so
   a `lib/` rename that a note mentions needs the note updated in the same PR.
+  It also fails when a `docs/map/` or `docs/adr/` path named in a comment
+  under `lib/`, `test/` or `.github/` no longer exists, so renaming a note means
+  updating the comments that point at it.
 - Release: `flutter pub publish --dry-run` **0 warnings**, archive excludes what
   `.pubignore` lists (build caches, `coverage/`, `docs/`, `tool/` and its test,
   `.github/`). A **tag is an

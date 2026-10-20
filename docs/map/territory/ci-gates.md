@@ -28,7 +28,11 @@ workflow's comments point here.
 - The Flutter version is pinned, so a new Flutter release cannot turn a
   green branch red.
 - The map check runs over every note under `docs/map`, listed fresh each
-  time.
+  time. Run with no note named, as CI runs it, it also checks every
+  `docs/map/...md` and `docs/adr/...md` path that a file under `lib/`,
+  `test/` or `.github/` mentions, so renaming a note fails where a source
+  comment still points at the old name. The checker's own test is skipped,
+  because its paths are fixtures.
 - The lcov report is uploaded even when an earlier step failed, so a
   coverage regression can be inspected rather than merely reported. A
   missing report is a warning, not an error: a failing test run has no lcov
@@ -38,7 +42,7 @@ workflow's comments point here.
 
 - `.github/workflows/ci.yml`
 - `tool/check_coverage.dart` — `main`, `_parse`
-- `tool/check_map.dart` — `checkMap`, `slugsOf`, `territoryHeadings`, `invariantHeadings`
+- `tool/check_map.dart` — `checkMap`, `checkPointers`, `slugsOf`, `territoryHeadings`, `invariantHeadings`
 - `test/check_map_test.dart`
 
 ## Reference behaviour
