@@ -39,7 +39,11 @@ Read from the source; nothing in a record says it.
   being clamped, so as not to cover the widget it is anchored to. That is
   the intent, not a guarantee: a menu taller than the room on either side
   is clamped back over its anchor, by its size minus the room on the side
-  it landed on. The
+  it landed on. The menu is not shrunk to that side's room
+  ([#42](https://github.com/kihyun1998/flutter_show_menu/issues/42), the
+  maintainer's call): neither Material menu does so, and a header and
+  footer can leave no room to scroll. A caller who must not cover the
+  anchor sets a smaller `maxHeight`. The
   flipped position mirrors the main-axis offset, so a gap stays a gap and a
   deliberate overlap stays an overlap. The cross-axis offset is unchanged.
 - Clamp: after any flip, both axes are clamped into the safe area. That is

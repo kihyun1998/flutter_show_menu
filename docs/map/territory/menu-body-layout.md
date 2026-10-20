@@ -62,3 +62,7 @@ Read from the source; nothing in a record says it.
 
 - No record says why header and footer dividers are dropped only when
   `items` is empty.
+- With no `maxHeight`, a body taller than the safe area overflows the
+  column: debug paints the overflow stripes, and release cuts the entries
+  off with no way to scroll to them
+  ([#46](https://github.com/kihyun1998/flutter_show_menu/issues/46)).
