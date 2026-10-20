@@ -21,8 +21,10 @@
 //
 // Code spans and fenced blocks are ignored when looking for links.
 //
-// With no notes named, it also checks that every `docs/map/...md` and
-// `docs/adr/...md` path mentioned under lib/, test/ and .github/ exists.
+// With no notes named, it also checks the markdown outside the map (the root
+// .md files, docs/agents and docs/adr): their relative links and anchors
+// resolve, and every `docs/map/...md` and `docs/adr/...md` path mentioned
+// there or under lib/, test/ and .github/ exists.
 import 'dart:io';
 
 const territoryHeadings = [
@@ -53,7 +55,9 @@ void main(List<String> args) {
     only: only.isEmpty ? null : only,
   );
   if (only.isEmpty) {
-    findings.addAll(checkPointers(repoRoot: Directory.current.path));
+    findings
+      ..addAll(checkDocLinks(repoRoot: Directory.current.path))
+      ..addAll(checkPointers(repoRoot: Directory.current.path));
   }
 
   for (final finding in findings) {
@@ -110,29 +114,53 @@ List<MapFinding> checkMap({
   return findings;
 }
 
+/// The markdown outside the map: the root .md files, and those under
+/// docs/agents and docs/adr.
+List<String> docFiles(String repoRoot) {
+  final root = _normalize(repoRoot);
+  return [
+    ...Directory(root)
+        .listSync()
+        .whereType<File>()
+        .map((f) => _relative(root, f.path))
+        .where((f) => f.endsWith('.md')),
+    ..._filesUnder(root, const ['docs/agents', 'docs/adr'])
+        .where((f) => f.endsWith('.md')),
+  ]..sort();
+}
+
+/// Every relative link in [docFiles] that does not resolve, or whose anchor
+/// names no heading.
+List<MapFinding> checkDocLinks({required String repoRoot}) {
+  final root = _normalize(repoRoot);
+  return [
+    for (final doc in docFiles(root))
+      ..._checkLinks(root, doc, _read(root, doc)!),
+  ];
+}
+
 /// Every `docs/map/...md` or `docs/adr/...md` path mentioned in a file under
-/// [dirs] that does not exist. The paths are relative to [repoRoot], and
-/// [skip] holds files whose paths are fixtures rather than pointers.
+/// [dirs], or in [docFiles] outside a markdown link, that does not exist. The
+/// paths are relative to [repoRoot], and [skip] holds files whose paths are
+/// fixtures rather than pointers.
 List<MapFinding> checkPointers({
   required String repoRoot,
   List<String> dirs = const ['lib', 'test', '.github'],
   Set<String> skip = const {'test/check_map_test.dart'},
 }) {
   final root = _normalize(repoRoot);
-  final files = [
-    for (final dir in dirs)
-      if (Directory('$root/$dir').existsSync())
-        ...Directory('$root/$dir')
-            .listSync(recursive: true)
-            .whereType<File>()
-            .map((f) => _relative(root, f.path)),
-  ]..sort();
+  final files = {..._filesUnder(root, dirs), ...docFiles(root)}.toList()
+    ..sort();
 
   final pointer = RegExp(r'docs/(?:map|adr)/[\w./-]*?\.md(?![\w-])');
   final findings = <MapFinding>[];
   for (final file in files) {
     if (skip.contains(file)) continue;
-    final text = _read(root, file)!;
+    final raw = _read(root, file)!;
+    // A link target is the link check's to report.
+    final text = file.endsWith('.md')
+        ? raw.replaceAllMapped(RegExp(r'\]\([^)]*\)'), _blank)
+        : raw;
     for (final match in pointer.allMatches(text)) {
       final path = match.group(0)!;
       if (!File('$root/$path').existsSync()) {
@@ -144,6 +172,16 @@ List<MapFinding> checkPointers({
   }
   return findings;
 }
+
+/// Every file under [dirs] that exists, relative to [root].
+List<String> _filesUnder(String root, List<String> dirs) => [
+      for (final dir in dirs)
+        if (Directory('$root/$dir').existsSync())
+          ...Directory('$root/$dir')
+              .listSync(recursive: true)
+              .whereType<File>()
+              .map((f) => _relative(root, f.path)),
+    ];
 
 /// The GitHub anchor of every heading in [markdown], duplicates numbered.
 Set<String> slugsOf(String markdown) {

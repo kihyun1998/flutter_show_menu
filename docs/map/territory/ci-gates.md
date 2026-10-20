@@ -32,7 +32,10 @@ workflow's comments point here.
   `docs/map/...md` and `docs/adr/...md` path that a file under `lib/`,
   `test/` or `.github/` mentions, so renaming a note fails where a source
   comment still points at the old name. The checker's own test is skipped,
-  because its paths are fixtures.
+  because its paths are fixtures. The same run checks the markdown outside
+  the map (the root `.md` files, `docs/agents` and `docs/adr`): its relative
+  links and anchors must resolve, and a path written outside a link, such as
+  a CHANGELOG entry's `docs/adr/...md`, must exist.
 - The lcov report is uploaded even when an earlier step failed, so a
   coverage regression can be inspected rather than merely reported. A
   missing report is a warning, not an error: a failing test run has no lcov
@@ -42,7 +45,7 @@ workflow's comments point here.
 
 - `.github/workflows/ci.yml`
 - `tool/check_coverage.dart` — `main`, `_parse`
-- `tool/check_map.dart` — `checkMap`, `checkPointers`, `slugsOf`, `territoryHeadings`, `invariantHeadings`
+- `tool/check_map.dart` — `checkMap`, `checkPointers`, `checkDocLinks`, `docFiles`, `slugsOf`, `territoryHeadings`, `invariantHeadings`
 - `test/check_map_test.dart`
 
 ## Reference behaviour

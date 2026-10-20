@@ -126,7 +126,9 @@ dart run tool/check_map.dart
   a `lib/` rename that a note mentions needs the note updated in the same PR.
   It also fails when a `docs/map/` or `docs/adr/` path named in a comment
   under `lib/`, `test/` or `.github/` no longer exists, so renaming a note means
-  updating the comments that point at it.
+  updating the comments that point at it. The root markdown, `docs/agents` and
+  `docs/adr` are held to the same rule, links and anchors included, so renaming
+  an ADR means updating the CHANGELOG and the ADRs that name it.
 - **A new public name fails the suite until it is added to the pinned list** in
   `test/check_surface_test.dart` (ADR-0007), so making a name public is always a
   visible line in the diff.
