@@ -29,7 +29,7 @@ Position menus relative to any widget with full control over direction, alignmen
 
 ```yaml
 dependencies:
-  flutter_show_menu: ^1.0.1
+  flutter_show_menu: ^1.0.2
 ```
 
 ## Basic Usage
