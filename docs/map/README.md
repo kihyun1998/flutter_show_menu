@@ -75,8 +75,8 @@ Each pair is now one hop apart.
   All. ADR-0003 covers the configuration objects. ADR-0004 covers one
   internal mechanism. Placement, the entry model, the body layout, the
   surface fallbacks and the anchor contract have no record. Since then,
-  ADR-0005 (2026-10-20) covers one part of placement: what a flip does to
-  the offset.
+  ADR-0005 (2026-10-20) covers what a flip does to the offset, and
+  ADR-0006 (2026-10-20) covers when a menu flips.
 - `lib/src/overlay_menu.dart` holds about a quarter of `lib/` and the most
   churn, and ten territory notes name it. The map
   splits it further than the module tree does.

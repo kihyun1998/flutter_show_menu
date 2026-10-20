@@ -2,6 +2,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_show_menu/src/menu_position.dart';
 import 'package:flutter_show_menu/src/menu_position_delegate.dart';
+import 'package:flutter_show_menu/src/menu_scale_origin.dart';
 
 /// A 100x50 target sitting comfortably in the middle of an 800x600 screen,
 /// far enough from every edge that neither flip nor clamp engages.
@@ -221,6 +222,93 @@ void main() {
         ),
         const Offset(300, 400), // flipped above: target.top - 80
       );
+    });
+  });
+
+  // A menu that fits on neither side goes to the side with more room, and on
+  // a tie stays where it was asked to go; the clamp then pulls it on screen
+  // (#35).
+  group('neither side fits', () {
+    test('bottom stays below when below has more room', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.start,
+          child: const Size(120, 400), // room below 300, above 250
+        ),
+        const Offset(300, 200), // clamped to 600 - 400
+      );
+    });
+
+    test('top stays above when above has more room', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.top,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(300, 300, 100, 50),
+          child: const Size(120, 400), // room above 300, below 250
+        ),
+        const Offset(300, 0),
+      );
+    });
+
+    test('right stays right when right has more room', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.right,
+          alignment: MenuAlignment.start,
+          child: const Size(450, 80), // room right 400, left 300
+        ),
+        const Offset(350, 250), // clamped to 800 - 450
+      );
+    });
+
+    test('left stays left when left has more room', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.left,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(400, 250, 100, 50),
+          child: const Size(450, 80), // room left 400, right 300
+        ),
+        const Offset(0, 250),
+      );
+    });
+
+    test('bottom flips above when above has more room', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(300, 350, 100, 50),
+          child: const Size(120, 380), // room below 200, above 350
+        ),
+        const Offset(300, 0), // flipped to 350 - 380, clamped
+      );
+    });
+
+    test('a tie stays on the requested side', () {
+      expect(
+        _positionFor(
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.start,
+          target: const Rect.fromLTWH(300, 275, 100, 50),
+          child: const Size(120, 300), // room below 275, above 275
+        ),
+        const Offset(300, 300), // clamped to 600 - 300
+      );
+    });
+
+    test('the scale origin follows the side the menu stayed on', () {
+      final origin = MenuScaleOrigin();
+      MenuPositionDelegate(
+        targetRect: _target,
+        position: MenuPosition.bottom,
+        alignment: MenuAlignment.start,
+        screenSize: _screen,
+        scaleOrigin: origin,
+      ).getPositionForChild(_screen, const Size(120, 400));
+      expect(origin.value, Alignment.topLeft);
     });
   });
 

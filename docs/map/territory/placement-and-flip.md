@@ -9,8 +9,9 @@ would run off the screen, and finally clamped into the safe area.
 ## Governing decisions
 
 - [ADR-0005 — a flip mirrors the main-axis offset](../../adr/0005-a-flip-mirrors-the-main-axis-offset.md#decision)
-  decides what a flip does to the offset. Nothing decides the rest of the
-  geometry: when to flip, the clamp, or the alignment.
+  decides what a flip does to the offset.
+- [ADR-0006 — a menu that fits neither side goes to the roomier one](../../adr/0006-a-menu-that-fits-neither-side-goes-to-the-roomier-one.md#decision)
+  decides when to flip. Nothing decides the clamp or the alignment.
 - [ADR-0004](../../adr/0004-resolve-the-scale-origin-during-layout.md#decision)
   decides that the *scale origin* follows the side the menu landed on, not
   the flip rule itself.
@@ -32,10 +33,13 @@ Read from the source; nothing in a record says it.
   added on this axis too. `start` and `end` are physical sides and ignore
   text direction.
 - Flip: only along the main axis, only once, only to the opposite side, and
-  only when the requested side would overrun the safe area on that side. The
-  menu jumps sides instead of just being clamped, so as not to cover the
-  widget it is anchored to. That is the intent, not a guarantee: a menu
-  taller than the room on either side is clamped back over its anchor. The
+  only when the requested side would overrun the safe area on that side and
+  the opposite side has more room. Room is the distance from the target's
+  edge to the safe edge; a tie stays. The menu jumps sides instead of just
+  being clamped, so as not to cover the widget it is anchored to. That is
+  the intent, not a guarantee: a menu taller than the room on either side
+  is clamped back over its anchor, by its size minus the room on the side
+  it landed on. The
   flipped position mirrors the main-axis offset, so a gap stays a gap and a
   deliberate overlap stays an overlap. The cross-axis offset is unchanged.
 - Clamp: after any flip, both axes are clamped into the safe area. That is
@@ -61,7 +65,8 @@ Read against the SDK at 3.41.9 for #28 (not pinned):
 
 - Material `showMenu` never flips. It bakes the offset into the position and
   only clamps, so it can cover its anchor.
-- `MenuAnchor` flips only when the other side fits. It mirrors the
+- `MenuAnchor` flips only when the other side fits, and otherwise pins the
+  menu to the edge it overflowed; ADR-0006 departs from that. It mirrors the
   horizontal offset both ways, mirrors the vertical offset when flipping up,
   and drops it when flipping down.
 
@@ -83,7 +88,4 @@ Read against the SDK at 3.41.9 for #28 (not pinned):
 
 ## Known holes / open
 
-- The delegate flips even when the opposite side would overrun the screen
-  too, and then the clamp decides. Material's `MenuAnchor` flips only when
-  the other side fits.
 - Text direction is never considered for `start` and `end`.

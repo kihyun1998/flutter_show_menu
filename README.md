@@ -155,7 +155,7 @@ left menu   │     Target Widget    │   right menu
 | `right` | `center` | Right of target, vertically centered |
 | `left` | `end` | Left of target, aligned to bottom edge |
 
-When the menu overflows the screen edge, it automatically **flips** to the opposite side.
+When the menu overflows the screen edge, it automatically **flips** to the opposite side, if that side has more room. A menu that fits on neither side stays on the roomier one and is clamped to the screen.
 
 ## API Reference
 
