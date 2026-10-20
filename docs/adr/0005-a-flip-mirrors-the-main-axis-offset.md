@@ -28,3 +28,4 @@ For reference, read against the Flutter SDK at 3.41.9: `showMenu` never flips an
 - The decision to flip is unchanged. It is still made from the position with the offset applied, before mirroring.
 - `test/menu_position_delegate_test.dart` covers the four flip directions with a non-zero offset on both axes.
 - Whether to flip at all when the opposite side also overflows is a separate question. This record does not decide it.
+- *Decided by [ADR-0006](0006-a-menu-that-fits-neither-side-goes-to-the-roomier-one.md#decision):* the menu flips only when the opposite side has more room.

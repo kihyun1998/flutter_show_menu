@@ -93,34 +93,40 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
   }
 
   /// Moves the menu to the opposite side of the target when it would overrun
-  /// the screen, mirroring the main-axis offset, and reports the side it ended
-  /// up on.
+  /// the screen and the opposite side has more room, mirroring the main-axis
+  /// offset, and reports the side it ended up on.
   (Offset, MenuPosition) _flipIfNeeded(double x, double y, Size childSize) {
     final minX = screenPadding.left;
     final maxX = screenSize.width - screenPadding.right - childSize.width;
     final minY = screenPadding.top;
     final maxY = screenSize.height - screenPadding.bottom - childSize.height;
 
+    final roomAbove = targetRect.top - screenPadding.top;
+    final roomBelow =
+        screenSize.height - screenPadding.bottom - targetRect.bottom;
+    final roomLeft = targetRect.left - screenPadding.left;
+    final roomRight = screenSize.width - screenPadding.right - targetRect.right;
+
     var landedOn = position;
 
     switch (position) {
       case MenuPosition.bottom:
-        if (y > maxY) {
+        if (y > maxY && roomAbove > roomBelow) {
           y = targetRect.top - childSize.height - offset.dy;
           landedOn = MenuPosition.top;
         }
       case MenuPosition.top:
-        if (y < minY) {
+        if (y < minY && roomBelow > roomAbove) {
           y = targetRect.bottom - offset.dy;
           landedOn = MenuPosition.bottom;
         }
       case MenuPosition.right:
-        if (x > maxX) {
+        if (x > maxX && roomLeft > roomRight) {
           x = targetRect.left - childSize.width - offset.dx;
           landedOn = MenuPosition.left;
         }
       case MenuPosition.left:
-        if (x < minX) {
+        if (x < minX && roomRight > roomLeft) {
           x = targetRect.right - offset.dx;
           landedOn = MenuPosition.right;
         }
