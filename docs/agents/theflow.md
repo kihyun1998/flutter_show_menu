@@ -127,6 +127,9 @@ dart run tool/check_map.dart
   It also fails when a `docs/map/` or `docs/adr/` path named in a comment
   under `lib/`, `test/` or `.github/` no longer exists, so renaming a note means
   updating the comments that point at it.
+- **A new public name fails the suite until it is added to the pinned list** in
+  `test/check_surface_test.dart` (ADR-0007), so making a name public is always a
+  visible line in the diff.
 - Release: `flutter pub publish --dry-run` **0 warnings**, archive excludes what
   `.pubignore` lists (build caches, `coverage/`, `docs/`, `tool/` and its test,
   `.github/`). A **tag is an
