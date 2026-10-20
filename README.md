@@ -12,7 +12,7 @@ Position menus relative to any widget with full control over direction, alignmen
 - **OverlayEntry-based** — no Navigator route pushed, no context limitations
 - **Directional positioning** — place the menu on top, bottom, left, or right of the target
 - **Cross-axis alignment** — align start, center, or end along the opposite axis
-- **Auto flip** — automatically flips to the opposite side when overflowing the screen edge
+- **Auto flip** — flips to the opposite side when overflowing the screen edge, if that side has more room
 - **Smooth animation** — fade + scale with configurable duration and curve
 - **Two API styles** — imperative function (`showOverlayMenu`) and declarative widget (`OverlayMenuButton`)
 - **Barrier support** — dismiss on outside tap with optional backdrop color
@@ -261,8 +261,6 @@ A menu part-way through its exit animation is torn down at once, and still deliv
 
 A widget that wraps a child and shows an overlay menu on tap.
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
 Takes the same configuration as `showOverlayMenu`, plus a tap target and selection callbacks.
 
 | Parameter | Type | Default | Description |
