@@ -107,21 +107,22 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('a scrollbarStyle without maxHeight has nothing to theme', (
+  // Without maxHeight the menu scrolls once it outgrows the screen (#46), so
+  // the style applies there too.
+  testWidgets('a scrollbarStyle without maxHeight still themes the scrollbar', (
     tester,
   ) async {
     final anchor = await _pumpHost(tester);
     showOverlayMenu<String>(
       context: anchor,
-      items: _items(10),
+      items: _items(30),
       style: const OverlayMenuStyle(
         scrollbarStyle: OverlayMenuScrollbarStyle(thickness: 6),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(Scrollbar), findsNothing);
-    expect(find.byType(ScrollbarTheme), findsNothing);
+    expect(_resolve(_scrollbarTheme(tester).thickness), 6);
 
     closeAllOverlayMenus();
     await tester.pumpAndSettle();

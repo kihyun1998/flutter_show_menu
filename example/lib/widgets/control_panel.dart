@@ -293,45 +293,44 @@ class ControlPanel extends StatelessWidget {
         ),
 
         // Scrollbar Style
-        if (config.maxHeight > 0)
-          ExpansionTile(
-            title: const Text('Scrollbar Style'),
-            childrenPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            children: [
-              ColorPickerRow(
-                label: 'Thumb Color',
-                current: config.scrollbarColor,
-                onChanged: (c) => _update(() => config.scrollbarColor = c),
-              ),
-              const SizedBox(height: 8),
-              SliderRow(
-                label: 'Thickness',
-                value: config.scrollbarThickness,
-                min: 2,
-                max: 12,
-                onChanged: (v) => _update(() => config.scrollbarThickness = v),
-                divisions: 10,
-              ),
-              SliderRow(
-                label: 'Radius',
-                value: config.scrollbarRadius,
-                min: 0,
-                max: 12,
-                onChanged: (v) => _update(() => config.scrollbarRadius = v),
-              ),
-              SwitchListTile(
-                title: const Text('Always Visible'),
-                dense: true,
-                value: config.scrollbarAlwaysVisible,
-                contentPadding: EdgeInsets.zero,
-                onChanged: (v) =>
-                    _update(() => config.scrollbarAlwaysVisible = v),
-              ),
-            ],
+        ExpansionTile(
+          title: const Text('Scrollbar Style'),
+          childrenPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
           ),
+          children: [
+            ColorPickerRow(
+              label: 'Thumb Color',
+              current: config.scrollbarColor,
+              onChanged: (c) => _update(() => config.scrollbarColor = c),
+            ),
+            const SizedBox(height: 8),
+            SliderRow(
+              label: 'Thickness',
+              value: config.scrollbarThickness,
+              min: 2,
+              max: 12,
+              onChanged: (v) => _update(() => config.scrollbarThickness = v),
+              divisions: 10,
+            ),
+            SliderRow(
+              label: 'Radius',
+              value: config.scrollbarRadius,
+              min: 0,
+              max: 12,
+              onChanged: (v) => _update(() => config.scrollbarRadius = v),
+            ),
+            SwitchListTile(
+              title: const Text('Always Visible'),
+              dense: true,
+              value: config.scrollbarAlwaysVisible,
+              contentPadding: EdgeInsets.zero,
+              onChanged: (v) =>
+                  _update(() => config.scrollbarAlwaysVisible = v),
+            ),
+          ],
+        ),
 
         // Header Style
         ExpansionTile(

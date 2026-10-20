@@ -136,7 +136,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<double> _scale;
-  ScrollController? _scrollController;
+  final ScrollController _scrollController = ScrollController();
 
   /// Filled in during layout, read during paint.
   final MenuScaleOrigin _scaleOrigin = MenuScaleOrigin();
@@ -144,10 +144,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   @override
   void initState() {
     super.initState();
-    if (widget.style?.maxHeight != null) {
-      _scrollController = ScrollController();
-      if (widget.initialValue != null) _jumpToInitialValue();
-    }
+    if (widget.initialValue != null) _jumpToInitialValue();
     _controller = AnimationController(
       vsync: this,
       duration: widget.motion.duration,
@@ -168,7 +165,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     // `docs/map/territory/entry-metrics.md`.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = _scrollController;
-      if (controller == null || !controller.hasClients) return;
+      if (!controller.hasClients) return;
 
       final position = controller.position;
       final target = resolveScrollOffsetToValue<T>(
@@ -187,7 +184,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   @override
   void dispose() {
     widget.menu.detachExitAnimator();
-    _scrollController?.dispose();
+    _scrollController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -302,25 +299,6 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final headerStyle = widget.style?.headerStyle;
     final footerStyle = widget.style?.footerStyle;
 
-    if (maxHeight == null) {
-      return Padding(
-        padding: padding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (headerEntries != null)
-              ...headerEntries
-                  .map((e) => _buildEntry(e, styleOverride: headerStyle)),
-            ...itemWidgets,
-            if (footerEntries != null)
-              ...footerEntries
-                  .map((e) => _buildEntry(e, styleOverride: footerStyle)),
-          ],
-        ),
-      );
-    }
-
     final horizontalPadding =
         EdgeInsets.only(left: padding.left, right: padding.right);
 
@@ -366,8 +344,9 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
       );
     }
 
+    // With no maxHeight, the safe area the delegate allows is the limit.
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxHeight),
+      constraints: BoxConstraints(maxHeight: maxHeight ?? double.infinity),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,

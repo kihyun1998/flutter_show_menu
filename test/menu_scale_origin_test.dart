@@ -158,7 +158,8 @@ void main() {
         position: MenuPosition.bottom,
       );
 
-      final target = tester.getRect(find.byType(SizedBox).last);
+      final box = anchor.findRenderObject()! as RenderBox;
+      final target = box.localToGlobal(Offset.zero) & box.size;
       expect(settled.bottom, lessThanOrEqualTo(target.top + 0.01));
 
       closeAllOverlayMenus();

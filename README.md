@@ -18,7 +18,7 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Barrier support** — dismiss on outside tap with optional backdrop color
 - **Rich styling** — `OverlayMenuStyle` with grouped sub-classes for item, divider, and scrollbar styles
 - **Divider support** — `OverlayMenuDivider` entries between items
-- **Scrollable menu** — `maxHeight` with automatic scrolling and scrollbar theming
+- **Scrollable menu** — scrolls once it outgrows `maxHeight`, or the screen when `maxHeight` is unset, with scrollbar theming
 - **Auto-scroll via `initialValue`** — when reopening a scrollable menu, the matching item is automatically centered in the viewport
 - **Header / Footer** — fixed entries pinned above/below the scrollable area with independent styling
 - **Auto-close on navigation** — menu automatically dismisses when the route is popped or a new route is pushed
@@ -312,7 +312,7 @@ Base type for menu entries. Two subtypes:
 | `backgroundColor` | `Color?` | Menu surface color (falls back to `surfaceContainer`) |
 | `borderRadius` | `BorderRadius?` | Menu surface border radius (falls back to `circular(8)`) |
 | `padding` | `EdgeInsets?` | Menu container inner padding (falls back to `symmetric(vertical: 4)`) |
-| `maxHeight` | `double?` | Max menu height; scrolls when exceeded |
+| `maxHeight` | `double?` | Max menu height; scrolls when exceeded. When null, the screen (minus its padding) is the limit |
 | `width` | `double?` | Fixed menu width; sizes to content when null |
 | `constraints` | `BoxConstraints?` | Extra box constraints around the menu |
 | `decoration` | `BoxDecoration?` | Extra decoration around the menu surface |
@@ -320,7 +320,7 @@ Base type for menu entries. Two subtypes:
 | `headerStyle` | `OverlayMenuHeaderStyle?` | Style override for header items |
 | `footerStyle` | `OverlayMenuFooterStyle?` | Style override for footer items |
 | `dividerStyle` | `OverlayMenuDividerStyle?` | Divider defaults |
-| `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming (when `maxHeight` is set) |
+| `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming for the scrolling entries |
 
 ### `OverlayMenuItemStyle`
 

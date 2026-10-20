@@ -61,6 +61,28 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  // Without maxHeight the safe area is the limit (#46), and the selected entry
+  // is brought into view the same way.
+  testWidgets('without maxHeight initialValue still centres its item', (
+    tester,
+  ) async {
+    final anchor = await _pumpHost(tester);
+    showOverlayMenu<String>(
+      context: anchor,
+      items: _items(30),
+      initialValue: 'v20',
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.getRect(find.text('Item 20')).center.dy,
+      _viewport(tester).center.dy,
+    );
+
+    closeAllOverlayMenus();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('a header and footer shrink the viewport the entry centres in', (
     tester,
   ) async {
