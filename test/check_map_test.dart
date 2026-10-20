@@ -248,6 +248,58 @@ void main() {
       _write('test/check_map_test.dart', "'docs/map/territory/gone.md'\n");
       expect(pointers(), isEmpty);
     });
+
+    test('a path in root markdown, docs/agents or docs/adr is read too', () {
+      _write('CHANGELOG.md', '- fix. See `docs/adr/0009-gone.md`.\n');
+      _write('docs/agents/flow.md', 'Read docs/map/territory/gone.md first.\n');
+      _write('docs/adr/0002-y.md', 'Amends `docs/adr/0001-x.md`.\n');
+      expect(pointers(), [
+        startsWith('CHANGELOG.md:1: docs/adr/0009-gone.md'),
+        startsWith('docs/agents/flow.md:1: docs/map/territory/gone.md'),
+      ]);
+    });
+
+    test('a markdown link target is left to the link check', () {
+      _write('CLAUDE.md', '[map](docs/map/gone.md)\n');
+      expect(pointers(), isEmpty);
+    });
+  });
+
+  group('links outside the map', () {
+    List<String> links() =>
+        checkDocLinks(repoRoot: _repo.path).map((f) => f.toString()).toList();
+
+    setUp(_writeGoodMap);
+
+    test('links that resolve pass', () {
+      _write('CLAUDE.md', '[map](docs/map/README.md)\n');
+      _write('docs/agents/flow.md', '[ADRs](../adr/)\n');
+      _write(
+        'docs/adr/0002-y.md',
+        '[ADR-0001](0001-x.md#consequences)\n',
+      );
+      expect(links(), isEmpty);
+    });
+
+    test('a root markdown link to a missing file fails', () {
+      _write('CLAUDE.md', '# C\n\n[map](docs/map/gone.md)\n');
+      expect(links(), [startsWith('CLAUDE.md:3: docs/map/gone.md')]);
+    });
+
+    test('a docs/agents link to a missing file fails', () {
+      _write('docs/agents/flow.md', '[note](../map/territory/gone.md)\n');
+      expect(links(), [startsWith('docs/agents/flow.md:1:')]);
+    });
+
+    test('an ADR link to a missing anchor fails', () {
+      _write('docs/adr/0002-y.md', '[ADR-0001](0001-x.md#decision)\n');
+      expect(links(), [contains('no heading for #decision')]);
+    });
+
+    test('a link inside a code span is ignored', () {
+      _write('README.md', '`[x](gone.md)`\n');
+      expect(links(), isEmpty);
+    });
   });
 
   test('GitHub slugs drop punctuation and number duplicates', () {
