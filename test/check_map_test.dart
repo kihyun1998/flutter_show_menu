@@ -200,6 +200,56 @@ void main() {
     expect(_check(), [contains('`gamma` is not on a bullet line')]);
   });
 
+  group('pointers in source', () {
+    List<String> pointers() =>
+        checkPointers(repoRoot: _repo.path).map((f) => f.toString()).toList();
+
+    setUp(() {
+      _writeGoodMap();
+      _write(
+        'lib/a.dart',
+        '// Slow, deliberately; see docs/map/territory/alpha.md.\n'
+            '// Decided in docs/adr/0001-x.md\n'
+            'class Alpha {}\n',
+      );
+      _write(
+        '.github/workflows/ci.yml',
+        '# see docs/map/invariant/one-path.md.\n',
+      );
+    });
+
+    test('a pointer to an existing note passes', () {
+      expect(pointers(), isEmpty);
+    });
+
+    test('a pointer to a renamed note fails at its line', () {
+      File('${_repo.path}/docs/map/territory/alpha.md')
+          .renameSync('${_repo.path}/docs/map/territory/beta.md');
+      expect(pointers(), [
+        'lib/a.dart:1: docs/map/territory/alpha.md does not exist',
+      ]);
+    });
+
+    test('a pointer to a missing decision record fails', () {
+      File('${_repo.path}/docs/adr/0001-x.md').deleteSync();
+      expect(pointers(), [contains('lib/a.dart:2:')]);
+    });
+
+    test('test/ and .github/ are read too', () {
+      _write('test/a_test.dart', '// see docs/map/territory/gone.md\n');
+      File('${_repo.path}/docs/map/invariant/one-path.md').deleteSync();
+      expect(pointers(), [
+        startsWith('.github/workflows/ci.yml:1:'),
+        startsWith('test/a_test.dart:1:'),
+      ]);
+    });
+
+    test("the checker's own fixtures are skipped", () {
+      _write('test/check_map_test.dart', "'docs/map/territory/gone.md'\n");
+      expect(pointers(), isEmpty);
+    });
+  });
+
   test('GitHub slugs drop punctuation and number duplicates', () {
     expect(slugsOf('## Known holes / open\n## A\n## A\n'),
         containsAll(['known-holes--open', 'a', 'a-1']));

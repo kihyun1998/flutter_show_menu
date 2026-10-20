@@ -20,6 +20,9 @@
 // - an invariant and a territory that name each other do so both ways.
 //
 // Code spans and fenced blocks are ignored when looking for links.
+//
+// With no notes named, it also checks that every `docs/map/...md` and
+// `docs/adr/...md` path mentioned under lib/, test/ and .github/ exists.
 import 'dart:io';
 
 const territoryHeadings = [
@@ -49,6 +52,9 @@ void main(List<String> args) {
     mapRoot: 'docs/map',
     only: only.isEmpty ? null : only,
   );
+  if (only.isEmpty) {
+    findings.addAll(checkPointers(repoRoot: Directory.current.path));
+  }
 
   for (final finding in findings) {
     stderr.writeln(finding);
@@ -100,6 +106,41 @@ List<MapFinding> checkMap({
       ..addAll(_checkHeadings(note, text))
       ..addAll(_checkCode(root, note, text))
       ..addAll(_checkReciprocity(root, mapRoot, note, text));
+  }
+  return findings;
+}
+
+/// Every `docs/map/...md` or `docs/adr/...md` path mentioned in a file under
+/// [dirs] that does not exist. The paths are relative to [repoRoot], and
+/// [skip] holds files whose paths are fixtures rather than pointers.
+List<MapFinding> checkPointers({
+  required String repoRoot,
+  List<String> dirs = const ['lib', 'test', '.github'],
+  Set<String> skip = const {'test/check_map_test.dart'},
+}) {
+  final root = _normalize(repoRoot);
+  final files = [
+    for (final dir in dirs)
+      if (Directory('$root/$dir').existsSync())
+        ...Directory('$root/$dir')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .map((f) => _relative(root, f.path)),
+  ]..sort();
+
+  final pointer = RegExp(r'docs/(?:map|adr)/[\w./-]*?\.md(?![\w-])');
+  final findings = <MapFinding>[];
+  for (final file in files) {
+    if (skip.contains(file)) continue;
+    final text = _read(root, file)!;
+    for (final match in pointer.allMatches(text)) {
+      final path = match.group(0)!;
+      if (!File('$root/$path').existsSync()) {
+        findings.add(
+          MapFinding(file, _lineOf(text, match.start), '$path does not exist'),
+        );
+      }
+    }
   }
   return findings;
 }
