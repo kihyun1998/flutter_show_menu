@@ -13,8 +13,9 @@ shows on the package's API landing page.
   field to one is not breaking; moving a field between them is.
 - [ADR-0001](../../adr/0001-global-close-all-registry.md#decision) makes
   `closeAllOverlayMenus()` a public top-level function.
-- Nothing decides the export style: which lines use `show` and which export
-  a whole file.
+- [ADR-0007](../../adr/0007-pin-the-public-names-the-barrel-exports.md#decision)
+  keeps the whole-file exports and pins the full list of public names in a
+  test.
 
 ## Design model
 
@@ -28,7 +29,8 @@ Read from the source; nothing in a record says it.
 - The other seven lines export whole files. These are the position enums, the
   barrier, the button, the entry types, motion, placement and style. Every
   public name declared in those files is public API, including names added
-  later.
+  later, so the test pins all 18 names. Adding one means adding it to the
+  pinned list in the same change.
 - Never exported: the position delegate, the scale-origin render object, the
   entry view and the metrics module. Tests reach them through
   `package:flutter_show_menu/src/...`, and callers should not.
@@ -38,6 +40,8 @@ Read from the source; nothing in a record says it.
 ## Code
 
 - `lib/flutter_show_menu.dart` — `showOverlayMenu`, `OverlayMenuController`, `closeAllOverlayMenus`, `OverlayMenuButton`, `OverlayMenuStyle`, `MenuPosition`
+- `tool/check_surface.dart` — `scanSurface`
+- `test/check_surface_test.dart` — `_publicNames`
 
 ## Reference behaviour
 
@@ -65,6 +69,6 @@ Read from the source; nothing in a record says it.
 
 ## Known holes / open
 
-- Because seven files are exported whole, a public helper added to one of
-  them becomes public API without the barrel changing. Nothing checks this.
-  Whether to move those lines to `show` has not been decided.
+- Members added to a class that is already public are not pinned.
+- The scan reads only what `dart format` leaves at column 0. A form it does
+  not know fails the test rather than passing.
