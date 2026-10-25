@@ -37,7 +37,6 @@ that menu and report whether it is already closed.
 ## Cross-cutting invariants
 
 - [Result latched at Close request](../invariant/result-latched-at-request.md)
-- [One Close path](../invariant/one-close-path.md)
 - [Force decides Animated vs Instant](../invariant/close-force-decides-animation.md)
 
 ## Blast radius

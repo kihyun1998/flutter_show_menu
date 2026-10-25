@@ -3,7 +3,7 @@
 ## What it is
 
 The checks every pull request and every push to `main` must pass: format,
-analyze, the test suite, the coverage floor, and the map check.
+analyze, the test suite and the coverage floor.
 
 ## Governing decisions
 
@@ -29,15 +29,6 @@ workflow's comments point here.
   absent from the report.
 - The Flutter version is pinned, so a new Flutter release cannot turn a
   green branch red.
-- The map check runs over every note under `docs/map`, listed fresh each
-  time. Run with no note named, as CI runs it, it also checks every
-  `docs/map/...md` and `docs/adr/...md` path that a file under `lib/`,
-  `test/` or `.github/` mentions, so renaming a note fails where a source
-  comment still points at the old name. The checker's own test is skipped,
-  because its paths are fixtures. The same run checks the markdown outside
-  the map (the root `.md` files, `docs/agents` and `docs/adr`): its relative
-  links and anchors must resolve, and a path written outside a link, such as
-  a CHANGELOG entry's `docs/adr/...md`, must exist.
 - The lcov report is uploaded even when an earlier step failed, so a
   coverage regression can be inspected rather than merely reported. A
   missing report is a warning, not an error: a failing test run has no lcov
@@ -47,8 +38,6 @@ workflow's comments point here.
 
 - `.github/workflows/ci.yml`
 - `tool/check_coverage.dart` — `main`, `_parse`
-- `tool/check_map.dart` — `checkMap`, `checkPointers`, `checkDocLinks`, `docFiles`, `slugsOf`, `territoryHeadings`, `invariantHeadings`
-- `test/check_map_test.dart`
 
 ## Reference behaviour
 
@@ -65,11 +54,14 @@ workflow's comments point here.
 
 ## Known holes / open
 
-- The map check silently skips some link forms: nested brackets in the
-  text, single-quote or parenthesised titles, angle-bracket targets, and
-  reference-style links. A broken link written in one of those forms passes.
-  A link inside a heading also leaks its target into that heading's slug.
-  No current note uses any of them.
+- No gate checks a link in the repo's markdown. The map checker that did,
+  for the map, the root `.md` files, `docs/agents` and `docs/adr`, and for
+  `docs/map/...md` paths named in `lib/`, `test/` and `.github/`, was removed
+  on 2026-10-25 (commit 3376eeb); the map is checked by reading it against
+  the code instead.
+- Nothing watches the pinned actions (`actions/checkout`,
+  `subosito/flutter-action`, `actions/upload-artifact`) for new releases.
+  Tracked: #51, which proposes a grouped monthly Dependabot update.
 
 - [lessons, Step 6/7](../../agents/lessons.md#step-67--정합성--게이트)
   measured why the floor is 100 and not 99: deleting one test file leaves

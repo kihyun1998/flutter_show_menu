@@ -57,8 +57,14 @@ up for the person who installs the package.
   `WidgetStatePropertyAll` is what sets the floor.
 - [CI gates](ci-gates.md): CI's pinned SDK is not the floor, so a green
   build says nothing about the floor.
+- [Example app](example-app.md): it ships in the archive, and what
+  `.pubignore` leaves out of `example/` decides what pub.dev shows.
 
 ## Known holes / open
 
+- Nothing tells the maintainer when `flutter_lints`, the one non-SDK
+  dependency (dev), publishes outside its caret. Tracked: #51, which
+  proposes Dependabot at the root with `increase-if-necessary`, one PR per
+  dependency, because such a release is a floor decision for consumers.
 - No gate checks the floor, so a new SDK API used in `lib/` can make it
   dishonest again without any red build.

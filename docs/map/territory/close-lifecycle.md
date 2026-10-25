@@ -17,6 +17,20 @@ two Closes overlap.
 
 ## Design model
 
+- Every Close trigger calls `OpenMenu.close`: a barrier tap
+  ([Barrier](barrier.md)), a selection
+  ([Entry rendering](entry-rendering.md), through the menu widget's
+  `_buildEntry`), `OverlayMenuController.close` ([Controller](controller.md)),
+  the two route listeners ([Route Auto-close](route-auto-close.md)) and
+  `closeAll` ([Open Menu Registry and Close All](close-all-registry.md)).
+  `_teardown` is the only place the entry, the result, the registry
+  membership, the Controller binding and the route listeners are released,
+  and a second teardown does nothing. ADR-0001's Consequences require this.
+  A trigger that released anything itself would leave a gone menu in the
+  registry (its `length` reads non-zero after the menu has gone) or drop a
+  menu still animating out, which Close All would then miss. Any new way to
+  take a menu away — a timeout, a key binding, an app-lifecycle hook — calls
+  `OpenMenu.close` and releases nothing outside `_teardown`.
 - One phase variable, not a flag per collaborator: `open` → `closing`
   (result latched, exit animation may be playing) → `closed` (resources
   released, result delivered). "Closed" once had four representations
@@ -54,7 +68,6 @@ two Closes overlap.
 ## Cross-cutting invariants
 
 - [Result latched at Close request](../invariant/result-latched-at-request.md)
-- [One Close path](../invariant/one-close-path.md)
 - [Force decides Animated vs Instant](../invariant/close-force-decides-animation.md)
 
 ## Blast radius
