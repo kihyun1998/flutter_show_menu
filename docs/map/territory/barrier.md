@@ -38,7 +38,6 @@ Close the menu, and it can hold a caller widget between itself and the menu.
 
 ## Cross-cutting invariants
 
-- [One Close path](../invariant/one-close-path.md)
 - [Force decides Animated vs Instant](../invariant/close-force-decides-animation.md)
 
 ## Blast radius

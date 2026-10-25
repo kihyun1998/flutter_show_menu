@@ -6,8 +6,11 @@ Substantive changes (bug fix / feature / behavior change) run through
 **`/thegraph`**. The outside sources this package is read against are in
 **`docs/agents/thegraph.md`**; what each part does and what moves with it is the
 territory map under [`docs/map/`](docs/map/README.md); the per-incident evidence
-is in **`docs/agents/lessons.md`**. Read the territory
-notes you will touch and lessons before starting; add new war-stories to lessons.
+is in **`docs/agents/lessons.md`**. Read the territory notes you will touch
+and lessons before designing a change; after it lands, bring those notes back in
+line, and ask whether the fact the fix revealed holds at every site that shares
+its assumption: if yes, it lands with an invariant note. Add new war-stories to
+lessons.
 
 ## Identity & invariants (the boundary)
 

@@ -5,7 +5,8 @@ you touch each part, and what each part was decided on. A comment's why,
 its trap and its measured value go to a note here (the rule is in
 [`CLAUDE.md`](../../CLAUDE.md#comments)).
 
-<!-- grill-map build stamp: b62786b -->
+<!-- grill-map build stamp: 18c00d1 -->
+<!-- grill-map synced at: 3376eeb (2026-10-25) -->
 
 ## The two questions
 
@@ -27,8 +28,8 @@ its trap and its measured value go to a note here (the rule is in
   territory?* For this package that usually means: does it hold at every
   other Close trigger, or at every other reader of the same layout pass? If
   yes, it goes in an invariant note before the fix lands.
-- Run `dart run tool/check_map.dart` (or pass it one note) after editing.
-  CI runs it over the whole map.
+- No tool checks the map. A note is checked by reading it against the code
+  it names under `## Code`, and by following its links.
 
 ## Why the layer exists
 
@@ -48,8 +49,18 @@ Each pair is now one hop apart.
 
 - Territories overlap, and a fact that holds in several of them gets an
   invariant note rather than being forced into one.
-- Every territory note has the same headings, and every invariant note has
-  the same headings. `tool/check_map.dart` holds the two lists.
+- Every territory note has the same headings: `What it is`,
+  `Governing decisions`, `Design model`, `Code`, `Reference behaviour`,
+  `Cross-cutting invariants`, `Blast radius`, `Known holes / open`. Every
+  invariant note has `The fact`, `Why it is cross-cutting`,
+  `Territories it holds in`, `What a violation looks like`,
+  `Discovery history`, `Where it will recur`.
+- A fact is an invariant only when at least two sites hold it that neither
+  call each other nor reach it through one shared primitive. Every Close
+  reaching `OpenMenu.close` is therefore a rule of
+  [Close lifecycle](territory/close-lifecycle.md), not an invariant.
+- Every claim carries its evidence (a symbol, a record, a commit) or its
+  source and date, so a stated reason reads apart from a checked one.
 - An empty section keeps its heading and says `**None.**`. Do not delete it.
 - `## Code` names symbols by file (`` - `file` — `Symbol`, `Type.member` ``),
   never line numbers. The first backticked name on a bullet is the file.
@@ -65,8 +76,9 @@ Each pair is now one hop apart.
   in ADR text and in the pin test for `TickerFuture`, all unpinned. A note
   that links them inherits that.
 - Material `showMenu`, the reference this package is an example against
-  ([`thegraph.md`](../agents/thegraph.md)), has not been compared with any
-  territory.
+  ([`thegraph.md`](../agents/thegraph.md)), has been compared only in
+  [placement and flip](territory/placement-and-flip.md#reference-behaviour)
+  (for #28). No other territory has been read against it.
 
 ## Measurements (2026-10-19)
 
@@ -94,8 +106,8 @@ rg -l 'lib/src/overlay_menu.dart' docs/map/territory/
 
 ## Coverage, and what an absent note means
 
-The map covers the whole package as of the commit that added it, including
-release and CI. So a part of the package with no note is a gap, not a
+The map covers the whole package as of its synced-at commit, including
+release, CI and the example app. So a part of the package with no note is a gap, not a
 correct state. A new note is owed when a change adds behaviour that no
 territory's `## What it is` covers.
 
@@ -125,9 +137,9 @@ Territories: [public surface](territory/public-surface.md) ·
 [configuration objects](territory/configuration-objects.md) ·
 [surface style](territory/surface-style.md) ·
 [OverlayMenuButton](territory/overlay-menu-button.md) ·
+[example app](territory/example-app.md) ·
 [release and publish](territory/release-and-publish.md) ·
 [CI gates](territory/ci-gates.md)
 
 Invariants: [result latched at Close request](invariant/result-latched-at-request.md) ·
-[one Close path](invariant/one-close-path.md) ·
 [force decides Animated vs Instant](invariant/close-force-decides-animation.md)
