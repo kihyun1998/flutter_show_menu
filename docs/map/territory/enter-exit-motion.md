@@ -41,8 +41,8 @@ and plays the same animation in reverse on an Animated Close. One
   records how `TickerFuture` behaves on cancellation, which is why the
   animator has no `catch`.
   `test/exit_animation_cancellation_test.dart` pins that SDK behaviour.
-- [theflow, Step 1](../../agents/theflow.md#step-1--reference-routing-table)
-  lists it among the facts proven from source (#9).
+- [lessons, Step 2](../../agents/lessons.md#step-2--추측-금지-sdk-소스가-진실)
+  records the proof from `scheduler/ticker.dart` (#9).
 
 ## Cross-cutting invariants
 

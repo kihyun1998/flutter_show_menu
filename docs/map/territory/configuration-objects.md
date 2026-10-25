@@ -23,6 +23,10 @@ classes nested in it. All of them have `==`, `hashCode` and `copyWith`.
 - Calling `copyWith()` with no arguments must return an equal object. The
   value-semantics test checks this for all seven classes, which is what
   covers the right-hand side of each `??` (#7).
+- An equality test builds its values at runtime and first asserts
+  `identical(a, b)` is false. Dart canonicalises same-argument `const`
+  values to one instance, so a const-built pair would pass on identity
+  alone (#7).
 - Adding a field is not a breaking change. Moving a field between objects
   is (ADR-0003, Consequences).
 - Configuration equality does not make rebuilds cheaper. The framework

@@ -21,6 +21,9 @@ shows on the package's API landing page.
 
 Read from the source; nothing in a record says it.
 
+- The package owns positioning, the scale-origin render object, the Close
+  and registry lifecycle, the animation and the barrier. The caller owns
+  the items, the anchor widget and what it does with the result.
 - Three export lines use `show`, and that is what keeps the lifetime and the
   registry private. `open_menu.dart` exports only `OverlayMenuController`,
   hiding `OpenMenu` and `ExitAnimator`. `open_menu_registry.dart` exports only

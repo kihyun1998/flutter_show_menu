@@ -1,8 +1,9 @@
 # Lessons — flutter_show_menu 실증
 
-이 repo 가 `theflow` 의 각 단계에서 실제로 **무엇을 놓쳤나** 의 기록 — 규칙에 무게를 주는
-근거. 전부 이 repo 에서 실제로 일어났다. 단계 번호는 `theflow` SKILL.md 와 일치. 바인딩
-(`theflow.md`)이 추상으로 읽히면 여기 사건과 대조하라.
+이 repo 가 변경의 각 단계에서 실제로 **무엇을 놓쳤나** 의 기록 — 규칙에 무게를 주는
+근거. 전부 이 repo 에서 실제로 일어났다. 단계 제목은 맵의 노트들이 앵커로 링크한다.
+[`docs/map/`](../map/README.md) 의 노트나 `CLAUDE.md` 의 규칙이 추상으로 읽히면 여기
+사건과 대조하라.
 
 ---
 
@@ -80,6 +81,12 @@
   README 는 `copyWith` 가 새 그룹 3 개에만 있다고 적었으나 실제 7 개 전부였고, `showOverlayMenu`
   의 `FlutterError` 와 반환 latch 시점은 어디에도 없었다. `.pubignore` 는 `coverage/` 가
   `.gitignore:31` 에 있는데도 아카이브에 실려 나갔다.
+- **#9 (ADR Consequences 는 현재 참인 문장)**: #9 가 catch 를 지우자 ADR 에 "살아 있는
+  가드" 로 적혀 있던 Consequences 가 거짓이 됐다. 결정이 뒤집히면 Consequences 도 같은
+  변경에서 뒤집는다.
+- **ADR-0002 (용어집의 침묵)**: `GLOSSARY.md` 의 **Close** 는 "결과를 전달한다" 고만 했지
+  결과가 *언제* 고정되는지는 말하지 않았다 — 결과 유실 버그 두 개가 그 침묵에 살았다.
+  용어집이 정의하지 않은 개념은 코드가 임의로 채운다.
 - **커버리지 바닥 100**: `test/menu_chrome_test.dart` 를 통째로 지우면 정확히 **99.0%**(518/523)
   — 바닥이 99 였다면 `99.0 < 99.0` 이 거짓이라 통과. #18 의 새 렌더 오브젝트가 미커버 3 줄
   (호출 안 되는 `updateRenderObject`)을 달고 들어왔고 게이트가 잡았다.
@@ -92,5 +99,5 @@
   로 빌드하지 않아 아무 게이트도 이걸 못 잡는다. 이슈 본문의 "3.22" 도 근거로 믿지 않고 SDK 소스에서
   확정했다: `git log -S "class WidgetStatePropertyAll"` → 커밋 `6190c5eea1e`, `git tag --contains`
   → 최초 stable `3.22.0`, 3.10–3.21 에는 없음(반증까지). floor 를 `>=3.22.0` 으로 올리고 정직성을
-  서술하던 표면(CLAUDE.md·theflow.md Step 1/7)을 과거형으로 뒤집었다. floor 의 정직성은 도구가
+  서술하던 표면(CLAUDE.md 와 당시의 바인딩 문서)을 과거형으로 뒤집었다. floor 의 정직성은 도구가
   아니라 사람이 손으로 지키는 계약이다.
