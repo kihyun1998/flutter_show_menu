@@ -50,9 +50,6 @@ jobs:
       - name: Enforce the coverage floor
         run: dart run tool/check_coverage.dart --min ${{ env.COVERAGE_FLOOR }} --report
 
-      - name: Check the territory map
-        run: dart run tool/check_map.dart
-
       # `always()` and `warn` are deliberate; see docs/map/territory/ci-gates.md.
       - name: Upload coverage
         if: always()

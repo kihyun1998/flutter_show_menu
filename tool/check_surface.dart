@@ -10,8 +10,6 @@
 //   dart run tool/check_surface.dart   # prints the names, one per line
 import 'dart:io';
 
-import 'check_map.dart' show MapFinding;
-
 void main() {
   final scan = scanSurface(repoRoot: Directory.current.path);
   for (final finding in scan.findings) {
@@ -25,17 +23,20 @@ void main() {
 
 /// The names [barrel] makes public, and anything that stopped them being read.
 /// Paths are relative to [repoRoot], with forward slashes.
-({Set<String> names, List<MapFinding> findings}) scanSurface({
+({Set<String> names, List<SurfaceFinding> findings}) scanSurface({
   required String repoRoot,
   String barrel = 'lib/flutter_show_menu.dart',
 }) {
   final root = repoRoot.replaceAll(r'\', '/');
   final names = <String>{};
-  final findings = <MapFinding>[];
+  final findings = <SurfaceFinding>[];
 
   final text = _read(root, barrel);
   if (text == null) {
-    return (names: names, findings: [MapFinding(barrel, 1, 'does not exist')]);
+    return (
+      names: names,
+      findings: [SurfaceFinding(barrel, 1, 'does not exist')]
+    );
   }
   _declarations(barrel, text, names, findings, inBarrel: true);
 
@@ -56,13 +57,13 @@ void main() {
       continue;
     }
     if (combinators.isNotEmpty) {
-      findings
-          .add(MapFinding(barrel, line, 'unsupported export: $combinators'));
+      findings.add(
+          SurfaceFinding(barrel, line, 'unsupported export: $combinators'));
       continue;
     }
     final source = _read(root, file);
     if (source == null) {
-      findings.add(MapFinding(barrel, line, '$file does not exist'));
+      findings.add(SurfaceFinding(barrel, line, '$file does not exist'));
       continue;
     }
     _declarations(file, source, names, findings, inBarrel: false);
@@ -91,7 +92,7 @@ void _declarations(
   String path,
   String text,
   Set<String> names,
-  List<MapFinding> findings, {
+  List<SurfaceFinding> findings, {
   required bool inBarrel,
 }) {
   final lines = text.split(RegExp(r'\r?\n'));
@@ -104,12 +105,13 @@ void _declarations(
     }
     if (line.startsWith(RegExp(r'export\s'))) {
       if (!inBarrel) {
-        findings.add(MapFinding(path, i + 1, 'export inside an exported file'));
+        findings
+            .add(SurfaceFinding(path, i + 1, 'export inside an exported file'));
       }
       continue;
     }
     if (line.startsWith(RegExp(r'part\s'))) {
-      findings.add(MapFinding(path, i + 1, 'part files are not read'));
+      findings.add(SurfaceFinding(path, i + 1, 'part files are not read'));
       continue;
     }
     String? name;
@@ -121,8 +123,8 @@ void _declarations(
       }
     }
     if (name == null) {
-      findings
-          .add(MapFinding(path, i + 1, 'unrecognised top-level line: $line'));
+      findings.add(
+          SurfaceFinding(path, i + 1, 'unrecognised top-level line: $line'));
     } else if (name.isNotEmpty && !name.startsWith('_')) {
       names.add(name);
     }
@@ -135,4 +137,16 @@ int _lineOf(String text, int offset) =>
 String? _read(String root, String path) {
   final file = File('$root/$path');
   return file.existsSync() ? file.readAsStringSync() : null;
+}
+
+/// A problem at [path]:[line].
+class SurfaceFinding {
+  SurfaceFinding(this.path, this.line, this.message);
+
+  final String path;
+  final int line;
+  final String message;
+
+  @override
+  String toString() => '$path:$line: $message';
 }
