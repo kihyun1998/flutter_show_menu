@@ -38,7 +38,7 @@ what the anchor must be.
 
 ## Reference behaviour
 
-- [theflow, Step 1](../../agents/theflow.md#step-1--reference-routing-table)
+- [lessons, Step 2](../../agents/lessons.md#step-2--추측-금지-sdk-소스가-진실)
   records that an unmounted element's `renderObject` throws only inside an
   `assert` (#8).
 

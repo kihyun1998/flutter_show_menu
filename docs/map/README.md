@@ -61,7 +61,7 @@ Each pair is now one hop apart.
 
 - Issues and source files are not nodes. They appear as text inside notes.
 - No reference fact is pinned to a Flutter SDK commit. Facts proven from SDK
-  source live in [theflow, Step 1](../agents/theflow.md#step-1--reference-routing-table),
+  source live in [lessons, Step 2](../agents/lessons.md#step-2--추측-금지-sdk-소스가-진실),
   in ADR text and in the pin test for `TickerFuture`, all unpinned. A note
   that links them inherits that.
 - Material `showMenu`, the reference this package is an example against

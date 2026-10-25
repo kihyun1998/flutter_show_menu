@@ -7,8 +7,7 @@ analyze, the test suite, the coverage floor, and the map check.
 
 ## Governing decisions
 
-**None.** The gates are listed in
-[theflow, Step 7](../../agents/theflow.md#step-7--gate-matrix). The
+**None.** The gates are the steps of `.github/workflows/ci.yml`. The
 workflow's comments point here.
 
 ## Design model
@@ -18,13 +17,16 @@ workflow's comments point here.
   3.7's tall style applies only at language version 3.7 and above, and
   without the package config the formatter assumes the latest version and
   reformats the whole repo. The check still runs before the tests, so a
-  formatting slip fails fast.
+  formatting slip fails fast. The misordering reproduces only in a clean
+  `git worktree`, where no package config is left over.
 - `analyze` runs with `--fatal-infos --fatal-warnings`, so an info-level
   lint fails the build.
 - The coverage floor is 100 and is set only in the workflow. `lib/` is
   fully covered, so anything less is a regression. A line wrapped
   in a `coverage:ignore-start` / `ignore-end` pair leaves the denominator
   entirely, and the pair itself keeps the exception visible in the diff.
+  A probe measured it: `LF` went from 14 to 15 and the wrapped line was
+  absent from the report.
 - The Flutter version is pinned, so a new Flutter release cannot turn a
   green branch red.
 - The map check runs over every note under `docs/map`, listed fresh each

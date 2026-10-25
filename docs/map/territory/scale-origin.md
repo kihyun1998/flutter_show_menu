@@ -29,7 +29,7 @@ corner or edge nearest the anchor, on the side the menu actually landed on.
 - [ADR-0004, Considered Options](../../adr/0004-resolve-the-scale-origin-during-layout.md#considered-options)
   explains why a late-resolving `AlignmentGeometry` is impossible: it
   declares private abstract members.
-- [theflow, Step 4](../../agents/theflow.md#step-4--proof-method-per-layer)
+- [lessons, Step 3/4](../../agents/lessons.md#step-34--설계-확정--redgreen)
   names the seam to test at: which point the menu keeps fixed as it grows.
 
 ## Cross-cutting invariants

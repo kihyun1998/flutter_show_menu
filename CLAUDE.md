@@ -1,14 +1,13 @@
 # CLAUDE.md
 
-## Working discipline — theflow
+## Working discipline — thegraph
 
-Substantive changes (bug fix / feature / behavior change) follow the **`theflow`**
-skill — run `/theflow` at the start. This repo's bindings (reference routing,
-boundary rule, proof methods, surfaces, gate matrix) live in
-**`docs/agents/theflow.md`**, and the module map is the territory map under
-[`docs/map/`](docs/map/README.md); the per-incident evidence (#5, #7, #8, #9, #18 …)
-in **`docs/agents/lessons.md`**. Read both before starting; add new war-stories
-to lessons.
+Substantive changes (bug fix / feature / behavior change) run through
+**`/thegraph`**. The outside sources this package is read against are in
+**`docs/agents/thegraph.md`**; what each part does and what moves with it is the
+territory map under [`docs/map/`](docs/map/README.md); the per-incident evidence
+(#5, #7, #8, #9, #18 …) is in **`docs/agents/lessons.md`**. Read the territory
+notes you will touch and lessons before starting; add new war-stories to lessons.
 
 ## Identity & invariants (the boundary)
 
@@ -34,8 +33,8 @@ lives in **`GLOSSARY.md`**; decisions in **`docs/adr/`**.
   Flutter throw inside an `assert` (silent in release); that is not the SDK's
   defect but ours to state and check (#8).
 
-There are **no consumers yet** — theflow's downstream steps are N/A (no target),
-not skipped.
+There are **no consumers yet** — downstream verification and migration are N/A
+(no target), not skipped.
 
 ## Comments
 
