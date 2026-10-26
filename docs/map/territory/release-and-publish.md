@@ -34,12 +34,32 @@ up for the person who installs the package.
 - A tag is an immutable pointer. For 1.0.0 the tag was moved rather than
   skipping to a new version.
 - An agent never runs `flutter pub publish`; the maintainer does.
+- Dependabot watches the root manifest with `increase-if-necessary`. The
+  root commits no `pubspec.lock`, so a release the caret already allows
+  changes nothing and opens no PR. Only a release outside the caret does:
+  every major release from `1.0.0` on, and every minor release below it.
+  For a runtime dependency such a PR raises the floor consumers resolve
+  against; for the dev dependency `flutter_lints` it brings new lint
+  rules. Either way it is a decision, not a chore, so root PRs are not
+  grouped: one PR is one decision.
+- The root is checked weekly. #51 asked for monthly; the maintainer chose
+  weekly to match the sibling packages. That was their call, and it is
+  theirs to reverse.
+- `example/` is checked monthly and its updates come in one grouped PR,
+  because nothing ships from it. It commits a `pubspec.lock`, so its PRs
+  also move resolved versions inside the caret.
+- The actions pinned in the workflows are checked monthly in one grouped
+  PR, so `actions/checkout`, `actions/upload-artifact` and
+  `subosito/flutter-action` move together.
+- Every Dependabot PR is labelled `needs-triage`. Dependabot ignores a
+  label the repository does not define, and this one is defined.
 
 ## Code
 
 - `.pubignore`
 - `pubspec.yaml`
 - `CHANGELOG.md`
+- `.github/dependabot.yml`
 
 ## Reference behaviour
 
@@ -62,9 +82,5 @@ up for the person who installs the package.
 
 ## Known holes / open
 
-- Nothing tells the maintainer when `flutter_lints`, the one non-SDK
-  dependency (dev), publishes outside its caret. Tracked: #51, which
-  proposes Dependabot at the root with `increase-if-necessary`, one PR per
-  dependency, because such a release is a floor decision for consumers.
 - No gate checks the floor, so a new SDK API used in `lib/` can make it
   dishonest again without any red build.
