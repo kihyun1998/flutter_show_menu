@@ -26,14 +26,9 @@ up for the person who installs the package.
   [lessons, Step 6/7](../../agents/lessons.md#step-67--정합성--게이트)
   (#24), run in the Flutter SDK tree that
   [`thegraph.md`](../../agents/thegraph.md) names.
-- pub.dev snapshots `CHANGELOG.md` at publish, so each release opens a new
-  version section rather than editing a published one.
-- `flutter pub publish --dry-run` must report 0 warnings before a release.
-  What pub.dev currently has is read from
-  `https://pub.dev/api/packages/flutter_show_menu`.
+- Before a release, run `pub-ready`.
 - A tag is an immutable pointer. For 1.0.0 the tag was moved rather than
   skipping to a new version.
-- An agent never runs `flutter pub publish`; the maintainer does.
 - Dependabot watches the root manifest with `increase-if-necessary`. The
   root commits no `pubspec.lock`, so a release the caret already allows
   changes nothing and opens no PR. Only a release outside the caret does:
