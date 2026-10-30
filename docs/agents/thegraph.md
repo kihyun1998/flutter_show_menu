@@ -10,3 +10,7 @@ An `OverlayEntry`-based drop-in `showMenu` replacement for Flutter (see `CLAUDE.
 |---|---|---|---|
 | Flutter SDK | how it works | its source tree at `D:/flutter` — raw | binding |
 | Material `showMenu` | how it works | `packages/flutter/lib/src/material/popup_menu.dart` in that tree — raw | example |
+
+## Release
+
+pub-ready
