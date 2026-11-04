@@ -90,7 +90,9 @@ Each pair is now one hop apart.
   ADR-0005 (2026-10-20) covers what a flip does to the offset, and
   ADR-0006 (2026-10-20) covers when a menu flips, and ADR-0007
   (2026-10-20) covers how the exported names are guarded. ADR-0008
-  (2026-10-20) covers how a menu without `maxHeight` scrolls.
+  (2026-10-20) covers how a menu without `maxHeight` scrolls. ADR-0009
+  (2026-11-04) covers the first runtime dependency and the wheel motion it
+  brings.
 - `lib/src/overlay_menu.dart` holds about a quarter of `lib/` and the most
   churn, and ten territory notes name it. The map
   splits it further than the module tree does.

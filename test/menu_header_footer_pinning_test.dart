@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_show_menu/flutter_show_menu.dart';
 
 List<OverlayMenuEntry<String>> _items(int count) => [
-      for (var i = 0; i < count; i++)
-        OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
-    ];
+  for (var i = 0; i < count; i++)
+    OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
+];
 
 OverlayMenuItem<String> _entry(String label) =>
     OverlayMenuItem<String>(value: label, child: Text(label));
@@ -30,8 +30,7 @@ Future<BuildContext> _pumpHost(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets(
-      'a scrolling menu keeps its header and footer outside the '
+  testWidgets('a scrolling menu keeps its header and footer outside the '
       'viewport', (tester) async {
     final anchor = await _pumpHost(tester);
     showOverlayMenu<String>(
@@ -44,10 +43,14 @@ void main() {
     await tester.pumpAndSettle();
 
     final viewport = tester.getRect(find.byType(SingleChildScrollView));
-    expect(tester.getRect(find.text('Header')).bottom,
-        lessThanOrEqualTo(viewport.top));
-    expect(tester.getRect(find.text('Footer')).top,
-        greaterThanOrEqualTo(viewport.bottom));
+    expect(
+      tester.getRect(find.text('Header')).bottom,
+      lessThanOrEqualTo(viewport.top),
+    );
+    expect(
+      tester.getRect(find.text('Footer')).top,
+      greaterThanOrEqualTo(viewport.bottom),
+    );
 
     closeAllOverlayMenus();
     await tester.pumpAndSettle();
@@ -71,7 +74,9 @@ void main() {
     final firstItemBefore = tester.getRect(find.text('Item 0'));
 
     await tester.drag(
-        find.byType(SingleChildScrollView), const Offset(0, -200));
+      find.byType(SingleChildScrollView),
+      const Offset(0, -200),
+    );
     await tester.pumpAndSettle();
 
     expect(tester.getRect(find.text('Header')), headerBefore);
@@ -86,8 +91,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets(
-      'without maxHeight the header and footer simply bracket the '
+  testWidgets('without maxHeight the header and footer simply bracket the '
       'entries', (tester) async {
     final anchor = await _pumpHost(tester);
     showOverlayMenu<String>(
@@ -130,7 +134,9 @@ void main() {
     expect(footerBefore.bottom, lessThanOrEqualTo(600));
 
     await tester.drag(
-        find.byType(SingleChildScrollView), const Offset(0, -500));
+      find.byType(SingleChildScrollView),
+      const Offset(0, -500),
+    );
     await tester.pumpAndSettle();
 
     expect(tester.getRect(find.text('Header')), headerBefore);

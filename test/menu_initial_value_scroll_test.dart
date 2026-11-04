@@ -5,9 +5,9 @@ import 'package:flutter_show_menu/flutter_show_menu.dart';
 const _itemHeight = 48.0;
 
 List<OverlayMenuEntry<String>> _items(int count) => [
-      for (var i = 0; i < count; i++)
-        OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
-    ];
+  for (var i = 0; i < count; i++)
+    OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
+];
 
 OverlayMenuItem<String> _entry(String label) =>
     OverlayMenuItem<String>(value: label, child: Text(label));
@@ -133,8 +133,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('initialValue on the last entry does not scroll past the bottom',
-      (
+  testWidgets('initialValue on the last entry does not scroll past the bottom', (
     tester,
   ) async {
     final anchor = await _pumpHost(tester);

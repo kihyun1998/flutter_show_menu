@@ -5,8 +5,9 @@ import 'package:flutter_show_menu/flutter_show_menu.dart';
 const _items = [OverlayMenuItem<String>(value: 'a', child: Text('Apple'))];
 
 void main() {
-  testWidgets('an unmounted anchor context is named in the failure',
-      (tester) async {
+  testWidgets('an unmounted anchor context is named in the failure', (
+    tester,
+  ) async {
     late BuildContext anchor;
     await tester.pumpWidget(
       MaterialApp(
@@ -39,8 +40,9 @@ void main() {
     );
   });
 
-  testWidgets('an anchor context with no RenderBox is named in the failure',
-      (tester) async {
+  testWidgets('an anchor context with no RenderBox is named in the failure', (
+    tester,
+  ) async {
     late BuildContext anchor;
     await tester.pumpWidget(
       MaterialApp(
@@ -77,8 +79,9 @@ void main() {
     );
   });
 
-  testWidgets('OverlayMenuButton still opens from inside a sliver',
-      (tester) async {
+  testWidgets('OverlayMenuButton still opens from inside a sliver', (
+    tester,
+  ) async {
     // The guard rejects contexts above a sliver. The button anchors to its own
     // context, which is a box, so it must keep working there.
     await tester.pumpWidget(

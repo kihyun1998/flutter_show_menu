@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smooth_wheel_scroll/flutter_smooth_wheel_scroll.dart';
 
 import 'menu_position_delegate.dart';
 import 'menu_scale_origin.dart';
@@ -136,7 +137,9 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<double> _scale;
-  final ScrollController _scrollController = ScrollController();
+  late final SmoothScrollController _scrollController = SmoothScrollController(
+    motion: (widget.style ?? const OverlayMenuStyle()).wheelMotion,
+  );
 
   /// Filled in during layout, read during paint.
   final MenuScaleOrigin _scaleOrigin = MenuScaleOrigin();
@@ -264,10 +267,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     );
 
     if (style?.decoration != null) {
-      menu = DecoratedBox(
-        decoration: style!.decoration!,
-        child: menu,
-      );
+      menu = DecoratedBox(decoration: style!.decoration!, child: menu);
     }
 
     if (style?.width != null) {
@@ -275,10 +275,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     }
 
     if (style?.constraints != null) {
-      menu = ConstrainedBox(
-        constraints: style!.constraints!,
-        child: menu,
-      );
+      menu = ConstrainedBox(constraints: style!.constraints!, child: menu);
     }
 
     return menu;
@@ -293,14 +290,17 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         ? widget.footer
         : widget.footer?.where((e) => e is! OverlayMenuDivider<T>).toList();
 
-    final itemWidgets =
-        widget.items.map((entry) => _buildEntry(entry)).toList();
+    final itemWidgets = widget.items
+        .map((entry) => _buildEntry(entry))
+        .toList();
 
     final headerStyle = widget.style?.headerStyle;
     final footerStyle = widget.style?.footerStyle;
 
-    final horizontalPadding =
-        EdgeInsets.only(left: padding.left, right: padding.right);
+    final horizontalPadding = EdgeInsets.only(
+      left: padding.left,
+      right: padding.right,
+    );
 
     final column = Column(
       mainAxisSize: MainAxisSize.min,
@@ -311,10 +311,7 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
     final sb = widget.style?.scrollbarStyle;
     final scrollView = SingleChildScrollView(
       controller: _scrollController,
-      child: Padding(
-        padding: horizontalPadding,
-        child: column,
-      ),
+      child: Padding(padding: horizontalPadding, child: column),
     );
 
     Widget scrollable;
@@ -332,16 +329,10 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
               ? WidgetStatePropertyAll(sb.thumbVisibility!)
               : null,
         ),
-        child: Scrollbar(
-          controller: _scrollController,
-          child: scrollView,
-        ),
+        child: Scrollbar(controller: _scrollController, child: scrollView),
       );
     } else {
-      scrollable = Scrollbar(
-        controller: _scrollController,
-        child: scrollView,
-      );
+      scrollable = Scrollbar(controller: _scrollController, child: scrollView);
     }
 
     // With no maxHeight, the safe area the delegate allows is the limit.
@@ -353,29 +344,36 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
         children: [
           SizedBox(height: padding.top),
           if (headerEntries != null)
-            ...headerEntries.map((e) => Padding(
-                  padding: horizontalPadding,
-                  child: _buildEntry(e, styleOverride: headerStyle),
-                )),
+            ...headerEntries.map(
+              (e) => Padding(
+                padding: horizontalPadding,
+                child: _buildEntry(e, styleOverride: headerStyle),
+              ),
+            ),
           Flexible(child: scrollable),
           if (footerEntries != null)
-            ...footerEntries.map((e) => Padding(
-                  padding: horizontalPadding,
-                  child: _buildEntry(e, styleOverride: footerStyle),
-                )),
+            ...footerEntries.map(
+              (e) => Padding(
+                padding: horizontalPadding,
+                child: _buildEntry(e, styleOverride: footerStyle),
+              ),
+            ),
           SizedBox(height: padding.bottom),
         ],
       ),
     );
   }
 
-  Widget _buildEntry(OverlayMenuEntry<T> entry,
-      {OverlayMenuItemStyle? styleOverride}) {
+  Widget _buildEntry(
+    OverlayMenuEntry<T> entry, {
+    OverlayMenuItemStyle? styleOverride,
+  }) {
     return OverlayMenuEntryView<T>(
       entry: entry,
       itemStyle: styleOverride ?? widget.style?.itemStyle,
       dividerStyle: widget.style?.dividerStyle,
-      isSelected: entry is OverlayMenuItem<T> &&
+      isSelected:
+          entry is OverlayMenuItem<T> &&
           widget.initialValue != null &&
           entry.value == widget.initialValue,
       onSelected: (value) => widget.menu.close(value, animated: true),

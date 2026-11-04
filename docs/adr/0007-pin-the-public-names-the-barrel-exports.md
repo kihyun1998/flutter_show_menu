@@ -32,3 +32,7 @@ This was the maintainer's call (#37), a judgement made on the measurements above
 - Members added to a class that is already public are not pinned. ADR-0003 allows them as non-breaking.
 - A new declaration form that the scan cannot read fails the suite until the scan learns it.
 - `test/check_surface_test.dart` imports `tool/`, so it is listed in `.pubignore` with the map check's test.
+
+## Later
+
+Since ADR-0009 the surface is 19 names: the barrel re-exports `WheelMotion` from `flutter_smooth_wheel_scroll` with `show`, which the scan reads. `package:analyzer` would no longer be the first external dependency; its other costs above still stand.

@@ -35,17 +35,23 @@ void main() {
     test('bottom anchors below the target, cross-axis follows alignment', () {
       expect(
         _positionFor(
-            position: MenuPosition.bottom, alignment: MenuAlignment.start),
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.start,
+        ),
         const Offset(300, 300), // target.left, target.bottom
       );
       expect(
         _positionFor(
-            position: MenuPosition.bottom, alignment: MenuAlignment.center),
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.center,
+        ),
         const Offset(290, 300), // centre 350 - half of 120
       );
       expect(
         _positionFor(
-            position: MenuPosition.bottom, alignment: MenuAlignment.end),
+          position: MenuPosition.bottom,
+          alignment: MenuAlignment.end,
+        ),
         const Offset(280, 300), // target.right - 120
       );
     });
@@ -53,12 +59,16 @@ void main() {
     test('top anchors above the target', () {
       expect(
         _positionFor(
-            position: MenuPosition.top, alignment: MenuAlignment.start),
+          position: MenuPosition.top,
+          alignment: MenuAlignment.start,
+        ),
         const Offset(300, 170), // target.top - 80
       );
       expect(
         _positionFor(
-            position: MenuPosition.top, alignment: MenuAlignment.center),
+          position: MenuPosition.top,
+          alignment: MenuAlignment.center,
+        ),
         const Offset(290, 170),
       );
       expect(
@@ -70,17 +80,23 @@ void main() {
     test('right anchors beside the target, cross-axis is vertical', () {
       expect(
         _positionFor(
-            position: MenuPosition.right, alignment: MenuAlignment.start),
+          position: MenuPosition.right,
+          alignment: MenuAlignment.start,
+        ),
         const Offset(400, 250), // target.right, target.top
       );
       expect(
         _positionFor(
-            position: MenuPosition.right, alignment: MenuAlignment.center),
+          position: MenuPosition.right,
+          alignment: MenuAlignment.center,
+        ),
         const Offset(400, 235), // centre 275 - half of 80
       );
       expect(
         _positionFor(
-            position: MenuPosition.right, alignment: MenuAlignment.end),
+          position: MenuPosition.right,
+          alignment: MenuAlignment.end,
+        ),
         const Offset(400, 220), // target.bottom - 80
       );
     });
@@ -88,12 +104,16 @@ void main() {
     test('left anchors beside the target', () {
       expect(
         _positionFor(
-            position: MenuPosition.left, alignment: MenuAlignment.start),
+          position: MenuPosition.left,
+          alignment: MenuAlignment.start,
+        ),
         const Offset(180, 250), // target.left - 120
       );
       expect(
         _positionFor(
-            position: MenuPosition.left, alignment: MenuAlignment.center),
+          position: MenuPosition.left,
+          alignment: MenuAlignment.center,
+        ),
         const Offset(180, 235),
       );
       expect(
@@ -315,18 +335,20 @@ void main() {
   // Layer 3: clamp. Cross-axis alignment can push the menu off-screen even
   // when the main axis fits; flip only ever corrects the main axis.
   group('clamp to safe area', () {
-    test('a centred menu wider than the gap is pulled back to the left edge',
-        () {
-      expect(
-        _positionFor(
-          position: MenuPosition.bottom,
-          alignment: MenuAlignment.center,
-          target: const Rect.fromLTWH(10, 250, 100, 50), // centre.dx = 60
-          child: const Size(300, 80), // 60 - 150 = -90
-        ),
-        const Offset(0, 300),
-      );
-    });
+    test(
+      'a centred menu wider than the gap is pulled back to the left edge',
+      () {
+        expect(
+          _positionFor(
+            position: MenuPosition.bottom,
+            alignment: MenuAlignment.center,
+            target: const Rect.fromLTWH(10, 250, 100, 50), // centre.dx = 60
+            child: const Size(300, 80), // 60 - 150 = -90
+          ),
+          const Offset(0, 300),
+        );
+      },
+    );
 
     test('clamping respects screenPadding rather than the raw screen edge', () {
       expect(
@@ -341,27 +363,29 @@ void main() {
       );
     });
 
-    test('a menu larger than the screen pins to the origin instead of throwing',
-        () {
-      // Guards the max() in the clamp bounds: without it the lower limit would
-      // exceed the upper limit and num.clamp would raise ArgumentError.
-      expect(
-        () => _positionFor(
-          position: MenuPosition.bottom,
-          alignment: MenuAlignment.start,
-          child: const Size(900, 700),
-        ),
-        returnsNormally,
-      );
-      expect(
-        _positionFor(
-          position: MenuPosition.bottom,
-          alignment: MenuAlignment.start,
-          child: const Size(900, 700),
-        ),
-        Offset.zero,
-      );
-    });
+    test(
+      'a menu larger than the screen pins to the origin instead of throwing',
+      () {
+        // Guards the max() in the clamp bounds: without it the lower limit would
+        // exceed the upper limit and num.clamp would raise ArgumentError.
+        expect(
+          () => _positionFor(
+            position: MenuPosition.bottom,
+            alignment: MenuAlignment.start,
+            child: const Size(900, 700),
+          ),
+          returnsNormally,
+        );
+        expect(
+          _positionFor(
+            position: MenuPosition.bottom,
+            alignment: MenuAlignment.start,
+            child: const Size(900, 700),
+          ),
+          Offset.zero,
+        );
+      },
+    );
   });
 
   group('getConstraintsForChild', () {
@@ -413,7 +437,9 @@ void main() {
         isTrue,
       );
       expect(
-          delegate(screen: const Size(400, 300)).shouldRelayout(old), isTrue);
+        delegate(screen: const Size(400, 300)).shouldRelayout(old),
+        isTrue,
+      );
       expect(delegate(offset: const Offset(1, 1)).shouldRelayout(old), isTrue);
       expect(
         delegate(screenPadding: const EdgeInsets.all(1)).shouldRelayout(old),

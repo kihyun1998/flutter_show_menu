@@ -40,18 +40,19 @@ void main() {
       expect(withConst, equals(withSameConst));
     });
 
-    test('separately built curves are unequal even with equal coefficients',
-        () {
-      final x = 0.2;
-      final left = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
-      final right = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
-      expect(left, isNot(equals(right)));
-    });
+    test(
+      'separately built curves are unequal even with equal coefficients',
+      () {
+        final x = 0.2;
+        final left = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
+        final right = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
+        expect(left, isNot(equals(right)));
+      },
+    );
   });
 
   group('OverlayMenuPlacement', () {
-    test(
-        'two placements with the same position, alignment, and offset are '
+    test('two placements with the same position, alignment, and offset are '
         'equal', () {
       final dx = 4.0;
       final a = OverlayMenuPlacement(
@@ -108,7 +109,9 @@ void main() {
       const base = OverlayMenuBarrier();
       expect(base, isNot(equals(base.copyWith(dismissible: false))));
       expect(
-          base, isNot(equals(base.copyWith(color: const Color(0xFF000000)))));
+        base,
+        isNot(equals(base.copyWith(color: const Color(0xFF000000)))),
+      );
     });
 
     // Widget has no `==` of its own. These pin the boundary rather than drive
@@ -246,6 +249,7 @@ void main() {
         itemStyle: OverlayMenuItemStyle(height: itemHeight),
         dividerStyle: const OverlayMenuDividerStyle(thickness: 2),
         scrollbarStyle: const OverlayMenuScrollbarStyle(thickness: 4),
+        wheelMotion: const WheelMotion.curve(),
       );
     }
 
@@ -294,6 +298,39 @@ void main() {
       expect(restyled.scrollbarStyle, equals(base.scrollbarStyle));
       expect(restyled.decoration, equals(base.decoration));
       expect(restyled, isNot(equals(base)));
+    });
+
+    test('wheelMotion participates in equality and hashCode', () {
+      final spring = OverlayMenuStyle(
+        wheelMotion: WheelMotion.spring(duration: Duration(milliseconds: 400)),
+      );
+      final sameSpring = OverlayMenuStyle(
+        wheelMotion: WheelMotion.spring(duration: Duration(milliseconds: 400)),
+      );
+      final instant = OverlayMenuStyle(
+        wheelMotion: WheelMotion.spring(duration: Duration.zero),
+      );
+
+      expect(identical(spring, sameSpring), isFalse);
+      expect(spring, equals(sameSpring));
+      expect(spring.hashCode, equals(sameSpring.hashCode));
+      expect(spring, isNot(equals(instant)));
+      expect(spring.hashCode, isNot(equals(instant.hashCode)));
+    });
+
+    test('wheelMotion defaults to a spring', () {
+      expect(const OverlayMenuStyle().wheelMotion, const WheelMotion.spring());
+    });
+
+    test('copyWith replaces wheelMotion and keeps the rest', () {
+      final base = build();
+      const instant = WheelMotion.spring(duration: Duration.zero);
+      final restyled = base.copyWith(wheelMotion: instant);
+
+      expect(restyled.wheelMotion, instant);
+      expect(restyled.maxHeight, base.maxHeight);
+      expect(base.wheelMotion, const WheelMotion.curve());
+      expect(base.copyWith().wheelMotion, base.wheelMotion);
     });
 
     test('header and footer styles participate in equality', () {

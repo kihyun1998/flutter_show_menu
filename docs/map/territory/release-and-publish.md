@@ -9,7 +9,10 @@ up for the person who installs the package.
 
 ## Governing decisions
 
-**None.** The process is written here and in
+- [ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#consequences)
+  takes the first runtime dependency and the floor it brings.
+
+The process is written here and in
 [lessons, Step 6/7](../../agents/lessons.md#step-67--정합성--게이트), not in a record.
 
 ## Design model
@@ -20,6 +23,12 @@ up for the person who installs the package.
 - `docs/`, `tool/` and `.github/` are excluded too, so this map and its
   checker do not ship. A published archive cannot be withdrawn, so a file
   this list misses ships for good.
+- The floor is Dart 3.8 and Flutter 3.32, the floor
+  `flutter_smooth_wheel_scroll` 0.1.5 declares
+  ([ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#decision)).
+  It is the only runtime dependency besides Flutter. A Dart lower bound of
+  3.7 or more also moves `dart format` to the tall style, so raising it
+  past 3.7 reformatted the tree (#58).
 - Nothing gates the declared Flutter floor. CI builds against a pinned
   newer SDK, not the floor. The floor is checked by hand, with the
   `git log -S` and `git tag --contains` method in
@@ -68,8 +77,9 @@ up for the person who installs the package.
 
 - [Public surface](public-surface.md): what the barrel exports is what a
   version number promises.
-- [Menu body layout](menu-body-layout.md): its use of
-  `WidgetStatePropertyAll` is what sets the floor.
+- [Menu body layout](menu-body-layout.md): its scroll controller comes
+  from `flutter_smooth_wheel_scroll`, whose floor is this package's floor.
+  Its use of `WidgetStatePropertyAll` needs 3.22, below that.
 - [CI gates](ci-gates.md): CI's pinned SDK is not the floor, so a green
   build says nothing about the floor.
 - [Example app](example-app.md): it ships in the archive, and what

@@ -15,10 +15,7 @@ OverlayMenuItem<String> _item(String value, {double? height}) {
 void main() {
   group('resolveEntryHeight — item', () {
     test('prefers the item over the style over the package default', () {
-      expect(
-        resolveEntryHeight(_item('a', height: 12)),
-        12,
-      );
+      expect(resolveEntryHeight(_item('a', height: 12)), 12);
       expect(
         resolveEntryHeight(
           _item('a'),

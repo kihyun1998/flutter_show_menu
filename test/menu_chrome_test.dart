@@ -103,9 +103,7 @@ void main() {
     showOverlayMenu<String>(
       context: anchor,
       items: _items,
-      style: const OverlayMenuStyle(
-        constraints: BoxConstraints(minWidth: 300),
-      ),
+      style: const OverlayMenuStyle(constraints: BoxConstraints(minWidth: 300)),
     );
     await tester.pumpAndSettle();
 

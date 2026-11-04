@@ -75,11 +75,9 @@ class OverlayMenuController {
 /// Auto-close. Every Close goes through [close]; see
 /// `docs/map/invariant/one-close-path.md`.
 class OpenMenu<T> {
-  OpenMenu({
-    OverlayMenuController? controller,
-    ModalRoute<Object?>? route,
-  })  : _controller = controller,
-        _route = route {
+  OpenMenu({OverlayMenuController? controller, ModalRoute<Object?>? route})
+    : _controller = controller,
+      _route = route {
     controller?._bind(this);
     _route?.animation?.addStatusListener(_onRouteStatus);
     _route?.secondaryAnimation?.addStatusListener(_onSecondaryRouteStatus);

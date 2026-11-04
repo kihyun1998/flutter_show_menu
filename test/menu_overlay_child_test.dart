@@ -25,19 +25,19 @@ Future<BuildContext> _pumpHost(WidgetTester tester) async {
 
 /// A strip along the top of the screen, well clear of the centred menu.
 Widget _strip({VoidCallback? onTap}) => Column(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            height: 40,
-            color: const Color(0x22000000),
-            alignment: Alignment.center,
-            child: const Text('Drag me'),
-          ),
-        ),
-        const Expanded(child: IgnorePointer(child: SizedBox.expand())),
-      ],
-    );
+  children: [
+    GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 40,
+        color: const Color(0x22000000),
+        alignment: Alignment.center,
+        child: const Text('Drag me'),
+      ),
+    ),
+    const Expanded(child: IgnorePointer(child: SizedBox.expand())),
+  ],
+);
 
 void main() {
   testWidgets('an overlayChild is rendered above the barrier', (tester) async {
@@ -74,8 +74,9 @@ void main() {
     showOverlayMenu<String>(
       context: anchor,
       items: _items,
-      barrier:
-          OverlayMenuBarrier(overlayChild: _strip(onTap: () => tapped = true)),
+      barrier: OverlayMenuBarrier(
+        overlayChild: _strip(onTap: () => tapped = true),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -88,8 +89,9 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('tapping an overlayChild does not Close the menu',
-      (tester) async {
+  testWidgets('tapping an overlayChild does not Close the menu', (
+    tester,
+  ) async {
     final anchor = await _pumpHost(tester);
     final future = showOverlayMenu<String>(
       context: anchor,
@@ -110,8 +112,7 @@ void main() {
     expect(await future, isNull);
   });
 
-  testWidgets(
-      'the barrier still Closes the menu where the overlayChild is '
+  testWidgets('the barrier still Closes the menu where the overlayChild is '
       'transparent to hits', (tester) async {
     final anchor = await _pumpHost(tester);
     final future = showOverlayMenu<String>(

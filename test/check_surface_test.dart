@@ -24,6 +24,7 @@ const _publicNames = {
   'OverlayMenuPlacement',
   'OverlayMenuScrollbarStyle',
   'OverlayMenuStyle',
+  'WheelMotion',
   'closeAllOverlayMenus',
   'showOverlayMenu',
 };
@@ -110,7 +111,9 @@ void main() {
         "export 'src/a.dart'\n    show Alpha,\n        beta;\n",
       );
       _write(
-          'lib/src/a.dart', 'class Alpha {}\nvoid beta() {}\nclass Gamma {}\n');
+        'lib/src/a.dart',
+        'class Alpha {}\nvoid beta() {}\nclass Gamma {}\n',
+      );
       _expectNames({'Alpha', 'beta'});
     });
 
@@ -137,12 +140,14 @@ void main() {
       expect(_scan().findings, [contains('lib/src/a.dart:1: ')]);
     });
 
-    test('an export inside an exported file fails rather than going unread',
-        () {
-      _write('lib/flutter_show_menu.dart', "export 'src/a.dart';\n");
-      _write('lib/src/a.dart', "export 'b.dart';\nclass Alpha {}\n");
-      expect(_scan().findings, [contains('lib/src/a.dart:1: ')]);
-    });
+    test(
+      'an export inside an exported file fails rather than going unread',
+      () {
+        _write('lib/flutter_show_menu.dart', "export 'src/a.dart';\n");
+        _write('lib/src/a.dart', "export 'b.dart';\nclass Alpha {}\n");
+        expect(_scan().findings, [contains('lib/src/a.dart:1: ')]);
+      },
+    );
 
     test('an exported file that does not exist fails', () {
       _write('lib/flutter_show_menu.dart', "export 'src/gone.dart';\n");

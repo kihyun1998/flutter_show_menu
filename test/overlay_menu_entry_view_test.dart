@@ -114,8 +114,9 @@ void main() {
       expect(tester.widget<InkWell>(find.byType(InkWell)).onTap, isNull);
     });
 
-    testWidgets('a disabled item paints its text with the disabled color',
-        (tester) async {
+    testWidgets('a disabled item paints its text with the disabled color', (
+      tester,
+    ) async {
       final theme = ThemeData(disabledColor: const Color(0xFF123456));
       await _pumpView(
         tester,
@@ -131,9 +132,7 @@ void main() {
       );
 
       final text = tester.widget<Text>(find.text('Dim'));
-      final style = DefaultTextStyle.of(
-        tester.element(find.text('Dim')),
-      ).style;
+      final style = DefaultTextStyle.of(tester.element(find.text('Dim'))).style;
       expect(text.style, isNull);
       expect(style.color, const Color(0xFF123456));
     });
@@ -166,8 +165,9 @@ void main() {
       expect(_inkColor(tester), const Color(0xFF222222));
     });
 
-    testWidgets('an enabled item uses the click cursor by default',
-        (tester) async {
+    testWidgets('an enabled item uses the click cursor by default', (
+      tester,
+    ) async {
       await _pumpView(
         tester,
         OverlayMenuEntryView<String>(
@@ -199,8 +199,9 @@ void main() {
   });
 
   group('divider', () {
-    testWidgets('resolves thickness and height through the metrics module',
-        (tester) async {
+    testWidgets('resolves thickness and height through the metrics module', (
+      tester,
+    ) async {
       await _pumpView(
         tester,
         OverlayMenuEntryView<String>(
