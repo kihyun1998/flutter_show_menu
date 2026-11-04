@@ -1,3 +1,13 @@
+## Unreleased
+
+### Added
+
+- **feat**: A scrolling menu animated nothing on the mouse wheel: each notch moved the whole distance in one frame, and the scroll controller was private. `OverlayMenuStyle.wheelMotion` now sets how wheel input moves the scrolling entries, and defaults to `WheelMotion.spring()`, so scrolling menus animate wheel input unless it is set to `WheelMotion.spring(duration: Duration.zero)`. Dragging, the scrollbar, the keyboard and the `initialValue` jump are unchanged. `WheelMotion` is exported. See `docs/adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md`.
+
+### Changed
+
+- **breaking**: The package now depends on `flutter_smooth_wheel_scroll`, and requires Dart 3.8 and Flutter 3.32 (was Dart 3.0 and Flutter 3.22), the floor that package declares.
+
 ## 1.0.2
 
 ### Fixed

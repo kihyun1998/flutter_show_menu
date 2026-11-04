@@ -24,6 +24,7 @@ const _publicNames = {
   'OverlayMenuPlacement',
   'OverlayMenuScrollbarStyle',
   'OverlayMenuStyle',
+  'WheelMotion',
   'closeAllOverlayMenus',
   'showOverlayMenu',
 };

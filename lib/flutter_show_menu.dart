@@ -7,14 +7,16 @@
 /// - Anchor to any side of the target ([MenuPosition]) with cross-axis
 ///   alignment ([MenuAlignment]).
 /// - Fixed header/footer entries outside the scroll area.
-/// - Selected-item auto-scroll, dividers, and scrollbar customisation via
-///   [OverlayMenuStyle].
+/// - Selected-item auto-scroll, dividers, scrollbar customisation and
+///   animated mouse wheel scrolling ([WheelMotion]) via [OverlayMenuStyle].
 /// - Automatic dismissal on route changes and programmatic close via
 ///   [OverlayMenuController].
 /// - App-wide dismissal of every open menu at once via [closeAllOverlayMenus]
 ///   for non-route moments (session expiry, app backgrounding, etc.).
 library;
 
+export 'package:flutter_smooth_wheel_scroll/flutter_smooth_wheel_scroll.dart'
+    show WheelMotion;
 export 'src/menu_position.dart';
 export 'src/open_menu.dart' show OverlayMenuController;
 export 'src/open_menu_registry.dart' show closeAllOverlayMenus;

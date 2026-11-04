@@ -10,6 +10,8 @@ surface, and when the items scroll.
 - [ADR-0008](../../adr/0008-a-menu-without-maxheight-scrolls-within-the-safe-area.md#decision)
   makes a menu without `maxHeight` scroll within the safe area, in the same
   layout as with it.
+- [ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#decision)
+  animates mouse wheel input through `flutter_smooth_wheel_scroll`.
 
 ## Design model
 
@@ -24,7 +26,14 @@ Read from the source, except where a record is linked.
 - The height limit is `maxHeight`, or the safe area the
   [placement](placement-and-flip.md) delegate allows when `maxHeight` is
   null (ADR-0008). A menu that fits is sized by its entries either way.
-- The scroll controller always exists.
+- The scroll controller always exists. It is a `SmoothScrollController` from
+  `flutter_smooth_wheel_scroll`, built with `style.wheelMotion`, or the
+  default spring when no style is given
+  ([ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#decision)).
+  It animates only mouse wheel input. `jumpTo`, which brings `initialValue`
+  into view, drag, the scrollbar and the keyboard move as with a plain
+  `ScrollController`. The motion is read when the menu is built; nothing
+  changes it while the menu is open.
 - When `items` is empty, dividers are dropped from the header and the
   footer.
 - The scroll view always has a `Scrollbar`. It is themed only when
@@ -39,6 +48,7 @@ Read from the source, except where a record is linked.
 - `test/menu_header_footer_pinning_test.dart`
 - `test/menu_max_height_test.dart`
 - `test/menu_scrollbar_test.dart`
+- `test/menu_wheel_motion_test.dart`
 
 ## Reference behaviour
 
@@ -56,7 +66,8 @@ Read from the source, except where a record is linked.
 - [Placement and flip](placement-and-flip.md): the body's height is what
   the flip test measures.
 - [Release and publish](release-and-publish.md): `WidgetStatePropertyAll`
-  is what sets the Flutter floor at 3.22 (#24).
+  needs Flutter 3.22 (#24); the `flutter_smooth_wheel_scroll` dependency
+  now sets the floor higher, at 3.32 (ADR-0009).
 - [Entry rendering](entry-rendering.md): each entry is drawn by it, with the
   header and footer styles passed in.
 - [Surface style](surface-style.md): supplies `padding` and `maxHeight`.

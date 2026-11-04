@@ -19,7 +19,12 @@ classes nested in it. All of them have `==`, `hashCode` and `copyWith`.
   equality. The const curves on `Curves` are canonicalised, so they still
   compare equal.
 - `copyWith` resolves each field as `argument ?? this.field`, so it cannot
-  set a field back to `null`.
+  set a field back to `null`. For that reason `OverlayMenuStyle.wheelMotion`
+  is not nullable: no animation is `WheelMotion.spring(duration:
+  Duration.zero)`, not `null`
+  ([ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#considered-options)).
+  `WheelMotion` has `==` of its own; its curve variant compares its `Curve`
+  by identity, as the configuration objects do.
 - Calling `copyWith()` with no arguments must return an equal object. The
   value-semantics test checks this for all seven classes, which is what
   covers the right-hand side of each `??` (#7).

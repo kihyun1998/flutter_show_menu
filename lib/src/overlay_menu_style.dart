@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smooth_wheel_scroll/flutter_smooth_wheel_scroll.dart';
 
 /// Style for header items. Same shape as [OverlayMenuItemStyle].
 typedef OverlayMenuHeaderStyle = OverlayMenuItemStyle;
@@ -21,6 +22,7 @@ class OverlayMenuStyle {
     this.footerStyle,
     this.dividerStyle,
     this.scrollbarStyle,
+    this.wheelMotion = const WheelMotion.spring(),
   });
 
   /// Background color of the menu surface.
@@ -65,6 +67,13 @@ class OverlayMenuStyle {
   /// Scrollbar style for the scrolling entries.
   final OverlayMenuScrollbarStyle? scrollbarStyle;
 
+  /// How mouse wheel input moves the scrolling entries.
+  ///
+  /// Defaults to [WheelMotion.spring]. `WheelMotion.spring(duration:
+  /// Duration.zero)` applies each wheel notch at once. Only mouse wheel input
+  /// is animated; dragging, the scrollbar and the keyboard are not.
+  final WheelMotion wheelMotion;
+
   OverlayMenuStyle copyWith({
     Color? backgroundColor,
     BorderRadius? borderRadius,
@@ -78,6 +87,7 @@ class OverlayMenuStyle {
     OverlayMenuFooterStyle? footerStyle,
     OverlayMenuDividerStyle? dividerStyle,
     OverlayMenuScrollbarStyle? scrollbarStyle,
+    WheelMotion? wheelMotion,
   }) {
     return OverlayMenuStyle(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -92,6 +102,7 @@ class OverlayMenuStyle {
       footerStyle: footerStyle ?? this.footerStyle,
       dividerStyle: dividerStyle ?? this.dividerStyle,
       scrollbarStyle: scrollbarStyle ?? this.scrollbarStyle,
+      wheelMotion: wheelMotion ?? this.wheelMotion,
     );
   }
 
@@ -111,7 +122,8 @@ class OverlayMenuStyle {
         other.headerStyle == headerStyle &&
         other.footerStyle == footerStyle &&
         other.dividerStyle == dividerStyle &&
-        other.scrollbarStyle == scrollbarStyle;
+        other.scrollbarStyle == scrollbarStyle &&
+        other.wheelMotion == wheelMotion;
   }
 
   @override
@@ -128,6 +140,7 @@ class OverlayMenuStyle {
     footerStyle,
     dividerStyle,
     scrollbarStyle,
+    wheelMotion,
   );
 }
 

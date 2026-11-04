@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smooth_wheel_scroll/flutter_smooth_wheel_scroll.dart';
 
 import 'menu_position_delegate.dart';
 import 'menu_scale_origin.dart';
@@ -136,7 +137,9 @@ class _OverlayMenuWidgetState<T> extends State<_OverlayMenuWidget<T>>
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<double> _scale;
-  final ScrollController _scrollController = ScrollController();
+  late final SmoothScrollController _scrollController = SmoothScrollController(
+    motion: (widget.style ?? const OverlayMenuStyle()).wheelMotion,
+  );
 
   /// Filled in during layout, read during paint.
   final MenuScaleOrigin _scaleOrigin = MenuScaleOrigin();

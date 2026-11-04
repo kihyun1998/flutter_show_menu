@@ -24,7 +24,12 @@ Read from the source; nothing in a record says it.
 - The package owns positioning, the scale-origin render object, the Close
   and registry lifecycle, the animation and the barrier. The caller owns
   the items, the anchor widget and what it does with the result.
-- Three export lines use `show`, and that is what keeps the lifetime and the
+- One export line re-exports another package:
+  `flutter_smooth_wheel_scroll` with `show WheelMotion`, so a caller can set
+  `OverlayMenuStyle.wheelMotion` with one import
+  ([ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#decision)).
+  `SmoothScrollController` stays unexported.
+- Three of this package's export lines use `show`, and that is what keeps the lifetime and the
   registry private. `open_menu.dart` exports only `OverlayMenuController`,
   hiding `OpenMenu` and `ExitAnimator`. `open_menu_registry.dart` exports only
   `closeAllOverlayMenus`, hiding `OpenMenuRegistry`. `overlay_menu.dart`
@@ -32,7 +37,7 @@ Read from the source; nothing in a record says it.
 - The other seven lines export whole files. These are the position enums, the
   barrier, the button, the entry types, motion, placement and style. Every
   public name declared in those files is public API, including names added
-  later, so the test pins all 18 names. Adding one means adding it to the
+  later, so the test pins all 19 names, `WheelMotion` included. Adding one means adding it to the
   pinned list in the same change.
 - Never exported: the position delegate, the scale-origin render object, the
   entry view and the metrics module. Tests reach them through

@@ -19,6 +19,7 @@ Position menus relative to any widget with full control over direction, alignmen
 - **Rich styling** — `OverlayMenuStyle` with grouped sub-classes for item, divider, and scrollbar styles
 - **Divider support** — `OverlayMenuDivider` entries between items
 - **Scrollable menu** — scrolls once it outgrows `maxHeight`, or the screen when `maxHeight` is unset, with scrollbar theming
+- **Smooth wheel scrolling** — mouse wheel input animates through `wheelMotion` (a spring by default)
 - **Auto-scroll via `initialValue`** — when reopening a scrollable menu, the matching item is automatically centered in the viewport
 - **Header / Footer** — fixed entries pinned above/below the scrollable area with independent styling
 - **Auto-close on navigation** — menu automatically dismisses when the route is popped or a new route is pushed
@@ -319,6 +320,7 @@ Base type for menu entries. Two subtypes:
 | `footerStyle` | `OverlayMenuFooterStyle?` | Style override for footer items |
 | `dividerStyle` | `OverlayMenuDividerStyle?` | Divider defaults |
 | `scrollbarStyle` | `OverlayMenuScrollbarStyle?` | Scrollbar theming for the scrolling entries |
+| `wheelMotion` | `WheelMotion` | How mouse wheel input moves the scrolling entries. Defaults to `WheelMotion.spring()`; `WheelMotion.spring(duration: Duration.zero)` applies each notch at once |
 
 ### `OverlayMenuItemStyle`
 
