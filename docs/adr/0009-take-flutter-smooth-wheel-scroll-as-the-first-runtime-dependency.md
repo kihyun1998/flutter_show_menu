@@ -26,3 +26,4 @@ This was the maintainer's call (#58). The package has no consumers yet, and the 
 - Scrolling menus animate wheel input by default. Menus that fit do not scroll and are unchanged.
 - `WheelMotion` joins the public names `test/check_surface_test.dart` pins (ADR-0007).
 - Dependabot opens a PR for each `flutter_smooth_wheel_scroll` release outside the caret; each one may raise the floor again.
+- The values behind the default, `WheelMotion.spring()`, are the dependency's. A release inside the caret can change them, and so this package's default wheel motion, with no change here and no Dependabot PR. This was the maintainer's call: the point is to move as the siblings do.
