@@ -1,4 +1,4 @@
-## Unreleased
+## 1.1.0
 
 ### Added
 
@@ -6,7 +6,7 @@
 
 ### Changed
 
-- **breaking**: The package now depends on `flutter_smooth_wheel_scroll`, and requires Dart 3.8 and Flutter 3.32 (was Dart 3.0 and Flutter 3.22), the floor that package declares.
+- **changed**: The package now depends on `flutter_smooth_wheel_scroll`, and requires Dart 3.8 and Flutter 3.32 (was Dart 3.0 and Flutter 3.22), the floor that package declares. On an older SDK, pub resolves 1.0.2 instead.
 
 ## 1.0.2
 
