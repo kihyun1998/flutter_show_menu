@@ -64,6 +64,17 @@ Future<({double firstFrame, double nextFrame, double settled})> _wheelOnce(
   );
 }
 
+/// The notch is spread over frames: short of the full delta at first,
+/// moving one frame later, and complete once settled.
+void _expectAnimated(
+  ({double firstFrame, double nextFrame, double settled}) r,
+) {
+  expect(r.firstFrame, lessThan(_wheelDelta));
+  expect(r.nextFrame, greaterThan(r.firstFrame));
+  expect(r.nextFrame, lessThan(_wheelDelta));
+  expect(r.settled, _wheelDelta);
+}
+
 Future<void> _closeAll(WidgetTester tester) async {
   closeAllOverlayMenus();
   await tester.pumpAndSettle();
@@ -83,10 +94,7 @@ void main() {
 
     final result = await _wheelOnce(tester);
 
-    expect(result.firstFrame, lessThan(_wheelDelta));
-    expect(result.nextFrame, greaterThan(result.firstFrame));
-    expect(result.nextFrame, lessThan(_wheelDelta));
-    expect(result.settled, _wheelDelta);
+    _expectAnimated(result);
 
     await _closeAll(tester);
   });
@@ -101,10 +109,7 @@ void main() {
 
     final result = await _wheelOnce(tester);
 
-    expect(result.firstFrame, lessThan(_wheelDelta));
-    expect(result.nextFrame, greaterThan(result.firstFrame));
-    expect(result.nextFrame, lessThan(_wheelDelta));
-    expect(result.settled, _wheelDelta);
+    _expectAnimated(result);
 
     await _closeAll(tester);
   });

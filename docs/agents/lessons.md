@@ -101,3 +101,9 @@
   → 최초 stable `3.22.0`, 3.10–3.21 에는 없음(반증까지). floor 를 `>=3.22.0` 으로 올리고 정직성을
   서술하던 표면(CLAUDE.md 와 당시의 바인딩 문서)을 과거형으로 뒤집었다. floor 의 정직성은 도구가
   아니라 사람이 손으로 지키는 계약이다.
+- **#58 (floor 를 올리면 포매터가 바뀐다)**: 의존성 때문에 `sdk` 하한을 3.0 → 3.8 로 올리자
+  `dart format` 이 tall style 로 바뀌어 `lib/`·`test/`·`tool/` 35 개 중 24 개가 다시 포맷됐다
+  (하한 3.6.0 은 0 개, 3.7.0 은 25 개 — 스크래치 클론에서 실측). CI 포맷 게이트가 이를 요구하므로
+  floor 상향은 재포맷 커밋을 따로 동반한다. 같은 이슈에서 로컬 Flutter 3.47.1 의 `flutter pub get`
+  /`analyze` 가 `analysis_options.yaml` 에 analyzer exclude 를 써 넣고 `example/pubspec.lock` 을
+  자기 SDK 핀으로 바꿨다 — 남이 고친 변경으로 오인했다. 커밋 전에 그 둘은 되돌린다.

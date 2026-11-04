@@ -71,7 +71,8 @@ class OverlayMenuStyle {
   ///
   /// Defaults to [WheelMotion.spring]. `WheelMotion.spring(duration:
   /// Duration.zero)` applies each wheel notch at once. Only mouse wheel input
-  /// is animated; dragging, the scrollbar and the keyboard are not.
+  /// follows this motion; dragging, the scrollbar and the keyboard move as
+  /// they would without it.
   final WheelMotion wheelMotion;
 
   OverlayMenuStyle copyWith({

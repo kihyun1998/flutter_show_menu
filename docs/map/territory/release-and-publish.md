@@ -26,10 +26,9 @@ The process is written here and in
 - The floor is Dart 3.8 and Flutter 3.32, the floor
   `flutter_smooth_wheel_scroll` 0.1.5 declares
   ([ADR-0009](../../adr/0009-take-flutter-smooth-wheel-scroll-as-the-first-runtime-dependency.md#decision)).
-  It is the only runtime dependency besides Flutter, so pub refuses a
-  lower SDK before compilation does. A Dart lower bound of 3.7 or more also
-  moves `dart format` to the tall style, so raising it past 3.7 reformatted
-  the tree (#58).
+  It is the only runtime dependency besides Flutter. A Dart lower bound of
+  3.7 or more also moves `dart format` to the tall style, so raising it
+  past 3.7 reformatted the tree (#58).
 - Nothing gates the declared Flutter floor. CI builds against a pinned
   newer SDK, not the floor. The floor is checked by hand, with the
   `git log -S` and `git tag --contains` method in
