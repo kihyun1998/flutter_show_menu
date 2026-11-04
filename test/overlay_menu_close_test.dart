@@ -40,8 +40,9 @@ void main() {
   });
 
   group('the result is latched when Close is requested', () {
-    testWidgets('an item whose onTap pushes a route still returns its value',
-        (tester) async {
+    testWidgets('an item whose onTap pushes a route still returns its value', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
 
       final future = showOverlayMenu<String>(
@@ -68,8 +69,9 @@ void main() {
       expect(await future, 'save');
     });
 
-    testWidgets('Close All during the exit animation preserves the selection',
-        (tester) async {
+    testWidgets('Close All during the exit animation preserves the selection', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
 
       final future = showOverlayMenu<String>(
@@ -139,15 +141,14 @@ void main() {
   });
 
   group('instant Close', () {
-    testWidgets('Close All removes the menu within a single frame',
-        (tester) async {
+    testWidgets('Close All removes the menu within a single frame', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
 
       final future = showOverlayMenu<String>(
         context: host.context,
-        items: [
-          const OverlayMenuItem<String>(value: 'a', child: Text('Solo')),
-        ],
+        items: [const OverlayMenuItem<String>(value: 'a', child: Text('Solo'))],
       );
       await tester.pumpAndSettle();
 
@@ -162,8 +163,9 @@ void main() {
       expect(await future, isNull);
     });
 
-    testWidgets('Close All preempts an in-flight exit animation',
-        (tester) async {
+    testWidgets('Close All preempts an in-flight exit animation', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
       final controller = OverlayMenuController();
 
@@ -222,8 +224,9 @@ void main() {
   });
 
   group('idempotency', () {
-    testWidgets('a second Close cannot overwrite the first result',
-        (tester) async {
+    testWidgets('a second Close cannot overwrite the first result', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
       final controller = OverlayMenuController();
 
@@ -245,8 +248,9 @@ void main() {
       expect(controller.isClosed, isTrue);
     });
 
-    testWidgets('Controller.close() twice is a no-op the second time',
-        (tester) async {
+    testWidgets('Controller.close() twice is a no-op the second time', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
       final controller = OverlayMenuController();
 
@@ -267,8 +271,9 @@ void main() {
       expect(controller.isClosed, isTrue);
     });
 
-    testWidgets('a barrier tap after selection does not change the result',
-        (tester) async {
+    testWidgets('a barrier tap after selection does not change the result', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
 
       final future = showOverlayMenu<String>(
@@ -289,8 +294,9 @@ void main() {
   });
 
   group('Controller binding', () {
-    testWidgets('a Controller reused for a second menu closes only that menu',
-        (tester) async {
+    testWidgets('a Controller reused for a second menu closes only that menu', (
+      tester,
+    ) async {
       final host = await _pumpHost(tester);
       final controller = OverlayMenuController();
 
@@ -319,132 +325,153 @@ void main() {
     });
 
     testWidgets(
-        'a Controller reused while its old menu animates out still closes '
-        'the new one', (tester) async {
-      final host = await _pumpHost(tester);
-      final controller = OverlayMenuController();
+      'a Controller reused while its old menu animates out still closes '
+      'the new one',
+      (tester) async {
+        final host = await _pumpHost(tester);
+        final controller = OverlayMenuController();
 
-      final first = showOverlayMenu<String>(
-        context: host.context,
-        controller: controller,
-        items: [const OverlayMenuItem<String>(value: 'a', child: Text('One'))],
-        motion: const OverlayMenuMotion(duration: _animation),
-      );
-      await tester.pumpAndSettle();
-      controller.close();
-      await tester.pump(_animation ~/ 3);
-      expect(find.text('One'), findsOneWidget, reason: 'still animating out');
+        final first = showOverlayMenu<String>(
+          context: host.context,
+          controller: controller,
+          items: [
+            const OverlayMenuItem<String>(value: 'a', child: Text('One')),
+          ],
+          motion: const OverlayMenuMotion(duration: _animation),
+        );
+        await tester.pumpAndSettle();
+        controller.close();
+        await tester.pump(_animation ~/ 3);
+        expect(find.text('One'), findsOneWidget, reason: 'still animating out');
 
-      final second = showOverlayMenu<String>(
-        context: host.context,
-        controller: controller,
-        items: [const OverlayMenuItem<String>(value: 'b', child: Text('Two'))],
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('One'), findsNothing, reason: 'the old menu tore down');
-      expect(await first, isNull);
-      expect(controller.isClosed, isFalse, reason: 'still bound to Two');
+        final second = showOverlayMenu<String>(
+          context: host.context,
+          controller: controller,
+          items: [
+            const OverlayMenuItem<String>(value: 'b', child: Text('Two')),
+          ],
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text('One'),
+          findsNothing,
+          reason: 'the old menu tore down',
+        );
+        expect(await first, isNull);
+        expect(controller.isClosed, isFalse, reason: 'still bound to Two');
 
-      controller.close();
-      await tester.pumpAndSettle();
-      expect(find.text('Two'), findsNothing);
-      expect(await second, isNull);
-    });
+        controller.close();
+        await tester.pumpAndSettle();
+        expect(find.text('Two'), findsNothing);
+        expect(await second, isNull);
+      },
+    );
 
     testWidgets(
-        'a Controller reused while its old menu is open still closes the new '
-        'one after the old one Closes', (tester) async {
-      final outer = GlobalKey<NavigatorState>();
-      final inner = GlobalKey<NavigatorState>();
-      late BuildContext rootAnchor;
-      await tester.pumpWidget(
-        MaterialApp(
-          navigatorKey: outer,
-          home: Scaffold(
-            body: Column(
-              children: [
-                Builder(
-                  builder: (context) {
-                    rootAnchor = context;
-                    return const SizedBox(width: 100, height: 40);
-                  },
-                ),
-                Expanded(
-                  child: Navigator(
-                    key: inner,
-                    onGenerateRoute: (_) => MaterialPageRoute<void>(
-                      builder: (_) => const SizedBox.expand(),
+      'a Controller reused while its old menu is open still closes the new '
+      'one after the old one Closes',
+      (tester) async {
+        final outer = GlobalKey<NavigatorState>();
+        final inner = GlobalKey<NavigatorState>();
+        late BuildContext rootAnchor;
+        await tester.pumpWidget(
+          MaterialApp(
+            navigatorKey: outer,
+            home: Scaffold(
+              body: Column(
+                children: [
+                  Builder(
+                    builder: (context) {
+                      rootAnchor = context;
+                      return const SizedBox(width: 100, height: 40);
+                    },
+                  ),
+                  Expanded(
+                    child: Navigator(
+                      key: inner,
+                      onGenerateRoute: (_) => MaterialPageRoute<void>(
+                        builder: (_) => const SizedBox.expand(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // The old menu lives on a nested route, so popping that route Closes it
-      // and nothing else.
-      late BuildContext innerAnchor;
-      inner.currentState!.push(
-        MaterialPageRoute<void>(
-          builder: (context) {
-            innerAnchor = context;
-            return const SizedBox(width: 100, height: 40);
-          },
-        ),
-      );
-      await tester.pumpAndSettle();
+        // The old menu lives on a nested route, so popping that route Closes it
+        // and nothing else.
+        late BuildContext innerAnchor;
+        inner.currentState!.push(
+          MaterialPageRoute<void>(
+            builder: (context) {
+              innerAnchor = context;
+              return const SizedBox(width: 100, height: 40);
+            },
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      final controller = OverlayMenuController();
-      final first = showOverlayMenu<String>(
-        context: innerAnchor,
-        controller: controller,
-        items: [const OverlayMenuItem<String>(value: 'a', child: Text('One'))],
-      );
-      await tester.pumpAndSettle();
-      final second = showOverlayMenu<String>(
-        context: rootAnchor,
-        controller: controller,
-        items: [const OverlayMenuItem<String>(value: 'b', child: Text('Two'))],
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('One'), findsOneWidget, reason: 'the old menu is open');
+        final controller = OverlayMenuController();
+        final first = showOverlayMenu<String>(
+          context: innerAnchor,
+          controller: controller,
+          items: [
+            const OverlayMenuItem<String>(value: 'a', child: Text('One')),
+          ],
+        );
+        await tester.pumpAndSettle();
+        final second = showOverlayMenu<String>(
+          context: rootAnchor,
+          controller: controller,
+          items: [
+            const OverlayMenuItem<String>(value: 'b', child: Text('Two')),
+          ],
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text('One'),
+          findsOneWidget,
+          reason: 'the old menu is open',
+        );
 
-      inner.currentState!.pop();
-      await tester.pumpAndSettle();
-      expect(find.text('One'), findsNothing, reason: 'the old menu Closed');
-      expect(await first, isNull);
-      expect(controller.isClosed, isFalse, reason: 'still bound to Two');
+        inner.currentState!.pop();
+        await tester.pumpAndSettle();
+        expect(find.text('One'), findsNothing, reason: 'the old menu Closed');
+        expect(await first, isNull);
+        expect(controller.isClosed, isFalse, reason: 'still bound to Two');
 
-      controller.close();
-      await tester.pumpAndSettle();
-      expect(find.text('Two'), findsNothing);
-      expect(await second, isNull);
-    });
+        controller.close();
+        await tester.pumpAndSettle();
+        expect(find.text('Two'), findsNothing);
+        expect(await second, isNull);
+      },
+    );
   });
 
   group('cleanup', () {
     testWidgets(
-        'the exit animation still runs when the menu outlives a rebuild',
-        (tester) async {
-      final host = await _pumpHost(tester);
+      'the exit animation still runs when the menu outlives a rebuild',
+      (tester) async {
+        final host = await _pumpHost(tester);
 
-      final future = showOverlayMenu<String>(
-        context: host.context,
-        items: [
-          const OverlayMenuItem<String>(value: 'a', child: Text('Rebuild')),
-        ],
-        motion: const OverlayMenuMotion(duration: _animation),
-      );
-      await tester.pumpAndSettle();
+        final future = showOverlayMenu<String>(
+          context: host.context,
+          items: [
+            const OverlayMenuItem<String>(value: 'a', child: Text('Rebuild')),
+          ],
+          motion: const OverlayMenuMotion(duration: _animation),
+        );
+        await tester.pumpAndSettle();
 
-      await tester.pump();
-      expect(find.text('Rebuild'), findsOneWidget);
+        await tester.pump();
+        expect(find.text('Rebuild'), findsOneWidget);
 
-      closeAllOverlayMenus();
-      await tester.pumpAndSettle();
-      expect(await future, isNull);
-    });
+        closeAllOverlayMenus();
+        await tester.pumpAndSettle();
+        expect(await future, isNull);
+      },
+    );
   });
 }

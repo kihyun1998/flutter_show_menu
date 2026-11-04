@@ -40,18 +40,19 @@ void main() {
       expect(withConst, equals(withSameConst));
     });
 
-    test('separately built curves are unequal even with equal coefficients',
-        () {
-      final x = 0.2;
-      final left = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
-      final right = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
-      expect(left, isNot(equals(right)));
-    });
+    test(
+      'separately built curves are unequal even with equal coefficients',
+      () {
+        final x = 0.2;
+        final left = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
+        final right = OverlayMenuMotion(curve: Cubic(x, 0.6, 0.35, 1));
+        expect(left, isNot(equals(right)));
+      },
+    );
   });
 
   group('OverlayMenuPlacement', () {
-    test(
-        'two placements with the same position, alignment, and offset are '
+    test('two placements with the same position, alignment, and offset are '
         'equal', () {
       final dx = 4.0;
       final a = OverlayMenuPlacement(
@@ -108,7 +109,9 @@ void main() {
       const base = OverlayMenuBarrier();
       expect(base, isNot(equals(base.copyWith(dismissible: false))));
       expect(
-          base, isNot(equals(base.copyWith(color: const Color(0xFF000000)))));
+        base,
+        isNot(equals(base.copyWith(color: const Color(0xFF000000)))),
+      );
     });
 
     // Widget has no `==` of its own. These pin the boundary rather than drive

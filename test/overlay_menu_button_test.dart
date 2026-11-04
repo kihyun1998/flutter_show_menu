@@ -4,7 +4,9 @@ import 'package:flutter_show_menu/flutter_show_menu.dart';
 
 Future<void> _pump(WidgetTester tester, Widget button) {
   return tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: Center(child: button))),
+    MaterialApp(
+      home: Scaffold(body: Center(child: button)),
+    ),
   );
 }
 
@@ -98,8 +100,9 @@ void main() {
       expect(canceled, isTrue);
     });
 
-    testWidgets('accepts an initialValue and marks it selected',
-        (tester) async {
+    testWidgets('accepts an initialValue and marks it selected', (
+      tester,
+    ) async {
       await _pump(
         tester,
         OverlayMenuButton<String>(
@@ -121,14 +124,16 @@ void main() {
       await tester.pumpAndSettle();
 
       final inks = tester.widgetList<Ink>(find.byType(Ink)).toList();
-      final colors =
-          inks.map((ink) => (ink.decoration as BoxDecoration?)?.color).toList();
+      final colors = inks
+          .map((ink) => (ink.decoration as BoxDecoration?)?.color)
+          .toList();
 
       expect(colors, [null, const Color(0xFF00FF00)]);
     });
 
-    testWidgets('barrier.dismissible: false keeps the menu open',
-        (tester) async {
+    testWidgets('barrier.dismissible: false keeps the menu open', (
+      tester,
+    ) async {
       await _pump(
         tester,
         const OverlayMenuButton<String>(

@@ -10,25 +10,25 @@ import 'menu_position.dart';
 Alignment resolveScaleOrigin(MenuPosition position, MenuAlignment alignment) {
   return switch (position) {
     MenuPosition.bottom => switch (alignment) {
-        MenuAlignment.start => Alignment.topLeft,
-        MenuAlignment.center => Alignment.topCenter,
-        MenuAlignment.end => Alignment.topRight,
-      },
+      MenuAlignment.start => Alignment.topLeft,
+      MenuAlignment.center => Alignment.topCenter,
+      MenuAlignment.end => Alignment.topRight,
+    },
     MenuPosition.top => switch (alignment) {
-        MenuAlignment.start => Alignment.bottomLeft,
-        MenuAlignment.center => Alignment.bottomCenter,
-        MenuAlignment.end => Alignment.bottomRight,
-      },
+      MenuAlignment.start => Alignment.bottomLeft,
+      MenuAlignment.center => Alignment.bottomCenter,
+      MenuAlignment.end => Alignment.bottomRight,
+    },
     MenuPosition.left => switch (alignment) {
-        MenuAlignment.start => Alignment.topRight,
-        MenuAlignment.center => Alignment.centerRight,
-        MenuAlignment.end => Alignment.bottomRight,
-      },
+      MenuAlignment.start => Alignment.topRight,
+      MenuAlignment.center => Alignment.centerRight,
+      MenuAlignment.end => Alignment.bottomRight,
+    },
     MenuPosition.right => switch (alignment) {
-        MenuAlignment.start => Alignment.topLeft,
-        MenuAlignment.center => Alignment.centerLeft,
-        MenuAlignment.end => Alignment.bottomLeft,
-      },
+      MenuAlignment.start => Alignment.topLeft,
+      MenuAlignment.center => Alignment.centerLeft,
+      MenuAlignment.end => Alignment.bottomLeft,
+    },
   };
 }
 

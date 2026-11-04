@@ -64,13 +64,17 @@ class MenuPositionDelegate extends SingleChildLayoutDelegate {
     // Final clamp to safe area
     x = x.clamp(
       screenPadding.left,
-      max(screenPadding.left,
-          screenSize.width - screenPadding.right - childSize.width),
+      max(
+        screenPadding.left,
+        screenSize.width - screenPadding.right - childSize.width,
+      ),
     );
     y = y.clamp(
       screenPadding.top,
-      max(screenPadding.top,
-          screenSize.height - screenPadding.bottom - childSize.height),
+      max(
+        screenPadding.top,
+        screenSize.height - screenPadding.bottom - childSize.height,
+      ),
     );
 
     return Offset(x, y);

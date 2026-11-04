@@ -63,10 +63,7 @@ class OverlayMenuEntryView<T> extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Ink(
-        decoration: BoxDecoration(
-          color: inkColor,
-          borderRadius: borderRadius,
-        ),
+        decoration: BoxDecoration(color: inkColor, borderRadius: borderRadius),
         child: InkWell(
           onTap: item.enabled
               ? () {

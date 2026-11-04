@@ -35,7 +35,7 @@ void main() {
   if (text == null) {
     return (
       names: names,
-      findings: [SurfaceFinding(barrel, 1, 'does not exist')]
+      findings: [SurfaceFinding(barrel, 1, 'does not exist')],
     );
   }
   _declarations(barrel, text, names, findings, inBarrel: true);
@@ -58,7 +58,8 @@ void main() {
     }
     if (combinators.isNotEmpty) {
       findings.add(
-          SurfaceFinding(barrel, line, 'unsupported export: $combinators'));
+        SurfaceFinding(barrel, line, 'unsupported export: $combinators'),
+      );
       continue;
     }
     final source = _read(root, file);
@@ -75,7 +76,8 @@ final _skipped = RegExp(r'^(import\s|library\b|//|/\*|@|[}\)\];])');
 
 final _declarationForms = [
   RegExp(
-      r'^(?:(?:abstract|sealed|final|base|interface|mixin)\s+)*class\s+(\w+)'),
+    r'^(?:(?:abstract|sealed|final|base|interface|mixin)\s+)*class\s+(\w+)',
+  ),
   RegExp(r'^enum\s+(\w+)'),
   RegExp(r'^mixin\s+(\w+)'),
   RegExp(r'^typedef\s+(\w+)\s*[<=]'),
@@ -105,8 +107,9 @@ void _declarations(
     }
     if (line.startsWith(RegExp(r'export\s'))) {
       if (!inBarrel) {
-        findings
-            .add(SurfaceFinding(path, i + 1, 'export inside an exported file'));
+        findings.add(
+          SurfaceFinding(path, i + 1, 'export inside an exported file'),
+        );
       }
       continue;
     }
@@ -124,7 +127,8 @@ void _declarations(
     }
     if (name == null) {
       findings.add(
-          SurfaceFinding(path, i + 1, 'unrecognised top-level line: $line'));
+        SurfaceFinding(path, i + 1, 'unrecognised top-level line: $line'),
+      );
     } else if (name.isNotEmpty && !name.startsWith('_')) {
       names.add(name);
     }

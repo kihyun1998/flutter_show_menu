@@ -37,8 +37,7 @@ void main() {
   // This test pins that SDK behaviour. If a future Flutter completes the
   // primary future on cancellation, it fails, and the exit animator needs to
   // handle it again.
-  testWidgets(
-      'disposing an AnimationController leaves a pending reverse() '
+  testWidgets('disposing an AnimationController leaves a pending reverse() '
       'unresolved rather than erroring', (tester) async {
     final controller = AnimationController(
       vsync: const TestVSync(),
@@ -50,9 +49,9 @@ void main() {
     Object? error;
     unawaited(
       controller.reverse().then(
-            (_) => resolved = true,
-            onError: (Object e) => error = e,
-          ),
+        (_) => resolved = true,
+        onError: (Object e) => error = e,
+      ),
     );
 
     await tester.pump(const Duration(milliseconds: 20));
@@ -82,8 +81,7 @@ void main() {
     expect(error, isA<TickerCanceled>());
   });
 
-  testWidgets(
-      'an instant Close preempting the exit animation raises no '
+  testWidgets('an instant Close preempting the exit animation raises no '
       'unhandled error', (tester) async {
     final anchor = await _pumpHost(tester);
     final controller = OverlayMenuController();
@@ -107,8 +105,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-      'a selection preempted by Close All still delivers its value and '
+  testWidgets('a selection preempted by Close All still delivers its value and '
       'raises no unhandled error', (tester) async {
     final anchor = await _pumpHost(tester);
 

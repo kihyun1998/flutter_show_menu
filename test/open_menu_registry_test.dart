@@ -93,8 +93,9 @@ void main() {
     expect(_registry.length, 0, reason: 'close all');
   });
 
-  testWidgets('the registry holds every simultaneously open menu',
-      (tester) async {
+  testWidgets('the registry holds every simultaneously open menu', (
+    tester,
+  ) async {
     final context = await _pumpHost(tester);
 
     final futures = [
@@ -141,8 +142,9 @@ void main() {
     expect(_registry.length, 0);
   });
 
-  testWidgets('repeated open/closeAll cycles leave nothing behind',
-      (tester) async {
+  testWidgets('repeated open/closeAll cycles leave nothing behind', (
+    tester,
+  ) async {
     final context = await _pumpHost(tester);
 
     for (var i = 0; i < 3; i++) {

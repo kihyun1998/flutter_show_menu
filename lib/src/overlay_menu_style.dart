@@ -116,19 +116,19 @@ class OverlayMenuStyle {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        borderRadius,
-        padding,
-        maxHeight,
-        width,
-        constraints,
-        decoration,
-        itemStyle,
-        headerStyle,
-        footerStyle,
-        dividerStyle,
-        scrollbarStyle,
-      );
+    backgroundColor,
+    borderRadius,
+    padding,
+    maxHeight,
+    width,
+    constraints,
+    decoration,
+    itemStyle,
+    headerStyle,
+    footerStyle,
+    dividerStyle,
+    scrollbarStyle,
+  );
 }
 
 /// Default style for individual menu items.
@@ -218,16 +218,16 @@ class OverlayMenuItemStyle {
 
   @override
   int get hashCode => Object.hash(
-        height,
-        borderRadius,
-        backgroundColor,
-        selectedBackgroundColor,
-        hoverColor,
-        splashColor,
-        highlightColor,
-        focusColor,
-        mouseCursor,
-      );
+    height,
+    borderRadius,
+    backgroundColor,
+    selectedBackgroundColor,
+    hoverColor,
+    splashColor,
+    highlightColor,
+    focusColor,
+    mouseCursor,
+  );
 }
 
 /// Style for menu dividers.

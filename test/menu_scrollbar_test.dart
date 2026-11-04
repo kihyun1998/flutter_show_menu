@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_show_menu/flutter_show_menu.dart';
 
 List<OverlayMenuEntry<String>> _items(int count) => [
-      for (var i = 0; i < count; i++)
-        OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
-    ];
+  for (var i = 0; i < count; i++)
+    OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
+];
 
 Future<BuildContext> _pumpHost(WidgetTester tester) async {
   late BuildContext anchor;
@@ -86,8 +86,9 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('omitting scrollbarStyle still gives a scrollbar',
-      (tester) async {
+  testWidgets('omitting scrollbarStyle still gives a scrollbar', (
+    tester,
+  ) async {
     final anchor = await _pumpHost(tester);
     showOverlayMenu<String>(
       context: anchor,

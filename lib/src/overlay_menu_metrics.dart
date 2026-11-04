@@ -29,9 +29,10 @@ double resolveEntryHeight<T>(
   return switch (entry) {
     OverlayMenuItem<T>() =>
       entry.height ?? itemStyle?.height ?? kDefaultItemHeight,
-    OverlayMenuDivider<T>() => entry.height ??
-        dividerStyle?.height ??
-        resolveDividerThickness(entry, dividerStyle),
+    OverlayMenuDivider<T>() =>
+      entry.height ??
+          dividerStyle?.height ??
+          resolveDividerThickness(entry, dividerStyle),
   };
 }
 

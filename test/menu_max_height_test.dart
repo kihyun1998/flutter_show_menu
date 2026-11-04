@@ -6,9 +6,9 @@ const _itemHeight = 48.0;
 const _verticalPadding = 8.0; // the default 4 top + 4 bottom
 
 List<OverlayMenuEntry<String>> _items(int count) => [
-      for (var i = 0; i < count; i++)
-        OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
-    ];
+  for (var i = 0; i < count; i++)
+    OverlayMenuItem<String>(value: 'v$i', child: Text('Item $i')),
+];
 
 Future<BuildContext> _pumpHost(WidgetTester tester) async {
   late BuildContext anchor;
@@ -95,15 +95,19 @@ void main() {
   ) async {
     final anchor = await _pumpHost(tester);
     String? selected;
-    showOverlayMenu<String>(context: anchor, items: _items(30))
-        .then((v) => selected = v);
+    showOverlayMenu<String>(
+      context: anchor,
+      items: _items(30),
+    ).then((v) => selected = v);
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
     expect(tester.getSize(_menuSurface()).height, 600); // the test screen
 
     await tester.drag(
-        find.byType(SingleChildScrollView), const Offset(0, -2000));
+      find.byType(SingleChildScrollView),
+      const Offset(0, -2000),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Item 29'));
     await tester.pumpAndSettle();
@@ -140,11 +144,15 @@ void main() {
     await tester.pumpAndSettle();
 
     final viewport = tester.getRect(find.byType(SingleChildScrollView));
-    expect(tester.getRect(find.text('Item 9')).center.dy,
-        isNot(inViewport(viewport)));
+    expect(
+      tester.getRect(find.text('Item 9')).center.dy,
+      isNot(inViewport(viewport)),
+    );
 
     await tester.drag(
-        find.byType(SingleChildScrollView), const Offset(0, -300));
+      find.byType(SingleChildScrollView),
+      const Offset(0, -300),
+    );
     await tester.pumpAndSettle();
 
     expect(tester.getRect(find.text('Item 9')).center.dy, inViewport(viewport));
